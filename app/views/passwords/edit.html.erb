@@ -1,0 +1,29 @@
+<% content_for :title, t("passwords.edit.title") %>
+
+<div class="columns is-centered">
+  <div class="column is-narrow" style="min-width: 24rem;">
+    <h1 class="title has-text-centered"><%= t("passwords.edit.title") %></h1>
+
+    <%= form_with url: password_path(params[:token]), method: :put, class: "box" do |form| %>
+      <div class="field">
+        <%= form.label :password, t("passwords.edit.password"), class: "label" %>
+        <div class="control">
+          <%= form.password_field :password, required: true, autocomplete: "new-password", maxlength: 72, class: "input" %>
+        </div>
+      </div>
+
+      <div class="field">
+        <%= form.label :password_confirmation, t("passwords.edit.password_confirmation"), class: "label" %>
+        <div class="control">
+          <%= form.password_field :password_confirmation, required: true, autocomplete: "new-password", maxlength: 72, class: "input" %>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="control">
+          <%= form.submit t("passwords.edit.submit"), class: "button is-primary is-fullwidth" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

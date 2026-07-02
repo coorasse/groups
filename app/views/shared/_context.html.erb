@@ -1,0 +1,14 @@
+<% group = local_assigns[:group] %>
+
+<div class="box mb-5">
+  <p class="heading mb-1"><%= Event.model_name.human %></p>
+  <p class="is-size-3 has-text-weight-bold">
+    <%= link_to event.title, event_path(event), class: "has-text-dark" %>
+  </p>
+  <% if group %>
+    <p class="is-size-5 mt-2">
+      <span class="tag is-light mr-2"><%= Group.model_name.human %></span>
+      <%= link_to group_label(group), event_group_path(event, group) %>
+    </p>
+  <% end %>
+</div>

@@ -1,0 +1,6 @@
+<% content_for :title, t(".title") %>
+
+<p class="is-size-7 has-text-grey"><%= link_to @event.title, event_path(@event) %></p>
+<h1 class="title"><%= t(".title") %></h1>
+
+<%= render "form", event: @event, group: @group %>

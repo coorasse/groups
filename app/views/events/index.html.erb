@@ -1,0 +1,63 @@
+<% content_for :title, t(".title") %>
+
+<div class="level">
+  <div class="level-left">
+    <h1 class="title level-item"><%= t(".title") %></h1>
+  </div>
+  <div class="level-right">
+    <%= link_to t(".new"), new_event_path, class: "button is-primary level-item" %>
+  </div>
+</div>
+
+<% if @events.any? %>
+  <div class="table-container">
+    <table class="table is-fullwidth is-hoverable">
+      <thead>
+        <tr>
+          <th><%= Event.human_attribute_name(:title) %></th>
+          <th><%= t(".adults") %></th>
+          <th><%= t(".kids") %></th>
+          <th><%= Event.human_attribute_name(:max_group_size) %></th>
+          <th><%= t(".groups_count") %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @events.each do |event| %>
+          <tr>
+            <td>
+              <div class="is-flex is-align-items-center">
+                <% if event.image.attached? %>
+                  <%= image_tag event.image.variant(resize_to_fill: [40, 40]), class: "event-thumb mr-2" %>
+                <% end %>
+                <%= link_to event.title, event %>
+              </div>
+            </td>
+            <td>
+              <%= number_to_currency(event.adult_price) %>
+              <br>
+              <small class="has-text-grey"><%= t(".ticket") %> <%= number_to_currency(event.adult_ticket_price) %></small>
+            </td>
+            <td>
+              <%= number_to_currency(event.kid_price) %>
+              <br>
+              <small class="has-text-grey"><%= t(".ticket") %> <%= number_to_currency(event.kid_ticket_price) %></small>
+            </td>
+            <td><%= event.max_group_size %></td>
+            <td><%= event.groups.count %></td>
+            <td class="has-text-right">
+              <%= link_to t("actions.edit"), edit_event_path(event), class: "button is-small" %>
+              <%= button_to t("actions.destroy"), event, method: :delete,
+                    class: "button is-small is-danger is-light",
+                    form: { data: { turbo_confirm: t("actions.confirm") } } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="notification is-light">
+    <%= t(".empty") %>
+  </div>
+<% end %>

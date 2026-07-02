@@ -1,0 +1,117 @@
+<% content_for :title, @event.title %>
+
+<div class="level">
+  <div class="level-left">
+    <div>
+      <p class="is-size-7 has-text-grey"><%= link_to t("events.index.title"), events_path %></p>
+      <h1 class="title"><%= @event.title %></h1>
+    </div>
+  </div>
+  <div class="level-right">
+    <%= link_to t("actions.edit"), edit_event_path(@event), class: "button level-item" %>
+  </div>
+</div>
+
+<% if @event.image.attached? || @event.description.present? %>
+  <div class="box">
+    <% if @event.image.attached? %>
+      <figure class="image mb-3">
+        <%= image_tag @event.image.variant(resize_to_limit: [1200, 400]), class: "event-image" %>
+      </figure>
+    <% end %>
+    <% if @event.description.present? %>
+      <div class="content"><%= simple_format @event.description %></div>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="columns">
+  <div class="column is-two-thirds">
+    <div class="box">
+      <table class="table is-fullwidth">
+        <thead>
+          <tr>
+            <th></th>
+            <th class="has-text-right"><%= t(".adults") %></th>
+            <th class="has-text-right"><%= t(".kids") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th><%= t(".public_price") %></th>
+            <td class="has-text-right"><%= number_to_currency(@event.adult_price) %></td>
+            <td class="has-text-right"><%= number_to_currency(@event.kid_price) %></td>
+          </tr>
+          <tr>
+            <th><%= t(".ticket_price") %></th>
+            <td class="has-text-right"><%= number_to_currency(@event.adult_ticket_price) %></td>
+            <td class="has-text-right"><%= number_to_currency(@event.kid_ticket_price) %></td>
+          </tr>
+          <tr>
+            <th><%= t(".guided_tour_price") %></th>
+            <td class="has-text-right"><%= number_to_currency(@event.adult_guided_tour_price) %></td>
+            <td class="has-text-right"><%= number_to_currency(@event.kid_guided_tour_price) %></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="column">
+    <div class="box has-text-centered">
+      <p class="heading"><%= Event.human_attribute_name(:max_group_size) %></p>
+      <p class="title is-4"><%= @event.max_group_size %></p>
+    </div>
+  </div>
+</div>
+
+<% if @event.notes.present? %>
+  <div class="box">
+    <p class="heading"><%= Event.human_attribute_name(:notes) %></p>
+    <p><%= simple_format @event.notes %></p>
+  </div>
+<% end %>
+
+<div class="level">
+  <div class="level-left">
+    <h2 class="subtitle level-item"><%= t(".groups") %></h2>
+  </div>
+  <div class="level-right">
+    <%= link_to t(".new_group"), new_event_group_path(@event), class: "button is-primary level-item" %>
+  </div>
+</div>
+
+<% if @groups.any? %>
+  <div class="table-container">
+    <table class="table is-fullwidth is-hoverable">
+      <thead>
+        <tr>
+          <th><%= t(".group_schedule") %></th>
+          <th><%= Group.human_attribute_name(:status) %></th>
+          <th><%= Group.human_attribute_name(:people_count) %></th>
+          <th><%= Group.human_attribute_name(:total_price) %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @groups.each do |group| %>
+          <tr>
+            <td><%= link_to group_label(group), event_group_path(@event, group), class: "has-text-weight-medium" %></td>
+            <td><%= group_status_tag(group) %></td>
+            <td><%= group.people_count %> / <%= @event.max_group_size %></td>
+            <td><%= number_to_currency(group.total_price) %></td>
+            <td class="has-text-right">
+              <%= link_to t("actions.edit"), edit_event_group_path(@event, group), class: "button is-small" %>
+              <%= button_to t("actions.destroy"), event_group_path(@event, group), method: :delete,
+                    class: "button is-small is-danger is-light",
+                    form: { data: { turbo_confirm: t("actions.confirm") } } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="notification is-light">
+    <%= t(".no_groups") %>
+  </div>
+<% end %>

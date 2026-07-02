@@ -1,0 +1,66 @@
+/*
+ * This is a manifest file that'll be compiled into application.css.
+ *
+ * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
+ * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
+ * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
+ * depending on specificity.
+ *
+ * Consider organizing styles into separate files for maintainability.
+ */
+
+.event-image {
+  display: block;
+  width: 100%;
+  max-height: 22rem;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.event-image-thumb {
+  display: block;
+  max-width: 200px;
+  height: auto;
+  border-radius: 6px;
+}
+
+.event-thumb {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.search-container {
+  position: relative;
+
+  .search-panel {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 30;
+    margin-top: 0.25rem;
+    min-width: 24rem;
+    max-height: 24rem;
+    overflow-y: auto;
+    background-color: var(--bulma-scheme-main, #fff);
+    border: 1px solid var(--bulma-border, #dbdbdb);
+    border-radius: 6px;
+    box-shadow: 0 8px 16px rgba(10, 10, 10, 0.1);
+  }
+
+  .search-result {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    color: var(--bulma-text, #363636);
+
+    &:hover {
+      background-color: var(--bulma-scheme-main-bis, #f5f5f5);
+    }
+
+    & + .search-result {
+      border-top: 1px solid var(--bulma-border-weak, #ededed);
+    }
+  }
+}

@@ -1,0 +1,274 @@
+it:
+  app:
+    name: "Groups"
+
+  number:
+    currency:
+      format:
+        unit: "€"
+        format: "%n %u"
+        separator: ","
+        delimiter: "."
+        precision: 2
+
+  date:
+    formats:
+      default: "%d/%m/%Y"
+      long: "%-d %B %Y"
+      day_short: "%a %d/%m"
+    month_names: [~, gennaio, febbraio, marzo, aprile, maggio, giugno, luglio, agosto, settembre, ottobre, novembre, dicembre]
+    abbr_month_names: [~, gen, feb, mar, apr, mag, giu, lug, ago, set, ott, nov, dic]
+    day_names: [domenica, lunedì, martedì, mercoledì, giovedì, venerdì, sabato]
+    abbr_day_names: [dom, lun, mar, mer, gio, ven, sab]
+
+  time:
+    formats:
+      default: "%d/%m/%Y %H:%M"
+      hour_minute: "%H:%M"
+
+  actions:
+    save: "Salva"
+    cancel: "Annulla"
+    edit: "Modifica"
+    destroy: "Elimina"
+    confirm: "Sei sicuro?"
+
+  errors:
+    template:
+      header:
+        one: "Non è stato possibile salvare questo %{model}: 1 errore"
+        other: "Non è stato possibile salvare questo %{model}: %{count} errori"
+
+  activerecord:
+    models:
+      event:
+        one: "Evento"
+        other: "Eventi"
+      group:
+        one: "Gruppo"
+        other: "Gruppi"
+      reservation:
+        one: "Prenotazione"
+        other: "Prenotazioni"
+      sys_manager:
+        one: "Gestore"
+        other: "Gestori"
+    attributes:
+      sys_manager:
+        email_address: "Email"
+        password: "Password"
+        password_confirmation: "Conferma password"
+      event:
+        title: "Titolo"
+        adult_price: "Prezzo al pubblico adulti"
+        kid_price: "Prezzo al pubblico ragazzi"
+        adult_ticket_price: "Prezzo biglietto adulti"
+        kid_ticket_price: "Prezzo biglietto ragazzi"
+        adult_guided_tour_price: "Prezzo visita guidata adulti"
+        kid_guided_tour_price: "Prezzo visita guidata ragazzi"
+        max_group_size: "Max persone per gruppo"
+        notes: "Note"
+        description: "Descrizione"
+        image: "Immagine"
+      group:
+        adults_count: "Adulti"
+        kids_count: "Ragazzi"
+        people_count: "Persone totali"
+        total_price: "Prezzo totale"
+        date: "Data"
+        time: "Ora"
+        status: "Stato"
+        notes: "Note"
+        net_price: "Prezzo netto"
+      reservation:
+        full_name: "Nome completo"
+        adults_count: "Numero adulti"
+        kids_count: "Numero ragazzi"
+        owned_adult_tickets: "Biglietti adulti già in possesso"
+        price_to_pay: "Prezzo da pagare"
+        paid: "Pagato"
+        phone: "Telefono"
+        email: "Email"
+        tax_code: "Codice fiscale"
+        notes: "Note"
+        status: "Stato"
+        data_processing_authorized: "Autorizzazione al trattamento dei dati personali"
+    errors:
+      models:
+        event:
+          attributes:
+            adult_ticket_price:
+              above_public_price: "non può superare il prezzo al pubblico"
+            kid_ticket_price:
+              above_public_price: "non può superare il prezzo al pubblico"
+            image:
+              invalid_type: "deve essere un'immagine (PNG, JPEG, WEBP o GIF)"
+              too_big: "è troppo grande (massimo %{size} MB)"
+        group:
+          attributes:
+            base:
+              empty_group: "Il gruppo deve contenere almeno una persona"
+              over_capacity: "Il gruppo supera il numero massimo di persone consentito (%{count})"
+        reservation:
+          attributes:
+            base:
+              empty_reservation: "La prenotazione deve contenere almeno una persona"
+              over_group_capacity: "Supera i posti disponibili nel gruppo (rimasti: %{count})"
+              consent_required: "Devi autorizzare il trattamento dei dati personali per procedere"
+            owned_adult_tickets:
+              more_than_adults: "non può superare il numero di adulti della prenotazione"
+
+  events:
+    index:
+      title: "Eventi"
+      new: "Nuovo evento"
+      groups_count: "Gruppi"
+      adults: "Adulti"
+      kids: "Ragazzi"
+      ticket: "biglietto"
+      empty: "Nessun evento presente. Creane uno per iniziare."
+    new:
+      title: "Nuovo evento"
+    edit:
+      title: "Modifica evento"
+    form:
+      adults: "Adulti"
+      kids: "Ragazzi"
+      public_hint: "Utilizzata per abbellire la pagina pubblica di prenotazione."
+    show:
+      groups: "Gruppi"
+      new_group: "Nuovo gruppo"
+      no_groups: "Nessun gruppo prenotato per questo evento."
+      group_schedule: "Data e ora"
+      adults: "Adulti"
+      kids: "Ragazzi"
+      public_price: "Prezzo al pubblico"
+      ticket_price: "Prezzo biglietto"
+      guided_tour_price: "Prezzo visita guidata"
+    create:
+      success: "Evento creato con successo."
+    update:
+      success: "Evento aggiornato con successo."
+    destroy:
+      success: "Evento eliminato con successo."
+
+  groups:
+    statuses:
+      open: "Aperto"
+      closed: "Chiuso"
+      completed: "Completato"
+      cancelled: "Annullato"
+    new:
+      title: "Nuovo gruppo"
+    edit:
+      title: "Modifica gruppo"
+    form:
+      capacity_hint: "Massimo %{count} persone per gruppo."
+    show:
+      reservations: "Prenotazioni"
+      new_reservation: "Nuova prenotazione"
+      no_reservations: "Nessuna prenotazione per questo gruppo."
+      tickets_to_buy: "Biglietti da acquistare"
+      reserved_people:
+        one: "1 persona prenotata"
+        other: "%{count} persone prenotate"
+      available_seats: "Posti disponibili"
+      max_indicative: "(capienza indicativa: %{count})"
+      computed_price: "Prezzo precalcolato"
+      total_price: "Prezzo effettivo"
+      price_difference: "Differenza"
+      save_net_price: "Salva"
+    create:
+      success: "Gruppo creato con successo."
+    update:
+      success: "Gruppo aggiornato con successo."
+    destroy:
+      success: "Gruppo eliminato con successo."
+
+  reservations:
+    statuses:
+      requested: "Richiesta"
+      approved: "Approvata"
+      confirmed: "Confermata"
+      cancelled: "Annullata"
+    paid:
+      "true": "Pagato"
+      "false": "Da pagare"
+    new:
+      title: "Nuova prenotazione"
+    edit:
+      title: "Modifica prenotazione"
+    form:
+      availability_hint: "Posti ancora disponibili nel gruppo: %{seats}."
+      tickets_to_buy: "Biglietti adulti da acquistare:"
+      suggested_price: "Prezzo suggerito:"
+      use_computed: "Usa prezzo calcolato"
+    show:
+      tickets_to_buy: "Biglietti da acquistare"
+      contacts: "Contatti"
+      computed_price: "Prezzo precalcolato"
+      price_difference: "Differenza"
+    create:
+      success: "Prenotazione creata con successo."
+    update:
+      success: "Prenotazione aggiornata con successo."
+    destroy:
+      success: "Prenotazione eliminata con successo."
+
+  searches:
+    placeholder: "Cerca prenotazione…"
+    include_past: "Eventi passati"
+    no_results: "Nessuna prenotazione trovata."
+
+  sessions:
+    logout: "Esci"
+    new:
+      title: "Accedi"
+      submit: "Accedi"
+      forgot_password: "Password dimenticata?"
+    create:
+      invalid: "Email o password non validi."
+      rate_limited: "Troppi tentativi. Riprova più tardi."
+
+  passwords:
+    invalid_token: "Il link per reimpostare la password non è valido o è scaduto."
+    new:
+      title: "Reimposta password"
+      submit: "Invia istruzioni via email"
+      back: "Torna al login"
+    create:
+      sent: "Se esiste un account con quell'email, riceverai le istruzioni per reimpostare la password."
+      rate_limited: "Troppi tentativi. Riprova più tardi."
+    edit:
+      title: "Aggiorna password"
+      password: "Nuova password"
+      password_confirmation: "Conferma nuova password"
+      submit: "Salva"
+    update:
+      reset: "Password reimpostata con successo."
+      mismatch: "Le password non coincidono."
+
+  public:
+    title: "Prenotazioni gruppi"
+    subtitle: "Prenota la tua visita"
+    reservations:
+      unavailable: "Il gruppo selezionato non è più disponibile."
+      index:
+        title: "Eventi disponibili"
+        prices: "Adulti %{adult} · Ragazzi %{kid}"
+        seats_left:
+          one: "1 posto disponibile"
+          other: "%{count} posti disponibili"
+        book: "Prenota"
+        empty: "Al momento non ci sono eventi disponibili per la prenotazione."
+      new:
+        title: "Nuova prenotazione"
+        optional: "facoltativa"
+        tickets_to_buy: "Biglietti adulti da acquistare:"
+        total_price: "Totale indicativo da pagare:"
+        consent: "Autorizzo il trattamento dei dati personali."
+        submit: "Invia prenotazione"
+      confirmation:
+        title: "Prenotazione ricevuta!"
+        body: "Grazie, abbiamo registrato la tua prenotazione. Ti contatteremo per confermarla."
+        back: "Torna agli eventi"

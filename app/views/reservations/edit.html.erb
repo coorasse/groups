@@ -1,0 +1,7 @@
+<% content_for :title, t(".title") %>
+
+<%= render "shared/context", event: @event, group: @group %>
+
+<h1 class="title"><%= t(".title") %></h1>
+
+<%= render "form", event: @event, group: @group, reservation: @reservation %>

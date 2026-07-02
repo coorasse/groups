@@ -1,0 +1,77 @@
+<% content_for :title, @reservation.full_name %>
+
+<%= render "shared/context", event: @event, group: @group %>
+
+<div class="level">
+  <div class="level-left">
+    <h1 class="title level-item"><%= @reservation.full_name %></h1>
+    <span class="level-item"><%= reservation_status_tag(@reservation) %></span>
+    <span class="level-item">
+      <%= tag.span(t("reservations.paid.#{@reservation.paid?}"), class: "tag #{@reservation.paid? ? 'is-success' : 'is-warning'}") %>
+    </span>
+  </div>
+  <div class="level-right">
+    <%= link_to t("actions.edit"), edit_event_group_reservation_path(@event, @group, @reservation), class: "button level-item" %>
+  </div>
+</div>
+
+<div class="box">
+  <table class="table is-fullwidth">
+    <tbody>
+      <tr>
+        <th><%= Reservation.human_attribute_name(:adults_count) %></th>
+        <td><%= @reservation.adults_count %></td>
+      </tr>
+      <tr>
+        <th><%= Reservation.human_attribute_name(:kids_count) %></th>
+        <td><%= @reservation.kids_count %></td>
+      </tr>
+      <tr>
+        <th><%= Reservation.human_attribute_name(:owned_adult_tickets) %></th>
+        <td><%= @reservation.owned_adult_tickets %></td>
+      </tr>
+      <tr>
+        <th><%= t("reservations.show.tickets_to_buy") %></th>
+        <td><strong><%= @reservation.adult_tickets_to_buy %></strong></td>
+      </tr>
+      <tr>
+        <th><%= t("reservations.show.computed_price") %></th>
+        <td><%= number_to_currency(@reservation.computed_price) %></td>
+      </tr>
+      <tr>
+        <th><%= Reservation.human_attribute_name(:price_to_pay) %></th>
+        <td><%= number_to_currency(@reservation.price_to_pay) %></td>
+      </tr>
+      <tr>
+        <th><%= t("reservations.show.price_difference") %></th>
+        <td><%= price_difference_tag(@reservation.price_difference) %></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="box">
+  <p class="heading"><%= t("reservations.show.contacts") %></p>
+  <table class="table is-fullwidth">
+    <tbody>
+      <tr>
+        <th><%= Reservation.human_attribute_name(:phone) %></th>
+        <td><%= @reservation.phone.presence || "—" %></td>
+      </tr>
+      <tr>
+        <th><%= Reservation.human_attribute_name(:email) %></th>
+        <td><%= @reservation.email.presence || "—" %></td>
+      </tr>
+      <tr>
+        <th><%= Reservation.human_attribute_name(:tax_code) %></th>
+        <td><%= @reservation.tax_code.presence || "—" %></td>
+      </tr>
+      <% if @reservation.notes.present? %>
+        <tr>
+          <th><%= Reservation.human_attribute_name(:notes) %></th>
+          <td><%= simple_format @reservation.notes %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

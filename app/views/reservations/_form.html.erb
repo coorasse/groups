@@ -1,0 +1,142 @@
+<% remaining_seats = group.remaining_seats + (reservation.persisted? ? reservation.people_count : 0) %>
+
+<%= form_with model: [event, group, reservation], class: "box",
+      data: {
+        controller: "reservation-price",
+        reservation_price_adult_price_value: event.adult_price,
+        reservation_price_kid_price_value: event.kid_price,
+        reservation_price_adult_guided_tour_price_value: event.adult_guided_tour_price,
+        reservation_price_persisted_value: reservation.persisted?
+      } do |f| %>
+  <%= render "shared/errors", record: reservation %>
+
+  <div class="field">
+    <%= f.label :full_name, class: "label" %>
+    <div class="control">
+      <%= f.text_field :full_name, class: "input" %>
+    </div>
+  </div>
+
+  <div class="notification is-light py-2 px-4">
+    <%= t(".availability_hint", seats: remaining_seats) %>
+  </div>
+
+  <div class="columns">
+    <div class="column">
+      <div class="field">
+        <%= f.label :adults_count, class: "label" %>
+        <div class="control">
+          <%= f.number_field :adults_count, min: 0, class: "input",
+                data: { reservation_price_target: "adultsCount", action: "input->reservation-price#recalculate" } %>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="field">
+        <%= f.label :kids_count, class: "label" %>
+        <div class="control">
+          <%= f.number_field :kids_count, min: 0, class: "input",
+                data: { reservation_price_target: "kidsCount", action: "input->reservation-price#recalculate" } %>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="field">
+        <%= f.label :owned_adult_tickets, class: "label" %>
+        <div class="control">
+          <%= f.number_field :owned_adult_tickets, min: 0, class: "input",
+                data: { reservation_price_target: "ownedAdultTickets", action: "input->reservation-price#recalculate" } %>
+        </div>
+        <p class="help">
+          <%= t(".tickets_to_buy") %>
+          <strong data-reservation-price-target="ticketsToBuy">0</strong>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="field">
+    <%= f.label :price_to_pay, class: "label" %>
+    <div class="field has-addons">
+      <div class="control is-expanded">
+        <%= f.number_field :price_to_pay, step: :any, min: 0, class: "input",
+              data: { reservation_price_target: "priceToPay", action: "input->reservation-price#markOverridden" } %>
+      </div>
+      <div class="control">
+        <button type="button" class="button is-light" data-action="reservation-price#useComputed">
+          <%= t(".use_computed") %>
+        </button>
+      </div>
+    </div>
+    <p class="help">
+      <%= t(".suggested_price") %>
+      <strong data-reservation-price-target="suggestedPrice">—</strong>
+    </p>
+  </div>
+
+  <div class="columns">
+    <div class="column is-one-third">
+      <div class="field">
+        <%= f.label :status, class: "label" %>
+        <div class="control">
+          <div class="select is-fullwidth">
+            <%= f.select :status, reservation_status_options %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="column is-flex is-align-items-center">
+      <div class="field">
+        <div class="control">
+          <label class="checkbox">
+            <%= f.check_box :paid %>
+            <%= Reservation.human_attribute_name(:paid) %>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="columns">
+    <div class="column">
+      <div class="field">
+        <%= f.label :phone, class: "label" %>
+        <div class="control">
+          <%= f.telephone_field :phone, class: "input" %>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="field">
+        <%= f.label :email, class: "label" %>
+        <div class="control">
+          <%= f.email_field :email, class: "input" %>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="field">
+        <%= f.label :tax_code, class: "label" %>
+        <div class="control">
+          <%= f.text_field :tax_code, class: "input" %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="field">
+    <%= f.label :notes, class: "label" %>
+    <div class="control">
+      <%= f.text_area :notes, rows: 3, class: "textarea" %>
+    </div>
+  </div>
+
+  <div class="field is-grouped">
+    <div class="control">
+      <%= f.submit t("actions.save"), class: "button is-primary" %>
+    </div>
+    <div class="control">
+      <%= link_to t("actions.cancel"), event_group_path(event, group), class: "button is-light" %>
+    </div>
+  </div>
+<% end %>

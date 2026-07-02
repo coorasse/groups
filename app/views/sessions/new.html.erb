@@ -1,0 +1,35 @@
+<% content_for :title, t("sessions.new.title") %>
+
+<div class="columns is-centered">
+  <div class="column is-narrow" style="min-width: 24rem;">
+    <h1 class="title has-text-centered"><%= t("sessions.new.title") %></h1>
+
+    <%= form_with url: session_path, class: "box" do |form| %>
+      <div class="field">
+        <%= form.label :email_address, SysManager.human_attribute_name(:email_address), class: "label" %>
+        <div class="control">
+          <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username",
+                value: params[:email_address], class: "input" %>
+        </div>
+      </div>
+
+      <div class="field">
+        <%= form.label :password, SysManager.human_attribute_name(:password), class: "label" %>
+        <div class="control">
+          <%= form.password_field :password, required: true, autocomplete: "current-password",
+                maxlength: 72, class: "input" %>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="control">
+          <%= form.submit t("sessions.new.submit"), class: "button is-primary is-fullwidth" %>
+        </div>
+      </div>
+
+      <p class="has-text-centered">
+        <%= link_to t("sessions.new.forgot_password"), new_password_path %>
+      </p>
+    <% end %>
+  </div>
+</div>

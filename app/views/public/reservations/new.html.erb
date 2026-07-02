@@ -1,0 +1,109 @@
+<% content_for :title, t("public.reservations.new.title") %>
+
+<div class="box mb-5">
+  <% if @event.image.attached? %>
+    <figure class="image mb-4">
+      <%= image_tag @event.image.variant(resize_to_limit: [1200, 500]), class: "event-image" %>
+    </figure>
+  <% end %>
+  <p class="heading mb-1"><%= Event.model_name.human %></p>
+  <p class="is-size-3 has-text-weight-bold"><%= @event.title %></p>
+  <% if @event.description.present? %>
+    <div class="content mt-2"><%= simple_format @event.description %></div>
+  <% end %>
+  <p class="is-size-5 mt-2">
+    <span class="tag is-light mr-2"><%= Group.model_name.human %></span>
+    <%= group_label(@group) %>
+  </p>
+</div>
+
+<h1 class="title"><%= t("public.reservations.new.title") %></h1>
+
+<%= form_with model: @reservation, url: public_group_reservation_path(@group), class: "box",
+      data: {
+        controller: "reservation-price",
+        reservation_price_adult_price_value: @event.adult_price,
+        reservation_price_kid_price_value: @event.kid_price,
+        reservation_price_adult_guided_tour_price_value: @event.adult_guided_tour_price
+      } do |f| %>
+  <%= render "shared/errors", record: @reservation %>
+
+  <div class="field">
+    <%= f.label :full_name, Reservation.human_attribute_name(:full_name), class: "label" %>
+    <div class="control">
+      <%= f.text_field :full_name, required: true, class: "input" %>
+    </div>
+  </div>
+
+  <div class="columns">
+    <div class="column">
+      <div class="field">
+        <%= f.label :adults_count, Reservation.human_attribute_name(:adults_count), class: "label" %>
+        <div class="control">
+          <%= f.number_field :adults_count, min: 0, class: "input",
+                data: { reservation_price_target: "adultsCount", action: "input->reservation-price#recalculate" } %>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="field">
+        <%= f.label :kids_count, Reservation.human_attribute_name(:kids_count), class: "label" %>
+        <div class="control">
+          <%= f.number_field :kids_count, min: 0, class: "input",
+                data: { reservation_price_target: "kidsCount", action: "input->reservation-price#recalculate" } %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="notification is-light py-3">
+    <p>
+      <%= t("public.reservations.new.total_price") %>
+      <strong data-reservation-price-target="suggestedPrice">—</strong>
+    </p>
+  </div>
+
+  <div class="columns">
+    <div class="column">
+      <div class="field">
+        <%= f.label :phone, Reservation.human_attribute_name(:phone), class: "label" %>
+        <div class="control">
+          <%= f.telephone_field :phone, required: true, class: "input" %>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="field">
+        <%= f.label :email, "#{Reservation.human_attribute_name(:email)} (#{t('public.reservations.new.optional')})", class: "label" %>
+        <div class="control">
+          <%= f.email_field :email, class: "input" %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="field">
+    <%= f.label :notes, Reservation.human_attribute_name(:notes), class: "label" %>
+    <div class="control">
+      <%= f.text_area :notes, rows: 3, class: "textarea" %>
+    </div>
+  </div>
+
+  <div class="field">
+    <div class="control">
+      <label class="checkbox">
+        <%= f.check_box :data_processing_authorized, required: true %>
+        <%= t("public.reservations.new.consent") %>
+      </label>
+    </div>
+  </div>
+
+  <div class="field is-grouped">
+    <div class="control">
+      <%= f.submit t("public.reservations.new.submit"), class: "button is-primary" %>
+    </div>
+    <div class="control">
+      <%= link_to t("actions.cancel"), public_root_path, class: "button is-light" %>
+    </div>
+  </div>
+<% end %>

@@ -1,0 +1,50 @@
+<%= form_with model: [event, group], class: "box" do |f| %>
+  <%= render "shared/errors", record: group %>
+
+  <p class="help mb-4"><%= t("groups.form.capacity_hint", count: event.max_group_size) %></p>
+
+  <div class="columns">
+    <div class="column">
+      <div class="field">
+        <%= f.label :date, class: "label" %>
+        <div class="control">
+          <%= f.date_field :date, class: "input" %>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="field">
+        <%= f.label :time, class: "label" %>
+        <div class="control">
+          <%= f.time_field :time, class: "input" %>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="field">
+        <%= f.label :status, class: "label" %>
+        <div class="control">
+          <div class="select is-fullwidth">
+            <%= f.select :status, group_status_options %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="field">
+    <%= f.label :notes, class: "label" %>
+    <div class="control">
+      <%= f.text_area :notes, rows: 4, class: "textarea" %>
+    </div>
+  </div>
+
+  <div class="field is-grouped">
+    <div class="control">
+      <%= f.submit t("actions.save"), class: "button is-primary" %>
+    </div>
+    <div class="control">
+      <%= link_to t("actions.cancel"), event_path(event), class: "button is-light" %>
+    </div>
+  </div>
+<% end %>
