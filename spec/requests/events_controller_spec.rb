@@ -24,6 +24,26 @@ RSpec.describe EventsController, type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(event.title)
     end
+
+    it "highlights reservations to process" do
+      event = create(:event)
+      create(:reservation, group: create(:group, event: event), status: :requested)
+
+      get event_path(event)
+
+      expect(response.body).to include("da elaborare")
+    end
+  end
+
+  describe "#index" do
+    it "flags events that have reservations to process" do
+      event = create(:event)
+      create(:reservation, group: create(:group, event: event), status: :requested)
+
+      get events_path
+
+      expect(response.body).to include("da elaborare")
+    end
   end
 
   describe "#create" do
@@ -43,13 +63,15 @@ RSpec.describe EventsController, type: :request do
       expect(response).to have_http_status(:unprocessable_content)
     end
 
-    it "attaches an image and stores the description" do
+    it "attaches an image and stores the description and message template" do
       image = Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/event.png"), "image/png")
-      attributes = attributes_for(:event).merge(description: "Una gita fantastica", image: image)
+      attributes = attributes_for(:event).merge(description: "Una gita fantastica",
+        message_template: "Salve <NOME_COMPLETO>", image: image)
 
       post events_path, params: { event: attributes }
 
       expect(Event.last.description).to eq("Una gita fantastica")
+      expect(Event.last.message_template).to eq("Salve <NOME_COMPLETO>")
       expect(Event.last.image).to be_attached
     end
   end

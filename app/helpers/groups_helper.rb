@@ -30,4 +30,10 @@ module GroupsHelper
       (l(group.time, format: :hour_minute) if group.time)
     ].compact.join(" ")
   end
+
+  def group_full_datetime(group)
+    return "" if group.date.blank? || group.time.blank?
+
+    "#{l(group.date, format: :full)} ore #{l(group.time, format: :hour_minute)}"
+  end
 end

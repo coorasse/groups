@@ -1,5 +1,7 @@
 <% content_for :title, @event.title %>
 
+<% requested_count = @event.reservations.requested.count %>
+
 <div class="level">
   <div class="level-left">
     <div>
@@ -11,6 +13,12 @@
     <%= link_to t("actions.edit"), edit_event_path(@event), class: "button level-item" %>
   </div>
 </div>
+
+<% if requested_count.positive? %>
+  <div class="notification is-warning">
+    <strong><%= t(".to_process_banner", count: requested_count) %></strong>
+  </div>
+<% end %>
 
 <% if @event.image.attached? || @event.description.present? %>
   <div class="box">

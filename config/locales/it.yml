@@ -16,6 +16,7 @@ it:
       default: "%d/%m/%Y"
       long: "%-d %B %Y"
       day_short: "%a %d/%m"
+      full: "%A %d %B"
     month_names: [~, gennaio, febbraio, marzo, aprile, maggio, giugno, luglio, agosto, settembre, ottobre, novembre, dicembre]
     abbr_month_names: [~, gen, feb, mar, apr, mag, giu, lug, ago, set, ott, nov, dic]
     day_names: [domenica, lunedì, martedì, mercoledì, giovedì, venerdì, sabato]
@@ -70,6 +71,7 @@ it:
         notes: "Note"
         description: "Descrizione"
         image: "Immagine"
+        message_template: "Modello messaggio di conferma"
       group:
         adults_count: "Adulti"
         kids_count: "Ragazzi"
@@ -126,6 +128,10 @@ it:
       adults: "Adulti"
       kids: "Ragazzi"
       ticket: "biglietto"
+      to_process: "Da elaborare"
+      to_process_banner:
+        one: "Hai 1 prenotazione in richiesta da elaborare."
+        other: "Hai %{count} prenotazioni in richiesta da elaborare."
       empty: "Nessun evento presente. Creane uno per iniziare."
     new:
       title: "Nuovo evento"
@@ -135,6 +141,7 @@ it:
       adults: "Adulti"
       kids: "Ragazzi"
       public_hint: "Utilizzata per abbellire la pagina pubblica di prenotazione."
+      message_hint: "Token disponibili: <NOME_COMPLETO>, <TITOLO_EVENTO>, <DATA_ORA_GRUPPO>, <NUMERO_ADULTI>, <NUMERO_RAGAZZI>, <IMPORTO_TOTALE>. Puoi usare ERB per le parti condizionali, es. <% if numero_ragazzi > 0 %> … <% end %>."
     show:
       groups: "Gruppi"
       new_group: "Nuovo gruppo"
@@ -145,6 +152,9 @@ it:
       public_price: "Prezzo al pubblico"
       ticket_price: "Prezzo biglietto"
       guided_tour_price: "Prezzo visita guidata"
+      to_process_banner:
+        one: "1 prenotazione in richiesta da elaborare."
+        other: "%{count} prenotazioni in richiesta da elaborare."
     create:
       success: "Evento creato con successo."
     update:
@@ -168,6 +178,7 @@ it:
       reservations: "Prenotazioni"
       new_reservation: "Nuova prenotazione"
       no_reservations: "Nessuna prenotazione per questo gruppo."
+      group_schedule: "Data e ora"
       tickets_to_buy: "Biglietti da acquistare"
       reserved_people:
         one: "1 persona prenotata"
@@ -178,6 +189,8 @@ it:
       total_price: "Prezzo effettivo"
       price_difference: "Differenza"
       save_net_price: "Salva"
+      copy_message: "Copia messaggio"
+      message_copied: "Copiato!"
     create:
       success: "Gruppo creato con successo."
     update:
@@ -186,6 +199,9 @@ it:
       success: "Gruppo eliminato con successo."
 
   reservations:
+    to_process:
+      one: "1 da elaborare"
+      other: "%{count} da elaborare"
     statuses:
       requested: "Richiesta"
       approved: "Approvata"

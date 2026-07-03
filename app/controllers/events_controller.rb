@@ -3,6 +3,7 @@ class EventsController < ApplicationController
 
   def index
     @events = Event.order(created_at: :desc)
+    @requested_counts = Reservation.requested.joins(:group).group("groups.event_id").count
   end
 
   def show
@@ -49,6 +50,6 @@ class EventsController < ApplicationController
     params.require(:event).permit(:title, :adult_price, :kid_price,
       :adult_ticket_price, :kid_ticket_price,
       :adult_guided_tour_price, :kid_guided_tour_price,
-      :max_group_size, :notes, :description, :image)
+      :max_group_size, :notes, :description, :image, :message_template)
   end
 end

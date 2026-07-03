@@ -53,6 +53,45 @@ RSpec.describe Event do
     end
   end
 
+  describe "#message_for" do
+    let(:event) do
+      build(:event, message_template: "Ciao <NOME_COMPLETO> per <TITOLO_EVENTO><% if numero_ragazzi > 0 %> con <NUMERO_RAGAZZI> ragazzi<% end %>. Importo <IMPORTO_TOTALE>")
+    end
+
+    let(:vars) do
+      { nome_completo: "Mario", titolo_evento: "Gita", data_ora_gruppo: "oggi",
+        numero_adulti: 2, numero_ragazzi: 1, importo_totale: "45,00 €" }
+    end
+
+    it "replaces the tokens with the provided values" do
+      result = event.message_for(**vars)
+
+      expect(result).to include("Ciao Mario per Gita")
+      expect(result).to include("Importo 45,00 €")
+    end
+
+    it "renders the conditional part when there are kids" do
+      expect(event.message_for(**vars)).to include("con 1 ragazzi")
+    end
+
+    it "hides the conditional part when there are no kids" do
+      expect(event.message_for(**vars.merge(numero_ragazzi: 0))).not_to include("ragazzi")
+    end
+
+    it "returns an empty string when no template is set" do
+      expect(build(:event, message_template: nil).message_for(**vars)).to eq("")
+    end
+  end
+
+  it "counts requested reservations across its groups" do
+    event = create(:event)
+    group = create(:group, event: event)
+    create(:reservation, group: group, status: :requested)
+    create(:reservation, group: group, status: :confirmed)
+
+    expect(event.reservations.requested.count).to eq(1)
+  end
+
   it "destroys its groups when destroyed" do
     event = create(:event)
     create(:group, event: event)

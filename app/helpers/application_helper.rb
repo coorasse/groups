@@ -8,6 +8,17 @@ module ApplicationHelper
     FLASH_CSS_CLASSES.fetch(type.to_s, "is-info")
   end
 
+  def stat_card(label, column_class: "is-one-quarter", &block)
+    tag.div(class: "column #{column_class}") do
+      tag.div(class: "box has-text-centered") do
+        safe_join([
+          tag.p(label, class: "heading"),
+          tag.div(capture(&block), class: "is-size-5 has-text-weight-bold")
+        ])
+      end
+    end
+  end
+
   def price_difference_tag(difference)
     return tag.span("—", class: "has-text-grey") if difference.zero?
 

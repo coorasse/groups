@@ -9,6 +9,13 @@
   </div>
 </div>
 
+<% total_requested = @requested_counts.values.sum %>
+<% if total_requested.positive? %>
+  <div class="notification is-warning">
+    <strong><%= t(".to_process_banner", count: total_requested) %></strong>
+  </div>
+<% end %>
+
 <% if @events.any? %>
   <div class="table-container">
     <table class="table is-fullwidth is-hoverable">
@@ -19,6 +26,7 @@
           <th><%= t(".kids") %></th>
           <th><%= Event.human_attribute_name(:max_group_size) %></th>
           <th><%= t(".groups_count") %></th>
+          <th><%= t(".to_process") %></th>
           <th></th>
         </tr>
       </thead>
@@ -45,6 +53,7 @@
             </td>
             <td><%= event.max_group_size %></td>
             <td><%= event.groups.count %></td>
+            <td><%= to_process_tag(@requested_counts.fetch(event.id, 0)) %></td>
             <td class="has-text-right">
               <%= link_to t("actions.edit"), edit_event_path(event), class: "button is-small" %>
               <%= button_to t("actions.destroy"), event, method: :delete,
