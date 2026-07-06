@@ -61,16 +61,18 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "app.guidaturisticaromagna.it"), protocol: "https" }
 
   # Outgoing SMTP server (Aruba). Credentials live in config/credentials.yml.enc under `smtp`.
+  # Port 587 (STARTTLS): Hetzner blocks outbound 25 and 465, but 587 is open.
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
     address:              "smtps.aruba.it",
-    port:                 465,
+    port:                 587,
     domain:               "guidaturisticaromagna.it",
     user_name:            Rails.application.credentials.dig(:smtp, :user_name),
     password:             Rails.application.credentials.dig(:smtp, :password),
     authentication:       :login,
-    ssl:                  true,
-    enable_starttls_auto: false
+    enable_starttls_auto: true,
+    open_timeout:         10,
+    read_timeout:         10
   }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
