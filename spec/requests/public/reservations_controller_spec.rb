@@ -93,6 +93,17 @@ RSpec.describe Public::ReservationsController, type: :request do
       expect(group.reservations.last).to be_requested
     end
 
+    it "enqueues the confirmation email when an email was provided" do
+      expect { book(valid_params) }.to have_enqueued_mail(ReservationMailer, :confirmation)
+    end
+
+    it "does not enqueue a confirmation email when no email was provided" do
+      expect { book(valid_params.merge(email: "")) }
+        .not_to have_enqueued_mail(ReservationMailer, :confirmation)
+
+      expect(group.reservations.last.email).to be_blank
+    end
+
     it "auto-computes the price to pay even though the form never sends it" do
       event = create(:event, adult_price: 25, kid_price: 12)
       group = bookable_group(event: event)

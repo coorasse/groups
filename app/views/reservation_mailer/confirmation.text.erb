@@ -1,0 +1,13 @@
+<%= t("greeting", scope: "reservation_mailer.confirmation", name: @reservation.full_name) %>
+
+<%= t("intro", scope: "reservation_mailer.confirmation", event: @event.title) %>
+
+<%= t("recap.event", scope: "reservation_mailer.confirmation") %>: <%= @event.title %>
+<%= t("recap.datetime", scope: "reservation_mailer.confirmation") %>: <%= group_full_datetime(@group, titleize: true) %>
+<%= t("recap.adults", scope: "reservation_mailer.confirmation") %>: <%= @reservation.adults_count %>
+<%= t("recap.kids", scope: "reservation_mailer.confirmation") %>: <%= @reservation.kids_count %>
+<%= t("recap.total", scope: "reservation_mailer.confirmation") %>: <%= number_to_currency(@reservation.price_to_pay) %>
+
+<%= t("outro", scope: "reservation_mailer.confirmation") %>
+
+<%= t("signature", scope: "reservation_mailer.confirmation") %>

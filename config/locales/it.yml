@@ -235,6 +235,20 @@ it:
     destroy:
       success: "Prenotazione eliminata con successo."
 
+  reservation_mailer:
+    confirmation:
+      subject: "Abbiamo ricevuto la tua richiesta di prenotazione – %{event}"
+      greeting: "Ciao %{name},"
+      intro: "abbiamo ricevuto la tua richiesta di prenotazione per «%{event}». Ecco il riepilogo:"
+      recap:
+        event: "Evento"
+        datetime: "Data e ora"
+        adults: "Adulti"
+        kids: "Ragazzi"
+        total: "Totale indicativo"
+      outro: "Nelle prossime ore ti contatteremo per confermare la disponibilità. Se qualche dato non è corretto, puoi rispondere direttamente a questa email."
+      signature: "A presto, Lisa Rodi – Guida Turistica Romagna"
+
   searches:
     placeholder: "Cerca prenotazione…"
     include_past: "Eventi passati"

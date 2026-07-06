@@ -36,6 +36,7 @@ module Public
       @reservation.status = :requested
 
       if @reservation.save(context: :public_booking)
+        ReservationMailer.confirmation(@reservation).deliver_later if @reservation.email.present?
         redirect_to public_confirmation_path
       else
         render :new, status: :unprocessable_entity

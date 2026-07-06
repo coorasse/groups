@@ -29,5 +29,9 @@ Rails.application.routes.draw do
 
   mount LetterThief::Engine => "/letter_thief" if Rails.env.development?
 
+  # Protected by the app's session authentication via Mission Control's default
+  # base controller (::ApplicationController, which requires a logged-in manager).
+  mount MissionControl::Jobs::Engine, at: "/jobs"
+
   root "events#index"
 end
