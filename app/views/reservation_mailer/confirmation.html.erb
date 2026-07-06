@@ -12,4 +12,4 @@
 
 <p><%= t("outro", scope: "reservation_mailer.confirmation") %></p>
 
-<p><%= t("signature", scope: "reservation_mailer.confirmation") %></p>
+<%= simple_format(t("signature", scope: "reservation_mailer.confirmation")) %>

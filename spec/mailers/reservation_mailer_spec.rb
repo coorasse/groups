@@ -30,5 +30,15 @@ RSpec.describe ReservationMailer do
       expect(mail.subject).to include("Tour del centro storico")
       expect(mail.body.encoded).to include("Ciao Mario Rossi!")
     end
+
+    it "interpolates the confirmation link into the message template" do
+      event = create(:event, message_template: "Conferma qui: <%= confirmation_link %>")
+      group = create(:group, event: event)
+      reservation = create(:reservation, group: group, email: "mario@example.com")
+
+      mail = described_class.approval_confirmation(reservation)
+
+      expect(mail.body.encoded).to include("http://example.com/prenotazione/#{reservation.token}")
+    end
   end
 end

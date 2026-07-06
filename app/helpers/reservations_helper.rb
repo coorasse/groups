@@ -32,7 +32,8 @@ module ReservationsHelper
       data_ora_gruppo: group_full_datetime(reservation.group),
       numero_adulti: reservation.adults_count,
       numero_ragazzi: reservation.kids_count,
-      importo_totale: number_to_currency(reservation.price_to_pay)
+      importo_totale: number_to_currency(reservation.price_to_pay),
+      confirmation_link: booking_url(reservation.token)
     )
   end
 

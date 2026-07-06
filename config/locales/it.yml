@@ -157,6 +157,7 @@ it:
         numero_adulti: "Numero di adulti"
         numero_ragazzi: "Numero di ragazzi"
         importo_totale: "Importo totale da pagare"
+        confirmation_link: "Link alla pagina di prenotazione per confermare"
       message_example_title: "Esempio"
       message_example: |-
         Salve <%= nome_completo %>,
@@ -279,7 +280,7 @@ it:
         kids: "Ragazzi"
         total: "Totale indicativo"
       outro: "Nelle prossime ore ti contatteremo per confermare la disponibilità. Se qualche dato non è corretto, puoi rispondere direttamente a questa email."
-      signature: "A presto, Lisa Rodi – Guida Turistica Romagna"
+      signature: "A presto,\nLisa Rodi\nGuida Turistica Romagna"
     approval_confirmation:
       subject: "Conferma prenotazione – %{event}"
 
@@ -337,7 +338,15 @@ it:
         consent: "Autorizzo il trattamento dei dati personali."
         submit: "Invia prenotazione"
         cancel_confirm: "Sei sicuro di voler annullare? I dati inseriti andranno persi."
-      confirmation:
-        title: "Prenotazione ricevuta!"
-        body: "Grazie per la tua richiesta. Nelle prossime ore riceverai un messaggio con la conferma della disponibilità."
-        back: "Torna agli eventi"
+
+  bookings:
+    show:
+      title: "La tua prenotazione"
+      confirm: "Conferma la prenotazione"
+      back: "Torna agli eventi"
+      messages:
+        requested: "Abbiamo ricevuto la tua richiesta. Nelle prossime ore riceverai un messaggio con la conferma della disponibilità."
+        approved: "La disponibilità è confermata! Clicca il pulsante qui sotto per confermare definitivamente la tua prenotazione."
+        confirmed: "La tua prenotazione è confermata. Ci vediamo all'evento!"
+        paid: "La tua prenotazione è confermata e il pagamento è stato registrato. Grazie!"
+        cancelled: "Questa prenotazione è stata annullata."

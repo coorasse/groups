@@ -73,6 +73,20 @@
   color: var(--bulma-success, #48c78e);
 }
 
+.booking {
+  max-width: 32rem;
+  margin-inline: auto;
+}
+
+.booking-header {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.booking-message {
+  text-align: center;
+}
+
 .table-input {
   width: 6rem;
 }

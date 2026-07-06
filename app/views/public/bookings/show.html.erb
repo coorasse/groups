@@ -1,0 +1,52 @@
+<% content_for :title, t("title", scope: "bookings.show") %>
+
+<div class="box booking">
+  <div class="booking-header">
+    <h1 class="title is-3 mb-1"><%= @event.title %></h1>
+    <p class="subtitle is-5 has-text-grey"><%= group_full_datetime(@group, titleize: true) %></p>
+    <%= reservation_status_tag(@reservation) %>
+  </div>
+
+  <table class="table is-fullwidth booking-details">
+    <tbody>
+      <tr>
+        <th><%= Reservation.human_attribute_name(:full_name) %></th>
+        <td><%= @reservation.full_name %></td>
+      </tr>
+      <tr>
+        <th><%= Reservation.human_attribute_name(:adults_count) %></th>
+        <td><%= @reservation.adults_count %></td>
+      </tr>
+      <tr>
+        <th><%= Reservation.human_attribute_name(:kids_count) %></th>
+        <td><%= @reservation.kids_count %></td>
+      </tr>
+      <tr>
+        <th><%= Reservation.human_attribute_name(:price_to_pay) %></th>
+        <td><%= number_to_currency(@reservation.price_to_pay) %></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <% if @reservation.confirmed? %>
+    <div class="notification is-success has-text-centered">
+      <span class="confirmation-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" fill="none"
+             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 6 9 17l-5-5"></path>
+        </svg>
+      </span>
+      <p><%= t("confirmed", scope: "bookings.show.messages") %></p>
+    </div>
+  <% else %>
+    <p class="booking-message has-text-grey"><%= t(@reservation.status, scope: "bookings.show.messages") %></p>
+  <% end %>
+
+  <% if @reservation.approved? %>
+    <%= button_to t("confirm", scope: "bookings.show"),
+          booking_confirmation_path(@reservation.token),
+          method: :patch, class: "button is-primary is-fullwidth is-medium mt-4" %>
+  <% end %>
+
+  <%= link_to t("back", scope: "bookings.show"), public_root_path, class: "button is-text mt-3" %>
+</div>

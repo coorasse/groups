@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_06_180541) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_06_183000) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -98,8 +98,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_06_180541) do
     t.decimal "price_to_pay", precision: 8, scale: 2, null: false
     t.integer "status", default: 2, null: false
     t.string "tax_code"
+    t.string "token", null: false
     t.datetime "updated_at", null: false
     t.index ["group_id"], name: "index_reservations_on_group_id"
+    t.index ["token"], name: "index_reservations_on_token", unique: true
   end
 
   create_table "sessions", force: :cascade do |t|

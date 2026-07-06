@@ -62,10 +62,10 @@ RSpec.describe Public::ReservationsController, type: :request do
       post public_group_reservation_path(group), params: { reservation: params }, headers: headers
     end
 
-    it "creates the reservation and redirects to the confirmation" do
+    it "creates the reservation and redirects to its booking page" do
       expect { book(valid_params) }.to change(Reservation, :count).by(1)
 
-      expect(response).to redirect_to(public_confirmation_path)
+      expect(response).to redirect_to(booking_path(Reservation.last.token))
     end
 
     it "does not set a session cookie" do

@@ -9,6 +9,13 @@ RSpec.describe Reservation do
     expect(Reservation.new.status).to eq("confirmed")
   end
 
+  it "generates a non-guessable token on creation" do
+    reservation = create(:reservation)
+
+    expect(reservation.token).to be_present
+    expect(create(:reservation).token).not_to eq(reservation.token)
+  end
+
   describe "public booking context" do
     it "requires the data processing consent" do
       expect(build(:reservation, data_processing_authorized: false).valid?(:public_booking)).to be(false)

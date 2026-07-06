@@ -1,6 +1,8 @@
 class Reservation < ApplicationRecord
   belongs_to :group
 
+  has_secure_token
+
   enum :status, { requested: 0, approved: 1, confirmed: 2, paid: 4, cancelled: 3 }, default: :confirmed
 
   scope :active, -> { where.not(status: :cancelled) }

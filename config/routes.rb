@@ -23,10 +23,14 @@ Rails.application.routes.draw do
 
   namespace :public, path: "prenota" do
     root "reservations#index"
-    get "confermata", to: "reservations#confirmation", as: :confirmation
     resources :groups, only: [], path: "gruppi" do
       resource :reservation, only: %i[new create]
     end
+  end
+
+  resources :bookings, only: :show, param: :token, path: "prenotazione",
+    controller: "public/bookings" do
+    resource :confirmation, only: :update, controller: "public/bookings/confirmations"
   end
 
   mount LetterThief::Engine => "/letter_thief" if Rails.env.development?

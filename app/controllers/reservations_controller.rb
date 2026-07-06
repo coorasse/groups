@@ -29,7 +29,7 @@ class ReservationsController < ApplicationController
 
     if inline_request?
       flash[:alert] = @reservation.errors.full_messages.to_sentence unless saved
-      redirect_to event_group_path(@event, @group)
+      redirect_back fallback_location: event_group_path(@event, @group)
     elsif saved
       redirect_to event_group_path(@event, @group), notice: t(".success")
     else

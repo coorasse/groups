@@ -99,6 +99,16 @@ RSpec.describe ReservationsController, type: :request do
       expect(reservation.reload.adults_count).to eq(4)
     end
 
+    it "redirects back to the referring page for an inline update, e.g. the events index" do
+      reservation = create(:reservation, group: group, status: :requested)
+
+      patch event_group_reservation_path(event, group, reservation),
+        params: { inline: "1", reservation: { status: "approved" } },
+        headers: { "HTTP_REFERER" => events_path }
+
+      expect(response).to redirect_to(events_path)
+    end
+
     it "re-renders the form when a regular edit is invalid" do
       reservation = create(:reservation, group: group)
 

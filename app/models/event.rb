@@ -9,6 +9,7 @@ class Event < ApplicationRecord
     numero_adulti
     numero_ragazzi
     importo_totale
+    confirmation_link
   ].freeze
 
   has_many :groups, dependent: :destroy
