@@ -7,13 +7,6 @@
       "runtimeArgs": ["server", "-P", "tmp/pids/preview-server.pid"],
       "port": 3002,
       "autoPort": true
-    },
-    {
-      "name": "rails-verify",
-      "runtimeExecutable": "bin/rails",
-      "runtimeArgs": ["server", "-P", "tmp/pids/preview-verify.pid"],
-      "port": 3003,
-      "autoPort": true
     }
   ]
 }

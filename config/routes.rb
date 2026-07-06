@@ -30,7 +30,8 @@ Rails.application.routes.draw do
 
   resources :bookings, only: :show, param: :token, path: "prenotazione",
     controller: "public/bookings" do
-    resource :confirmation, only: :update, controller: "public/bookings/confirmations"
+    resource :confirmation, only: :update, path: "conferma",
+      controller: "public/bookings/confirmations"
   end
 
   mount LetterThief::Engine => "/letter_thief" if Rails.env.development?
