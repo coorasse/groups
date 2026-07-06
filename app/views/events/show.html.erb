@@ -13,13 +13,68 @@
     </div>
   </div>
   <div class="level-right">
-    <%= link_to t("actions.edit"), edit_event_path(@event), class: "button level-item" %>
+    <%= link_to action_icon(:edit), edit_event_path(@event), class: "button level-item",
+          title: t("actions.edit"), "aria-label": t("actions.edit") %>
   </div>
 </div>
 
 <% if requested_count.positive? %>
   <div class="notification is-warning">
     <strong><%= t(".to_process_banner", count: requested_count) %></strong>
+  </div>
+<% end %>
+
+<div class="level">
+  <div class="level-left">
+    <h2 class="subtitle level-item"><%= t(".groups") %></h2>
+  </div>
+  <div class="level-right">
+    <%= link_to t(".new_group"), new_event_group_path(@event), class: "button is-primary level-item" %>
+  </div>
+</div>
+
+<% if @groups.any? %>
+  <div class="table-container">
+    <table class="table is-fullwidth is-hoverable">
+      <thead>
+        <tr>
+          <th><%= t(".group_schedule") %></th>
+          <th><%= Group.human_attribute_name(:status) %></th>
+          <th><%= Group.human_attribute_name(:people_count) %></th>
+          <th><%= Group.human_attribute_name(:total_price) %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @groups.each do |group| %>
+          <tr>
+            <td>
+              <%= link_to group_label(group), event_group_path(@event, group), class: "has-text-weight-medium" %>
+              <% if group.notes.present? %>
+                <br>
+                <span class="has-text-grey is-size-7"><%= Group.human_attribute_name(:notes) %>:</span>
+                <span class="is-size-7"><%= group.notes %></span>
+              <% end %>
+            </td>
+            <td><%= group_status_tag(group) %></td>
+            <td><%= group.people_count %> / <%= @event.max_group_size %></td>
+            <td><%= number_to_currency(group.total_price) %></td>
+            <td class="has-text-right">
+              <%= link_to action_icon(:edit), edit_event_group_path(@event, group), class: "button is-small",
+                    title: t("actions.edit"), "aria-label": t("actions.edit") %>
+              <%= button_to action_icon(:destroy), event_group_path(@event, group), method: :delete,
+                    class: "button is-small is-danger is-light",
+                    title: t("actions.destroy"), "aria-label": t("actions.destroy"),
+                    form: { data: { turbo_confirm: t("actions.confirm") } } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="notification is-light">
+    <%= t(".no_groups") %>
   </div>
 <% end %>
 
@@ -70,55 +125,13 @@
   <%= stat_card(Event.human_attribute_name(:max_group_size), column_class: "") do %>
     <%= @event.max_group_size %>
   <% end %>
+  <%= stat_card(Event.human_attribute_name(:max_overbooking), column_class: "") do %>
+    <%= @event.max_overbooking %>
+  <% end %>
 </div>
 
 <% if @event.notes.present? %>
   <%= card(title: Event.human_attribute_name(:notes)) do %>
     <%= simple_format @event.notes %>
   <% end %>
-<% end %>
-
-<div class="level">
-  <div class="level-left">
-    <h2 class="subtitle level-item"><%= t(".groups") %></h2>
-  </div>
-  <div class="level-right">
-    <%= link_to t(".new_group"), new_event_group_path(@event), class: "button is-primary level-item" %>
-  </div>
-</div>
-
-<% if @groups.any? %>
-  <div class="table-container">
-    <table class="table is-fullwidth is-hoverable">
-      <thead>
-        <tr>
-          <th><%= t(".group_schedule") %></th>
-          <th><%= Group.human_attribute_name(:status) %></th>
-          <th><%= Group.human_attribute_name(:people_count) %></th>
-          <th><%= Group.human_attribute_name(:total_price) %></th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @groups.each do |group| %>
-          <tr>
-            <td><%= link_to group_label(group), event_group_path(@event, group), class: "has-text-weight-medium" %></td>
-            <td><%= group_status_tag(group) %></td>
-            <td><%= group.people_count %> / <%= @event.max_group_size %></td>
-            <td><%= number_to_currency(group.total_price) %></td>
-            <td class="has-text-right">
-              <%= link_to t("actions.edit"), edit_event_group_path(@event, group), class: "button is-small" %>
-              <%= button_to t("actions.destroy"), event_group_path(@event, group), method: :delete,
-                    class: "button is-small is-danger is-light",
-                    form: { data: { turbo_confirm: t("actions.confirm") } } %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-<% else %>
-  <div class="notification is-light">
-    <%= t(".no_groups") %>
-  </div>
 <% end %>

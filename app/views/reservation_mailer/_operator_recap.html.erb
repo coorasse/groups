@@ -1,0 +1,15 @@
+<ul>
+  <li><strong><%= t("event", scope: "reservation_mailer.operator_recap") %>:</strong> <%= @event.title %></li>
+  <li><strong><%= t("datetime", scope: "reservation_mailer.operator_recap") %>:</strong> <%= group_full_datetime(@group, titleize: true) %></li>
+  <li><strong><%= t("full_name", scope: "reservation_mailer.operator_recap") %>:</strong> <%= @reservation.full_name %></li>
+  <li><strong><%= t("adults", scope: "reservation_mailer.operator_recap") %>:</strong> <%= @reservation.adults_count %></li>
+  <li><strong><%= t("kids", scope: "reservation_mailer.operator_recap") %>:</strong> <%= @reservation.kids_count %></li>
+  <li><strong><%= t("phone", scope: "reservation_mailer.operator_recap") %>:</strong> <%= @reservation.phone %></li>
+  <% if @reservation.email.present? %>
+    <li><strong><%= t("email", scope: "reservation_mailer.operator_recap") %>:</strong> <%= @reservation.email %></li>
+  <% end %>
+  <li><strong><%= t("total", scope: "reservation_mailer.operator_recap") %>:</strong> <%= number_to_currency(@reservation.price_to_pay) %></li>
+  <% if @reservation.notes.present? %>
+    <li><strong><%= t("notes", scope: "reservation_mailer.operator_recap") %>:</strong> <%= @reservation.notes %></li>
+  <% end %>
+</ul>

@@ -9,6 +9,7 @@ class Reservation < ApplicationRecord
 
   scope :active, -> { where.not(status: :cancelled) }
 
+  before_validation :normalize_full_name
   before_validation :normalize_kids_count
   before_validation :set_price_to_pay
 
@@ -51,6 +52,13 @@ class Reservation < ApplicationRecord
   end
 
   private
+
+  # Capitalizes each word so all-lowercase or all-uppercase names get tidied up.
+  def normalize_full_name
+    return if full_name.blank?
+
+    self.full_name = full_name.split.map(&:capitalize).join(" ")
+  end
 
   # Kids count is optional on the public form: a blank value means "no kids".
   def normalize_kids_count

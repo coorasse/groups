@@ -1,0 +1,5 @@
+<%= t("intro", scope: "reservation_mailer.new_booking_notification", event: @event.title) %>
+
+<%= render "operator_recap" %>
+<%= t("cta", scope: "reservation_mailer.new_booking_notification") %>
+<%= event_group_url(@event, @group) %>

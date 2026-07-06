@@ -8,6 +8,14 @@
     </div>
   </div>
 
+  <div class="field">
+    <%= f.label :short_name, class: "label" %>
+    <div class="control">
+      <%= f.text_field :short_name, class: "input" %>
+    </div>
+    <p class="help"><%= t(".short_name_hint") %></p>
+  </div>
+
   <div class="columns">
     <div class="column">
       <h2 class="label"><%= t(".adults") %></h2>
@@ -53,10 +61,23 @@
     </div>
   </div>
 
-  <div class="field">
-    <%= f.label :max_group_size, class: "label" %>
-    <div class="control">
-      <%= f.number_field :max_group_size, min: 1, class: "input" %>
+  <div class="columns">
+    <div class="column">
+      <div class="field">
+        <%= f.label :max_group_size, class: "label" %>
+        <div class="control">
+          <%= f.number_field :max_group_size, min: 1, class: "input" %>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="field">
+        <%= f.label :max_overbooking, class: "label" %>
+        <div class="control">
+          <%= f.number_field :max_overbooking, min: 0, class: "input" %>
+        </div>
+        <p class="help"><%= t("events.form.overbooking_hint") %></p>
+      </div>
     </div>
   </div>
 

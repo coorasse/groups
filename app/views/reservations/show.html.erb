@@ -8,7 +8,8 @@
     <span class="level-item"><%= reservation_status_tag(@reservation) %></span>
   </div>
   <div class="level-right">
-    <%= link_to t("actions.edit"), edit_event_group_reservation_path(@event, @group, @reservation), class: "button level-item" %>
+    <%= link_to action_icon(:edit), edit_event_group_reservation_path(@event, @group, @reservation), class: "button level-item",
+          title: t("actions.edit"), "aria-label": t("actions.edit") %>
   </div>
 </div>
 

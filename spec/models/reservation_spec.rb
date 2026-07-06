@@ -82,6 +82,12 @@ RSpec.describe Reservation do
     expect(build(:reservation, full_name: nil)).not_to be_valid
   end
 
+  it "capitalizes each word of the full name on save" do
+    reservation = create(:reservation, full_name: "mARIO de   ROSSI")
+
+    expect(reservation.full_name).to eq("Mario De Rossi")
+  end
+
   it "is invalid without people" do
     expect(build(:reservation, adults_count: 0, kids_count: 0)).not_to be_valid
   end

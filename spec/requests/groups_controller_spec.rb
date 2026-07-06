@@ -5,6 +5,51 @@ RSpec.describe GroupsController, type: :request do
 
   let(:event) { create(:event, max_group_size: 5) }
 
+  describe "#index" do
+    it "lists open groups across events and links to the group page" do
+      group = create(:group, event: event, status: :open)
+
+      get root_path
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include(event.title)
+      expect(response.body).to include(event_group_path(event, group))
+    end
+
+    it "uses the event short name when present" do
+      event = create(:event, title: "Titolo lungo", short_name: "Breve")
+      group = create(:group, event: event, status: :open)
+
+      get root_path
+
+      expect(response.body).to include("Breve")
+      expect(response.body).to include(event_group_path(event, group))
+    end
+
+    it "omits groups that are not open" do
+      closed_group = create(:group, event: event, status: :closed)
+
+      get groups_path
+
+      expect(response.body).not_to include(event_group_path(event, closed_group))
+    end
+
+    it "flags open groups that have reservations to process" do
+      group = create(:group, event: event, status: :open)
+      create(:reservation, group: group, status: :requested)
+
+      get root_path
+
+      expect(response.body).to include("da elaborare")
+    end
+
+    it "shows an empty state when there are no open groups" do
+      get root_path
+
+      expect(response.body).to include(I18n.t("groups.index.empty"))
+    end
+  end
+
   describe "#show" do
     it "renders the group" do
       group = create(:group, event: event)
@@ -15,7 +60,17 @@ RSpec.describe GroupsController, type: :request do
       expect(response.body).to include(event.title)
     end
 
-    it "renders the copy-message button when the event has a message template" do
+    it "lists reservations with the most recent at the bottom" do
+      group = create(:group, event: event)
+      older = create(:reservation, group: group, full_name: "Zoe")
+      newer = create(:reservation, group: group, full_name: "Amy")
+
+      get event_group_path(event, group)
+
+      expect(response.body.index(older.full_name)).to be < response.body.index(newer.full_name)
+    end
+
+    it "renders the copy-message icon button when the event has a message template" do
       event = create(:event, message_template: "Ciao <%= nome_completo %>")
       group = create(:group, event: event)
       reservation = create(:reservation, group: group)
@@ -23,6 +78,8 @@ RSpec.describe GroupsController, type: :request do
       get event_group_path(event, group)
 
       expect(response.body).to include("Ciao #{reservation.full_name}")
+      expect(response.body).to include("aria-label=\"#{I18n.t('groups.show.copy_message')}\"")
+      expect(response.body).to include("data-controller=\"clipboard\"")
     end
   end
 
@@ -51,6 +108,16 @@ RSpec.describe GroupsController, type: :request do
         .not_to change(Group, :count)
 
       expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it "stores the per-group capacity overrides" do
+      attributes = { date: Date.current, time: "10:00", status: "open", max_group_size: 3, max_overbooking: 1 }
+
+      post event_groups_path(event), params: { group: attributes }
+
+      group = event.groups.order(:id).last
+      expect(group.max_group_size).to eq(3)
+      expect(group.max_overbooking).to eq(1)
     end
   end
 

@@ -1,9 +1,16 @@
 class GroupsController < ApplicationController
-  before_action :set_event
+  before_action :set_event, except: :index
   before_action :set_group, only: %i[show edit update destroy]
 
+  def index
+    @groups = Group.open.includes(:event).order(:date, :time)
+    @requested_counts = Reservation.requested.joins(:group)
+                                   .where(groups: { status: Group.statuses[:open] })
+                                   .group("groups.id").count
+  end
+
   def show
-    @reservations = @group.reservations.order(:full_name)
+    @reservations = @group.reservations.order(:created_at, :id)
   end
 
   def new
@@ -52,6 +59,6 @@ class GroupsController < ApplicationController
   end
 
   def group_params
-    params.require(:group).permit(:date, :time, :status, :notes, :net_price)
+    params.require(:group).permit(:date, :time, :status, :notes, :net_price, :max_group_size, :max_overbooking)
   end
 end

@@ -1,0 +1,51 @@
+<% content_for :title, t(".title") %>
+<% content_for :head do %>
+  <meta name="turbo-cache-control" content="no-cache">
+<% end %>
+
+<div class="level">
+  <div class="level-left">
+    <h1 class="title level-item"><%= t(".title") %></h1>
+  </div>
+</div>
+
+<% if @groups.any? %>
+  <div class="table-container">
+    <table class="table is-fullwidth is-hoverable">
+      <thead>
+        <tr>
+          <th><%= t(".group_schedule") %></th>
+          <th><%= Event.model_name.human %></th>
+          <th><%= Group.human_attribute_name(:people_count) %></th>
+          <th><%= t(".available_seats") %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @groups.each do |group| %>
+          <% requested_count = @requested_counts.fetch(group.id, 0) %>
+          <tr class="clickable-row">
+            <td class="group-datetime">
+              <span class="group-datetime-day"><%= l(group.date, format: :weekday_abbr) %></span>
+              <span class="group-datetime-date"><%= l(group.date, format: :day_month) %></span>
+              <span class="group-datetime-time"><%= l(group.time, format: :hour_minute) %></span>
+            </td>
+            <td class="group-event">
+              <%= link_to group.event.short_name_or_title, event_group_path(group.event, group),
+                    class: "row-link has-text-weight-medium" %>
+            </td>
+            <td><%= group.people_count %></td>
+            <td><%= seats_left_tag(group) %></td>
+            <td class="has-text-right">
+              <%= to_process_tag(requested_count) if requested_count.positive? %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="notification is-light">
+    <%= t(".empty") %>
+  </div>
+<% end %>

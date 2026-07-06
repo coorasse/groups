@@ -2,7 +2,7 @@
   <% if @query.present? %>
     <% if @reservations.any? %>
       <% @reservations.each do |reservation| %>
-        <%= link_to event_group_reservation_path(reservation.group.event, reservation.group, reservation),
+        <%= link_to event_group_path(reservation.group.event, reservation.group, anchor: dom_id(reservation)),
               class: "search-result", data: { turbo_frame: "_top" } do %>
           <p class="has-text-weight-semibold"><%= reservation.full_name %></p>
           <p class="is-size-7 has-text-grey">

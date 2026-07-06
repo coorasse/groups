@@ -8,5 +8,6 @@ FactoryBot.define do
     adult_guided_tour_price { 5.00 }
     kid_guided_tour_price { 3.00 }
     max_group_size { 10 }
+    max_overbooking { 2 }
   end
 end

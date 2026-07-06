@@ -123,6 +123,75 @@
   accent-color: var(--bulma-primary, #00d1b2);
 }
 
+/* Whole-row link: the first-cell link stretches over the entire row so a click
+   anywhere on the row opens the group. */
+.clickable-row {
+  position: relative;
+  cursor: pointer;
+
+  .row-link {
+    color: inherit;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+    }
+  }
+}
+
+/* Date + time cell: fixed-width day abbreviation and tabular figures keep the
+   date and time parts aligned in a column across every row. */
+.group-datetime {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+
+  .group-datetime-day {
+    display: inline-block;
+    width: 2.5rem;
+    color: var(--bulma-grey, #7a7a7a);
+  }
+
+  .group-datetime-time {
+    margin-left: 0.75rem;
+  }
+}
+
+/* On mobile the event name is truncated to a single line to keep rows compact. */
+@media screen and (max-width: 768px) {
+  .group-event .row-link {
+    display: inline-block;
+    max-width: 9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
+  }
+}
+
+/* Keep row action buttons (edit link + delete form) inline within a table cell. */
+td form.button_to {
+  display: inline-block;
+  margin-left: 0.25rem;
+  vertical-align: top;
+}
+
+/* Keep the reservation row actions on a single line so the buttons never wrap
+   and grow the row height (the table already scrolls horizontally on mobile). */
+.reservation-actions {
+  white-space: nowrap;
+}
+
+/* Confirmation modal (Turbo confirm override): compact card, headerless. */
+.confirm-modal-card {
+  max-width: 26rem;
+  width: calc(100% - 2rem);
+
+  & .modal-card-body {
+    border-radius: var(--bulma-radius-large, 0.75rem) var(--bulma-radius-large, 0.75rem) 0 0;
+  }
+}
+
 .table-input {
   width: 6rem;
 }
@@ -201,6 +270,10 @@
       background-color: var(--bulma-scheme-main-bis, #f5f5f5);
     }
 
+    &.is-highlighted {
+      background-color: color-mix(in srgb, var(--bulma-primary, #7048e8) 15%, transparent);
+    }
+
     & + .search-result {
       border-top: 1px solid var(--bulma-border-weak, #ededed);
     }
@@ -270,6 +343,26 @@ code.erb-output {
   &:hover {
     color: inherit;
     box-shadow: 0 8px 16px rgba(10, 10, 10, 0.15);
+  }
+}
+
+.is-highlighted-row > td {
+  animation: row-flash 2.5s ease-out;
+}
+
+@keyframes row-flash {
+  0%, 25% {
+    background-color: color-mix(in srgb, var(--bulma-primary, #00d1b2) 30%, transparent);
+  }
+
+  100% {
+    background-color: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .is-highlighted-row > td {
+    animation: none;
   }
 }
 

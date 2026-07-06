@@ -13,6 +13,12 @@ RSpec.describe Event do
     expect(build(:event, max_group_size: 0)).not_to be_valid
   end
 
+  it "requires a non-negative max_overbooking" do
+    expect(build(:event, max_overbooking: -1)).not_to be_valid
+    expect(build(:event, max_overbooking: nil)).not_to be_valid
+    expect(build(:event, max_overbooking: 0)).to be_valid
+  end
+
   it "rejects negative prices" do
     expect(build(:event, adult_price: -1)).not_to be_valid
   end
@@ -96,6 +102,16 @@ RSpec.describe Event do
     create(:reservation, group: group, status: :confirmed)
 
     expect(event.reservations.requested.count).to eq(1)
+  end
+
+  describe "#short_name_or_title" do
+    it "returns the short name when present" do
+      expect(build(:event, title: "Titolo", short_name: "Breve").short_name_or_title).to eq("Breve")
+    end
+
+    it "falls back to the title when the short name is blank" do
+      expect(build(:event, title: "Titolo", short_name: "").short_name_or_title).to eq("Titolo")
+    end
   end
 
   it "destroys its groups when destroyed" do

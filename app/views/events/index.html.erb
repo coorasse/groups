@@ -53,6 +53,7 @@
               <p class="mb-1">
                 <strong><%= Event.human_attribute_name(:max_group_size) %>:</strong>
                 <%= event.max_group_size %>
+                <span class="has-text-grey">· <%= Event.human_attribute_name(:max_overbooking) %> <%= event.max_overbooking %></span>
               </p>
               <p class="mb-1">
                 <strong><%= t(".groups_count") %>:</strong>
@@ -60,9 +61,11 @@
               </p>
             </div>
             <div class="buttons event-card-actions mb-0">
-              <%= link_to t("actions.edit"), edit_event_path(event), class: "button is-small" %>
-              <%= button_to t("actions.destroy"), event, method: :delete,
+              <%= link_to action_icon(:edit), edit_event_path(event), class: "button is-small",
+                    title: t("actions.edit"), "aria-label": t("actions.edit") %>
+              <%= button_to action_icon(:destroy), event, method: :delete,
                     class: "button is-small is-danger is-light",
+                    title: t("actions.destroy"), "aria-label": t("actions.destroy"),
                     form: { data: { turbo_confirm: t("actions.confirm") } } %>
             </div>
           </div>
@@ -112,7 +115,8 @@
               <% end %>
             </td>
             <td class="has-text-right">
-              <%= link_to t("actions.edit"), edit_event_group_reservation_path(event, group, reservation), class: "button is-small" %>
+              <%= link_to action_icon(:edit), edit_event_group_reservation_path(event, group, reservation), class: "button is-small",
+                    title: t("actions.edit"), "aria-label": t("actions.edit") %>
             </td>
           </tr>
         <% end %>

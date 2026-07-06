@@ -11,6 +11,8 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
+  resources :groups, only: :index
+
   resources :events do
     resources :groups, except: :index do
       resources :reservations, except: :index do
@@ -40,5 +42,5 @@ Rails.application.routes.draw do
   # base controller (::ApplicationController, which requires a logged-in manager).
   mount MissionControl::Jobs::Engine, at: "/jobs"
 
-  root "events#index"
+  root "groups#index"
 end

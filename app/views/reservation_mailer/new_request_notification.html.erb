@@ -1,19 +1,5 @@
 <p><%= t("intro", scope: "reservation_mailer.new_request_notification", event: @event.title) %></p>
 
-<ul>
-  <li><strong><%= t("recap.event", scope: "reservation_mailer.new_request_notification") %>:</strong> <%= @event.title %></li>
-  <li><strong><%= t("recap.datetime", scope: "reservation_mailer.new_request_notification") %>:</strong> <%= group_full_datetime(@group, titleize: true) %></li>
-  <li><strong><%= t("recap.full_name", scope: "reservation_mailer.new_request_notification") %>:</strong> <%= @reservation.full_name %></li>
-  <li><strong><%= t("recap.adults", scope: "reservation_mailer.new_request_notification") %>:</strong> <%= @reservation.adults_count %></li>
-  <li><strong><%= t("recap.kids", scope: "reservation_mailer.new_request_notification") %>:</strong> <%= @reservation.kids_count %></li>
-  <li><strong><%= t("recap.phone", scope: "reservation_mailer.new_request_notification") %>:</strong> <%= @reservation.phone %></li>
-  <% if @reservation.email.present? %>
-    <li><strong><%= t("recap.email", scope: "reservation_mailer.new_request_notification") %>:</strong> <%= @reservation.email %></li>
-  <% end %>
-  <li><strong><%= t("recap.total", scope: "reservation_mailer.new_request_notification") %>:</strong> <%= number_to_currency(@reservation.price_to_pay) %></li>
-  <% if @reservation.notes.present? %>
-    <li><strong><%= t("recap.notes", scope: "reservation_mailer.new_request_notification") %>:</strong> <%= @reservation.notes %></li>
-  <% end %>
-</ul>
+<%= render "operator_recap" %>
 
 <p><%= link_to t("cta", scope: "reservation_mailer.new_request_notification"), event_group_url(@event, @group) %></p>

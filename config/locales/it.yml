@@ -5,8 +5,8 @@ it:
   number:
     currency:
       format:
-        unit: "€"
-        format: "%n %u"
+        unit: ""
+        format: "%n"
         separator: ","
         delimiter: "."
         precision: 2
@@ -16,6 +16,8 @@ it:
       default: "%d/%m/%Y"
       long: "%-d %B %Y"
       day_short: "%a %d/%m"
+      weekday_abbr: "%a"
+      day_month: "%d/%m"
       full: "%A %d %B"
     month_names: [~, gennaio, febbraio, marzo, aprile, maggio, giugno, luglio, agosto, settembre, ottobre, novembre, dicembre]
     abbr_month_names: [~, gen, feb, mar, apr, mag, giu, lug, ago, set, ott, nov, dic]
@@ -66,6 +68,7 @@ it:
         password_confirmation: "Conferma password"
       event:
         title: "Titolo"
+        short_name: "Nome breve"
         adult_price: "Prezzo al pubblico adulti"
         kid_price: "Prezzo al pubblico ragazzi"
         adult_ticket_price: "Prezzo biglietto adulti"
@@ -73,6 +76,7 @@ it:
         adult_guided_tour_price: "Prezzo visita guidata adulti"
         kid_guided_tour_price: "Prezzo visita guidata ragazzi"
         max_group_size: "Max persone per gruppo"
+        max_overbooking: "Max persone in overbooking"
         notes: "Note"
         description: "Descrizione"
         image: "Immagine"
@@ -87,8 +91,10 @@ it:
         status: "Stato"
         notes: "Note"
         net_price: "Prezzo netto"
+        max_group_size: "Max persone per gruppo"
+        max_overbooking: "Max persone in overbooking"
       reservation:
-        full_name: "Nome completo"
+        full_name: "Nome Cognome"
         adults_count: "Numero adulti"
         kids_count: "Numero ragazzi"
         owned_adult_tickets: "Biglietti adulti già in possesso"
@@ -147,6 +153,8 @@ it:
     form:
       adults: "Adulti"
       kids: "Ragazzi"
+      short_name_hint: "Nome abbreviato usato nella lista dei gruppi in homepage. Se vuoto, viene usato il titolo."
+      overbooking_hint: "Persone accettabili oltre la capienza massima prima che il gruppo non sia più prenotabile dal pubblico. Ridefinibile per singolo gruppo."
       public_hint: "Utilizzata per abbellire la pagina pubblica di prenotazione."
       message_intro_html: "Il messaggio è un template <strong>ERB</strong>: usa <code>&lt;%= variabile %&gt;</code> per inserire un valore e <code>&lt;% ... %&gt;</code> per la logica condizionale."
       message_variables_title: "Variabili disponibili"
@@ -188,6 +196,11 @@ it:
       success: "Evento eliminato con successo."
 
   groups:
+    index:
+      title: "Gruppi aperti"
+      group_schedule: "Data e ora"
+      available_seats: "Posti disponibili"
+      empty: "Nessun gruppo aperto al momento."
     statuses:
       open: "Aperto"
       closed: "Chiuso"
@@ -198,9 +211,11 @@ it:
     edit:
       title: "Modifica gruppo"
     form:
-      capacity_hint: "Massimo %{count} persone per gruppo."
+      capacity_hint: "Valori ereditati dall'evento: %{seats} persone per gruppo, %{overbooking} in overbooking. Lascia i campi vuoti per usarli."
+      inherited: "Ereditato: %{value}"
     show:
       reservations: "Prenotazioni"
+      details: "Dettagli"
       new_reservation: "Nuova prenotazione"
       no_reservations: "Nessuna prenotazione per questo gruppo."
       group_schedule: "Data e ora"
@@ -213,6 +228,7 @@ it:
         other: "%{count} persone prenotate"
       available_seats: "Posti disponibili"
       max_indicative: "(capienza indicativa: %{count})"
+      overbooking_allowance: "(overbooking consentito: %{count})"
       computed_price: "Prezzo precalcolato"
       total_price: "Prezzo effettivo"
       price_difference: "Differenza"
@@ -280,25 +296,29 @@ it:
         kids: "Ragazzi"
         total: "Totale indicativo"
       outro: "Nelle prossime ore ti contatteremo per confermare la disponibilità. Se qualche dato non è corretto, puoi rispondere direttamente a questa email."
-      status_intro: "Puoi seguire lo stato della tua prenotazione da questa pagina:"
-      status_link: "Visualizza lo stato della prenotazione"
+      status_intro: "Puoi seguire lo stato della tua richiesta da questa pagina:"
+      status_link: "Visualizza lo stato della richiesta"
       signature: "A presto,\nLisa Rodi\nGuida Turistica Romagna"
     approval_confirmation:
       subject: "Conferma prenotazione – %{event}"
+    operator_recap:
+      event: "Evento"
+      datetime: "Data e ora"
+      full_name: "Nome"
+      adults: "Adulti"
+      kids: "Ragazzi"
+      phone: "Telefono"
+      email: "Email"
+      total: "Totale indicativo"
+      notes: "Note"
     new_request_notification:
       subject: "Nuova richiesta di prenotazione da approvare – %{event}"
       intro: "È arrivata una nuova richiesta di prenotazione per «%{event}»:"
-      recap:
-        event: "Evento"
-        datetime: "Data e ora"
-        full_name: "Nome"
-        adults: "Adulti"
-        kids: "Ragazzi"
-        phone: "Telefono"
-        email: "Email"
-        total: "Totale indicativo"
-        notes: "Note"
       cta: "Apri il gruppo per approvarla"
+    new_booking_notification:
+      subject: "Nuova prenotazione confermata – %{event}"
+      intro: "È arrivata una nuova prenotazione per «%{event}», confermata automaticamente perché rientra nei posti disponibili:"
+      cta: "Apri il gruppo"
 
   searches:
     placeholder: "Cerca prenotazione…"
@@ -347,7 +367,7 @@ it:
         book: "Invia Richiesta"
         empty: "Al momento non ci sono eventi disponibili per la prenotazione."
       new:
-        title: "Nuova prenotazione"
+        title: "Richiesta di prenotazione"
         optional: "facoltativa"
         tickets_to_buy: "Biglietti adulti da acquistare:"
         total_price: "Totale indicativo da pagare:"
@@ -355,6 +375,8 @@ it:
         submit: "Invia Richiesta"
         submitting: "Invio in corso…"
         cancel_confirm: "Sei sicuro di voler annullare? I dati inseriti andranno persi."
+        cancel_accept: "Sì, annulla"
+        cancel_dismiss: "No, continua"
 
   bookings:
     show:
@@ -365,7 +387,7 @@ it:
       contact_note_html: "Per correzioni o segnalazioni di errori puoi contattarci al %{phone} o scrivere a %{email}."
       back: "Torna agli eventi"
       messages:
-        requested: "Abbiamo ricevuto la tua richiesta. Nelle prossime ore riceverai un messaggio con la conferma della disponibilità."
+        requested: "La tua richiesta è stata inviata: non è ancora una prenotazione confermata. Nelle prossime ore riceverai un messaggio con la conferma della disponibilità."
         approved: "La disponibilità è confermata! Clicca il pulsante qui sotto per confermare definitivamente la tua prenotazione."
         confirmed: "La tua prenotazione è confermata. Ci vediamo all'evento!"
         paid: "La tua prenotazione è confermata e il pagamento è stato registrato. Grazie!"

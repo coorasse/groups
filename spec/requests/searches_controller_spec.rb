@@ -22,6 +22,17 @@ RSpec.describe SearchesController, type: :request do
       expect(response.body).to include(reservation.group.event.title)
     end
 
+    it "links each result to the group page anchored to the reservation" do
+      reservation = create(:reservation, group: future_group, full_name: "Mario Rossi")
+      group = reservation.group
+
+      get search_reservations_path, params: { q: "mario" }
+
+      expect(response.body).to include(
+        "#{event_group_path(group.event, group)}##{ActionView::RecordIdentifier.dom_id(reservation)}"
+      )
+    end
+
     it "does not match a different name" do
       create(:reservation, group: future_group, full_name: "Mario Rossi")
 

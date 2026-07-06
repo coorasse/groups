@@ -1,7 +1,9 @@
 <%= form_with model: [event, group], class: "box" do |f| %>
   <%= render "shared/errors", record: group %>
 
-  <p class="help mb-4"><%= t("groups.form.capacity_hint", count: event.max_group_size) %></p>
+  <p class="help mb-4">
+    <%= t("groups.form.capacity_hint", seats: event.max_group_size, overbooking: event.max_overbooking) %>
+  </p>
 
   <div class="columns">
     <div class="column">
@@ -27,6 +29,27 @@
           <div class="select is-fullwidth">
             <%= f.select :status, group_status_options %>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="columns">
+    <div class="column">
+      <div class="field">
+        <%= f.label :max_group_size, class: "label" %>
+        <div class="control">
+          <%= f.number_field :max_group_size, min: 1, class: "input",
+                placeholder: t("groups.form.inherited", value: event.max_group_size) %>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="field">
+        <%= f.label :max_overbooking, class: "label" %>
+        <div class="control">
+          <%= f.number_field :max_overbooking, min: 0, class: "input",
+                placeholder: t("groups.form.inherited", value: event.max_overbooking) %>
         </div>
       </div>
     </div>

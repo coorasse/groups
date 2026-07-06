@@ -14,9 +14,98 @@
     <h1 class="title level-item"><%= @event.title %> - <%= group_label(@group) %></h1>
   </div>
   <div class="level-right">
-    <%= link_to t("actions.edit"), edit_event_group_path(@event, @group), class: "button level-item" %>
+    <%= link_to action_icon(:edit), edit_event_group_path(@event, @group), class: "button level-item",
+          title: t("actions.edit"), "aria-label": t("actions.edit") %>
   </div>
 </div>
+
+<div class="level">
+  <div class="level-left">
+    <h2 class="subtitle level-item mb-0"><%= t(".reservations") %></h2>
+  </div>
+  <div class="level-right">
+    <%= link_to t(".new_reservation"), new_event_group_reservation_path(@event, @group),
+          class: "button is-primary level-item" %>
+  </div>
+</div>
+
+<% if @reservations.any? %>
+  <div class="table-container" data-controller="highlight-row">
+    <table class="table is-fullwidth is-hoverable">
+      <thead>
+        <tr>
+          <th><%= Reservation.human_attribute_name(:full_name) %></th>
+          <th><%= Reservation.human_attribute_name(:phone) %></th>
+          <th><%= t(".adults_short") %></th>
+          <th><%= t(".kids_short") %></th>
+          <th><%= t(".tickets_to_buy") %></th>
+          <th><%= Reservation.human_attribute_name(:price_to_pay) %></th>
+          <th><%= t(".price_difference") %></th>
+          <th><%= Reservation.human_attribute_name(:status) %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @reservations.each do |reservation| %>
+          <tr id="<%= dom_id(reservation) %>" class="<%= "has-text-grey" if reservation.cancelled? %>">
+            <td>
+              <%= link_to reservation.full_name, event_group_reservation_path(@event, @group, reservation) %>
+              <% if reservation.notes.present? %>
+                <br>
+                <span class="has-text-grey is-size-7"><%= Reservation.human_attribute_name(:notes) %>:</span>
+                <span class="is-size-7"><%= reservation.notes %></span>
+              <% end %>
+            </td>
+            <td>
+              <% if reservation.phone.present? %>
+                <%= link_to reservation.phone, "tel:#{reservation.phone}" %>
+              <% else %>
+                —
+              <% end %>
+            </td>
+            <td><%= render "reservations/inline_number", event: @event, group: @group, reservation: reservation, field: :adults_count, narrow: true %></td>
+            <td><%= render "reservations/inline_number", event: @event, group: @group, reservation: reservation, field: :kids_count, narrow: true %></td>
+            <td><%= reservation.adult_tickets_to_buy %></td>
+            <td><%= render "reservations/inline_number", event: @event, group: @group, reservation: reservation, field: :price_to_pay, step: "any" %></td>
+            <td><%= price_difference_tag(reservation.price_difference) %></td>
+            <td>
+              <%= form_with model: [@event, @group, reservation], data: { controller: "autosubmit" } do |f| %>
+                <%= hidden_field_tag :inline, "1" %>
+                <div class="select is-small">
+                  <%= f.select :status, reservation_status_options, {}, data: { action: "change->autosubmit#submit" } %>
+                </div>
+              <% end %>
+            </td>
+            <td class="has-text-right reservation-actions">
+              <% if @event.message_template.present? %>
+                <button type="button" class="button is-small"
+                        data-controller="clipboard"
+                        data-clipboard-text-value="<%= reservation_message(reservation) %>"
+                        data-clipboard-copied-label-value="<%= t(".message_copied") %>"
+                        data-action="clipboard#copy"
+                        title="<%= t(".copy_message") %>" aria-label="<%= t(".copy_message") %>">
+                  <%= action_icon(:copy) %>
+                </button>
+              <% end %>
+              <%= link_to action_icon(:edit), edit_event_group_reservation_path(@event, @group, reservation), class: "button is-small",
+                    title: t("actions.edit"), "aria-label": t("actions.edit") %>
+              <%= button_to action_icon(:destroy), event_group_reservation_path(@event, @group, reservation), method: :delete,
+                    class: "button is-small is-danger is-light",
+                    title: t("actions.destroy"), "aria-label": t("actions.destroy"),
+                    form: { data: { turbo_confirm: t("actions.confirm") } } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="notification is-light">
+    <%= t(".no_reservations") %>
+  </div>
+<% end %>
+
+<h2 class="subtitle mt-6"><%= t(".details") %></h2>
 
 <div class="columns is-multiline">
   <%= stat_card(t(".group_schedule")) { group_label(@group) } %>
@@ -33,7 +122,8 @@
 
   <%= stat_card(t(".available_seats")) do %>
     <%= seats_left_tag(@group) %>
-    <p class="is-size-7 has-text-grey has-text-weight-normal"><%= t(".max_indicative", count: @event.max_group_size) %></p>
+    <p class="is-size-7 has-text-grey has-text-weight-normal"><%= t(".max_indicative", count: @group.effective_max_group_size) %></p>
+    <p class="is-size-7 has-text-grey has-text-weight-normal"><%= t(".overbooking_allowance", count: @group.effective_max_overbooking) %></p>
   <% end %>
 
   <div class="column is-half">
@@ -87,80 +177,3 @@
     </div>
   <% end %>
 </div>
-
-<div class="level">
-  <div class="level-left">
-    <h2 class="subtitle level-item mb-0"><%= t(".reservations") %></h2>
-  </div>
-  <div class="level-right">
-    <%= link_to t(".new_reservation"), new_event_group_reservation_path(@event, @group),
-          class: "button is-primary level-item" %>
-  </div>
-</div>
-
-<% if @reservations.any? %>
-  <div class="table-container">
-    <table class="table is-fullwidth is-hoverable">
-      <thead>
-        <tr>
-          <th><%= Reservation.human_attribute_name(:full_name) %></th>
-          <th><%= Reservation.human_attribute_name(:status) %></th>
-          <th><%= t(".adults_short") %></th>
-          <th><%= t(".kids_short") %></th>
-          <th><%= t(".tickets_to_buy") %></th>
-          <th><%= Reservation.human_attribute_name(:price_to_pay) %></th>
-          <th><%= t(".price_difference") %></th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @reservations.each do |reservation| %>
-          <tr id="<%= dom_id(reservation) %>" class="<%= "has-text-grey" if reservation.cancelled? %>">
-            <td><%= link_to reservation.full_name, event_group_reservation_path(@event, @group, reservation) %></td>
-            <td>
-              <%= form_with model: [@event, @group, reservation], data: { controller: "autosubmit" } do |f| %>
-                <%= hidden_field_tag :inline, "1" %>
-                <div class="select is-small">
-                  <%= f.select :status, reservation_status_options, {}, data: { action: "change->autosubmit#submit" } %>
-                </div>
-              <% end %>
-            </td>
-            <td><%= render "reservations/inline_number", event: @event, group: @group, reservation: reservation, field: :adults_count, narrow: true %></td>
-            <td><%= render "reservations/inline_number", event: @event, group: @group, reservation: reservation, field: :kids_count, narrow: true %></td>
-            <td><%= reservation.adult_tickets_to_buy %></td>
-            <td><%= render "reservations/inline_number", event: @event, group: @group, reservation: reservation, field: :price_to_pay, step: "any" %></td>
-            <td><%= price_difference_tag(reservation.price_difference) %></td>
-            <td class="has-text-right">
-              <% if @event.message_template.present? %>
-                <button type="button" class="button is-small mb-1"
-                        data-controller="clipboard"
-                        data-clipboard-text-value="<%= reservation_message(reservation) %>"
-                        data-clipboard-copied-label-value="<%= t(".message_copied") %>"
-                        data-action="clipboard#copy">
-                  <%= t(".copy_message") %>
-                </button>
-              <% end %>
-              <%= link_to t("actions.edit"), edit_event_group_reservation_path(@event, @group, reservation), class: "button is-small" %>
-              <%= button_to t("actions.destroy"), event_group_reservation_path(@event, @group, reservation), method: :delete,
-                    class: "button is-small is-danger is-light",
-                    form: { data: { turbo_confirm: t("actions.confirm") } } %>
-            </td>
-          </tr>
-          <% if reservation.notes.present? %>
-            <tr class="<%= "has-text-grey" if reservation.cancelled? %>">
-              <td></td>
-              <td colspan="7" class="pt-0">
-                <span class="has-text-grey is-size-7"><%= Reservation.human_attribute_name(:notes) %>:</span>
-                <span class="is-size-7"><%= reservation.notes %></span>
-              </td>
-            </tr>
-          <% end %>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
-<% else %>
-  <div class="notification is-light">
-    <%= t(".no_reservations") %>
-  </div>
-<% end %>

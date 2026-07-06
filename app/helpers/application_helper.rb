@@ -8,6 +8,22 @@ module ApplicationHelper
     FLASH_CSS_CLASSES.fetch(type.to_s, "is-info")
   end
 
+  # Inline SVG icons (feather-style) used for action buttons.
+  ICON_PATHS = {
+    edit: "M12 20h9 M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z",
+    destroy: "M3 6h18 M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2 M10 11v6 M14 11v6",
+    copy: "M9 9h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V11a2 2 0 0 1 2-2z M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+  }.freeze
+
+  def action_icon(name)
+    svg = <<~SVG.html_safe
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"
+           fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+           stroke-linejoin="round" aria-hidden="true"><path d="#{ICON_PATHS.fetch(name)}"/></svg>
+    SVG
+    tag.span(svg, class: "icon is-small")
+  end
+
   # Unified card used across the site. Renders a Bulma box with an optional
   # label (heading). Pass the content as a block or via `body:`.
   def card(title: nil, centered: false, body: nil, &block)

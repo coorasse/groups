@@ -30,6 +30,16 @@ RSpec.describe Public::ReservationsController, type: :request do
 
       expect(response.body).not_to include(group.event.title)
     end
+
+    it "excludes groups that reached the overbooking ceiling" do
+      event = create(:event, max_group_size: 2, max_overbooking: 1)
+      group = bookable_group(event: event)
+      create(:reservation, group: group, adults_count: 3, kids_count: 0)
+
+      get public_root_path
+
+      expect(response.body).not_to include(group.event.title)
+    end
   end
 
   describe "#new" do
@@ -39,8 +49,47 @@ RSpec.describe Public::ReservationsController, type: :request do
       expect(response).to have_http_status(:ok)
     end
 
+    it "disables the submit button while the request is in flight" do
+      get new_public_group_reservation_path(bookable_group)
+
+      expect(response.body).to include('data-turbo-submits-with="Invio in corso')
+    end
+
+    it "autofocuses the full name field" do
+      get new_public_group_reservation_path(bookable_group)
+
+      full_name_field = response.body[/<input[^>]*name="reservation\[full_name\]"[^>]*>/]
+      expect(full_name_field).to include("autofocus")
+    end
+
+    it "leaves the adults and kids fields empty instead of defaulting to zero" do
+      get new_public_group_reservation_path(bookable_group)
+
+      adults_field = response.body[/<input[^>]*name="reservation\[adults_count\]"[^>]*>/]
+      kids_field = response.body[/<input[^>]*name="reservation\[kids_count\]"[^>]*>/]
+      expect(adults_field).not_to include("value=")
+      expect(kids_field).not_to include("value=")
+    end
+
+    it "asks for confirmation before cancelling the request" do
+      get new_public_group_reservation_path(bookable_group)
+
+      expect(response.body).to include('data-turbo-confirm=')
+      expect(response.body).to include('data-turbo-confirm-accept="Sì, annulla"')
+    end
+
     it "redirects with an unavailable flag when the group is not bookable" do
       get new_public_group_reservation_path(bookable_group(status: :closed))
+
+      expect(response).to redirect_to(public_root_path(unavailable: true))
+    end
+
+    it "redirects with an unavailable flag when the group reached the overbooking ceiling" do
+      event = create(:event, max_group_size: 2, max_overbooking: 1)
+      group = bookable_group(event: event)
+      create(:reservation, group: group, adults_count: 3, kids_count: 0)
+
+      get new_public_group_reservation_path(group)
 
       expect(response).to redirect_to(public_root_path(unavailable: true))
     end
@@ -87,30 +136,60 @@ RSpec.describe Public::ReservationsController, type: :request do
       expect(response).to have_http_status(:forbidden)
     end
 
-    it "creates public reservations in the requested status" do
-      book(valid_params)
+    context "when the request fits the available seats" do
+      it "confirms the reservation automatically" do
+        book(valid_params)
 
-      expect(group.reservations.last).to be_requested
+        expect(group.reservations.last).to be_confirmed
+      end
+
+      it "enqueues the confirmation email to the person who booked" do
+        expect { book(valid_params) }.to have_enqueued_mail(ReservationMailer, :approval_confirmation)
+      end
+
+      it "does not enqueue the confirmation email when no email was provided" do
+        expect { book(valid_params.merge(email: "")) }
+          .not_to have_enqueued_mail(ReservationMailer, :approval_confirmation)
+
+        expect(group.reservations.last.email).to be_blank
+      end
+
+      it "notifies the operator about the confirmed booking" do
+        expect { book(valid_params) }.to have_enqueued_mail(ReservationMailer, :new_booking_notification)
+      end
     end
 
-    it "enqueues the confirmation email when an email was provided" do
-      expect { book(valid_params) }.to have_enqueued_mail(ReservationMailer, :confirmation)
-    end
+    context "when the request causes overbooking" do
+      let(:event) { create(:event, max_group_size: 3, max_overbooking: 5) }
+      let(:group) do
+        bookable_group(event: event).tap do |g|
+          create(:reservation, group: g, adults_count: 3, kids_count: 0)
+        end
+      end
 
-    it "does not enqueue a confirmation email when no email was provided" do
-      expect { book(valid_params.merge(email: "")) }
-        .not_to have_enqueued_mail(ReservationMailer, :confirmation)
+      it "keeps the reservation in the requested status" do
+        book(valid_params)
 
-      expect(group.reservations.last.email).to be_blank
-    end
+        expect(group.reservations.order(:id).last).to be_requested
+      end
 
-    it "enqueues the staff notification email for every new request" do
-      expect { book(valid_params) }.to have_enqueued_mail(ReservationMailer, :new_request_notification)
-    end
+      it "enqueues the request-received email to the person who booked" do
+        expect { book(valid_params) }.to have_enqueued_mail(ReservationMailer, :confirmation)
+      end
 
-    it "enqueues the staff notification email even when no email was provided" do
-      expect { book(valid_params.merge(email: "")) }
-        .to have_enqueued_mail(ReservationMailer, :new_request_notification)
+      it "does not enqueue the request-received email when no email was provided" do
+        expect { book(valid_params.merge(email: "")) }
+          .not_to have_enqueued_mail(ReservationMailer, :confirmation)
+      end
+
+      it "notifies the operator about the new request" do
+        expect { book(valid_params) }.to have_enqueued_mail(ReservationMailer, :new_request_notification)
+      end
+
+      it "notifies the operator even when no email was provided" do
+        expect { book(valid_params.merge(email: "")) }
+          .to have_enqueued_mail(ReservationMailer, :new_request_notification)
+      end
     end
 
     it "auto-computes the price to pay even though the form never sends it" do

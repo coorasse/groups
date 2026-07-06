@@ -29,11 +29,16 @@ class Event < ApplicationRecord
     message_template
   end
 
+  def short_name_or_title
+    short_name.presence || title
+  end
+
   validates :title, presence: true
   validates :adult_price, :kid_price, :adult_ticket_price, :kid_ticket_price,
             :adult_guided_tour_price, :kid_guided_tour_price,
             presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :max_group_size, presence: true, numericality: { only_integer: true, greater_than: 0 }
+  validates :max_overbooking, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validate :ticket_prices_within_public_prices
   validate :acceptable_image
 

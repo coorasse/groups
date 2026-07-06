@@ -40,6 +40,15 @@ RSpec.describe EventsController, type: :request do
       expect(response.body).to include("da elaborare")
     end
 
+    it "shows each group's notes" do
+      event = create(:event)
+      create(:group, event: event, notes: "Ritrovo alla fontana")
+
+      get event_path(event)
+
+      expect(response.body).to include("Ritrovo alla fontana")
+    end
+
     it "opts out of the Turbo cache so the to-process banner stays fresh" do
       get event_path(create(:event))
 
@@ -119,10 +128,11 @@ RSpec.describe EventsController, type: :request do
     it "updates the event" do
       event = create(:event)
 
-      patch event_path(event), params: { event: { title: "Aggiornato" } }
+      patch event_path(event), params: { event: { title: "Aggiornato", short_name: "Corto" } }
 
       expect(response).to redirect_to(event)
       expect(event.reload.title).to eq("Aggiornato")
+      expect(event.short_name).to eq("Corto")
     end
 
     it "re-renders the form with invalid attributes" do

@@ -6,6 +6,8 @@ class Group < ApplicationRecord
 
   validates :date, :time, presence: true
   validates :net_price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :max_group_size, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
+  validates :max_overbooking, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
 
   scope :upcoming_candidates, -> { where(date: Date.current..) }
 
@@ -19,8 +21,29 @@ class Group < ApplicationRecord
     starts_at.present? && starts_at.future?
   end
 
+  # Capacity is inherited from the event but can be overridden per group.
+  def effective_max_group_size
+    max_group_size || event.max_group_size
+  end
+
+  def effective_max_overbooking
+    max_overbooking || event.max_overbooking
+  end
+
+  # Total number of people the group can hold, overbooking included. Once this
+  # ceiling is reached the group is no longer offered on the public form.
+  def total_capacity
+    effective_max_group_size + effective_max_overbooking
+  end
+
   def bookable?
-    open? && upcoming?
+    open? && upcoming? && people_count < total_capacity
+  end
+
+  # Whether a reservation of `count` people still fits within the plain seats
+  # (i.e. without spilling into the overbooking allowance).
+  def fits_available_seats?(count)
+    people_count + count <= effective_max_group_size
   end
 
   def adults_count
@@ -36,7 +59,7 @@ class Group < ApplicationRecord
   end
 
   def remaining_seats
-    event.max_group_size - people_count
+    effective_max_group_size - people_count
   end
 
   def people_count_for(status)

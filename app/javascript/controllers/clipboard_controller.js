@@ -10,11 +10,11 @@ export default class ClipboardController extends Controller {
   showFeedback() {
     if (!this.copiedLabelValue) return
 
-    const original = this.element.textContent
+    const original = this.element.innerHTML
     this.element.textContent = this.copiedLabelValue
     this.element.disabled = true
     setTimeout(() => {
-      this.element.textContent = original
+      this.element.innerHTML = original
       this.element.disabled = false
     }, 1500)
   }
