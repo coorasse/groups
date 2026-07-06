@@ -49,4 +49,23 @@ RSpec.describe ReservationMailer do
       expect(mail.body.encoded).to include("http://example.com/prenotazione/#{reservation.token}")
     end
   end
+
+  describe "#new_request_notification" do
+    it "notifies the booking inbox about the new request, with a link to approve it" do
+      event = create(:event, title: "Tour del centro storico")
+      group = create(:group, event: event, date: Date.new(2026, 7, 10), time: "10:30")
+      reservation = create(:reservation, group: group, full_name: "Mario Rossi",
+        phone: "+39 333 1234567", email: "mario@example.com", adults_count: 2, kids_count: 1)
+
+      mail = described_class.new_request_notification(reservation)
+
+      expect(mail.to).to eq([ "prenota@guidaturisticaromagna.it" ])
+      expect(mail.subject).to include("Tour del centro storico")
+      expect(mail.body.encoded).to include("Mario Rossi")
+      expect(mail.body.encoded).to include("+39 333 1234567")
+      expect(mail.body.encoded).to include("mario@example.com")
+      expect(mail.body.encoded).to include("10:30")
+      expect(mail.body.encoded).to include("http://example.com/events/#{event.id}/groups/#{group.id}")
+    end
+  end
 end

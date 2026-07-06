@@ -21,6 +21,7 @@ module Public
 
       if @reservation.save(context: :public_booking)
         ReservationMailer.confirmation(@reservation).deliver_later if @reservation.email.present?
+        ReservationMailer.new_request_notification(@reservation).deliver_later
         redirect_to booking_path(@reservation.token)
       else
         render :new, status: :unprocessable_entity

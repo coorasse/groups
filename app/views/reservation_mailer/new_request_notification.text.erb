@@ -1,0 +1,18 @@
+<%= t("intro", scope: "reservation_mailer.new_request_notification", event: @event.title) %>
+
+<%= t("recap.event", scope: "reservation_mailer.new_request_notification") %>: <%= @event.title %>
+<%= t("recap.datetime", scope: "reservation_mailer.new_request_notification") %>: <%= group_full_datetime(@group, titleize: true) %>
+<%= t("recap.full_name", scope: "reservation_mailer.new_request_notification") %>: <%= @reservation.full_name %>
+<%= t("recap.adults", scope: "reservation_mailer.new_request_notification") %>: <%= @reservation.adults_count %>
+<%= t("recap.kids", scope: "reservation_mailer.new_request_notification") %>: <%= @reservation.kids_count %>
+<%= t("recap.phone", scope: "reservation_mailer.new_request_notification") %>: <%= @reservation.phone %>
+<% if @reservation.email.present? -%>
+<%= t("recap.email", scope: "reservation_mailer.new_request_notification") %>: <%= @reservation.email %>
+<% end -%>
+<%= t("recap.total", scope: "reservation_mailer.new_request_notification") %>: <%= number_to_currency(@reservation.price_to_pay) %>
+<% if @reservation.notes.present? -%>
+<%= t("recap.notes", scope: "reservation_mailer.new_request_notification") %>: <%= @reservation.notes %>
+<% end -%>
+
+<%= t("cta", scope: "reservation_mailer.new_request_notification") %>
+<%= event_group_url(@event, @group) %>

@@ -104,6 +104,15 @@ RSpec.describe Public::ReservationsController, type: :request do
       expect(group.reservations.last.email).to be_blank
     end
 
+    it "enqueues the staff notification email for every new request" do
+      expect { book(valid_params) }.to have_enqueued_mail(ReservationMailer, :new_request_notification)
+    end
+
+    it "enqueues the staff notification email even when no email was provided" do
+      expect { book(valid_params.merge(email: "")) }
+        .to have_enqueued_mail(ReservationMailer, :new_request_notification)
+    end
+
     it "auto-computes the price to pay even though the form never sends it" do
       event = create(:event, adult_price: 25, kid_price: 12)
       group = bookable_group(event: event)

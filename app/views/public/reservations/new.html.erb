@@ -3,7 +3,8 @@
 <div class="box mb-5">
   <% if @event.image.attached? %>
     <figure class="image mb-4">
-      <%= image_tag @event.image.variant(:header), class: "event-image" %>
+      <%= image_tag @event.image.variant(:header), class: "event-image",
+            style: "view-transition-name: #{reservation_image_transition_name(@group)}" %>
     </figure>
   <% end %>
   <h2 class="title is-3 mb-2"><%= @event.title %></h2>
@@ -89,18 +90,20 @@
     </div>
   </div>
 
-  <div class="field">
+  <div class="field consent-field">
     <div class="control">
       <label class="checkbox">
         <%= f.check_box :data_processing_authorized, required: true %>
-        <%= t("public.reservations.new.consent") %>
+        <span><%= t("public.reservations.new.consent") %></span>
       </label>
     </div>
   </div>
 
   <div class="field">
     <div class="control">
-      <%= f.submit t("public.reservations.new.submit"), class: "button is-primary is-medium is-fullwidth" %>
+      <%= f.submit t("public.reservations.new.submit"),
+            class: "button is-primary is-medium is-fullwidth",
+            data: { turbo_submits_with: t("public.reservations.new.submitting") } %>
     </div>
   </div>
   <div class="field mt-4">

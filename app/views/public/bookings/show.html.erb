@@ -57,7 +57,8 @@
   <% if @reservation.approved? %>
     <%= button_to t("confirm", scope: "bookings.show"),
           booking_confirmation_path(@reservation.token),
-          method: :patch, class: "button is-primary is-fullwidth is-medium mt-4" %>
+          method: :patch, class: "button is-primary is-fullwidth is-medium mt-4",
+          data: { turbo_submits_with: t("confirming", scope: "bookings.show") } %>
   <% end %>
 
   <% if @reservation.confirmed? && @event.notes.present? %>

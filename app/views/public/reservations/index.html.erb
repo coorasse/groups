@@ -14,7 +14,8 @@
       <%= link_to new_public_group_reservation_path(group), class: "box reservation-slot-card" do %>
         <% if event.image.attached? %>
           <figure class="image mb-4">
-            <%= image_tag event.image.variant(:header), class: "event-image" %>
+            <%= image_tag event.image.variant(:header), class: "event-image",
+                  style: "view-transition-name: #{reservation_image_transition_name(group)}" %>
           </figure>
         <% end %>
         <p class="title is-4"><%= group_full_datetime(group) %></p>

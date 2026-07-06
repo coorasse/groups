@@ -285,6 +285,20 @@ it:
       signature: "A presto,\nLisa Rodi\nGuida Turistica Romagna"
     approval_confirmation:
       subject: "Conferma prenotazione – %{event}"
+    new_request_notification:
+      subject: "Nuova richiesta di prenotazione da approvare – %{event}"
+      intro: "È arrivata una nuova richiesta di prenotazione per «%{event}»:"
+      recap:
+        event: "Evento"
+        datetime: "Data e ora"
+        full_name: "Nome"
+        adults: "Adulti"
+        kids: "Ragazzi"
+        phone: "Telefono"
+        email: "Email"
+        total: "Totale indicativo"
+        notes: "Note"
+      cta: "Apri il gruppo per approvarla"
 
   searches:
     placeholder: "Cerca prenotazione…"
@@ -330,7 +344,7 @@ it:
         seats_left:
           one: "1 posto disponibile"
           other: "%{count} posti disponibili"
-        book: "Prenota"
+        book: "Invia Richiesta"
         empty: "Al momento non ci sono eventi disponibili per la prenotazione."
       new:
         title: "Nuova prenotazione"
@@ -338,13 +352,15 @@ it:
         tickets_to_buy: "Biglietti adulti da acquistare:"
         total_price: "Totale indicativo da pagare:"
         consent: "Autorizzo il trattamento dei dati personali."
-        submit: "Invia prenotazione"
+        submit: "Invia Richiesta"
+        submitting: "Invio in corso…"
         cancel_confirm: "Sei sicuro di voler annullare? I dati inseriti andranno persi."
 
   bookings:
     show:
       title: "La tua prenotazione"
       confirm: "Conferma la prenotazione"
+      confirming: "Conferma in corso…"
       instructions_title: "Istruzioni utili"
       contact_note_html: "Per correzioni o segnalazioni di errori puoi contattarci al %{phone} o scrivere a %{email}."
       back: "Torna agli eventi"

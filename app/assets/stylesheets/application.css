@@ -104,6 +104,25 @@
   text-align: center;
 }
 
+/* Consent checkbox: enlarged and given a generous tap area for mobile use. */
+.consent-field .checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--bulma-border, #dbdbdb);
+  border-radius: var(--bulma-radius, 0.5rem);
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.consent-field input[type="checkbox"] {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  accent-color: var(--bulma-primary, #00d1b2);
+}
+
 .table-input {
   width: 6rem;
 }
@@ -251,5 +270,20 @@ code.erb-output {
   &:hover {
     color: inherit;
     box-shadow: 0 8px 16px rgba(10, 10, 10, 0.15);
+  }
+}
+
+/* Smooth the shared event image morph between the reservation list and the
+ * reservation form (see reservation_image_transition_name). */
+::view-transition-group(*) {
+  animation-duration: 0.35s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
   }
 }
