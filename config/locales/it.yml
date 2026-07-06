@@ -134,6 +134,10 @@ it:
         one: "Hai 1 prenotazione in richiesta da elaborare."
         other: "Hai %{count} prenotazioni in richiesta da elaborare."
       empty: "Nessun evento presente. Creane uno per iniziare."
+      pending_reservations: "Prenotazioni da approvare"
+      group_schedule: "Data e ora"
+      adults_short: "# Adulti"
+      kids_short: "# Ragazzi"
     new:
       title: "Nuovo evento"
     edit:

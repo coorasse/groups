@@ -47,11 +47,11 @@ museo = Event.find_or_create_by!(title: "Gita al museo") do |event|
   event.notes = "Ritrovo davanti all'ingresso principale 15 minuti prima."
   event.description = "Una visita guidata alle collezioni permanenti del museo civico, adatta a famiglie e scolaresche. Durata circa 2 ore."
   event.message_template = <<~MESSAGE
-    Salve <NOME_COMPLETO>,
-    Le confermo la prenotazione per <TITOLO_EVENTO> per
-    <DATA_ORA_GRUPPO> (appuntamento 15 min prima all'ingresso principale)
-    Numero Adulti:<NUMERO_ADULTI><% if numero_ragazzi > 0 %>, Ragazzi:<NUMERO_RAGAZZI><% end %>
-    Importo: <IMPORTO_TOTALE>
+    Salve <%= nome_completo %>,
+    Le confermo la prenotazione per <%= titolo_evento %> per
+    <%= data_ora_gruppo %> (appuntamento 15 min prima all'ingresso principale)
+    Numero Adulti:<%= numero_adulti %><% if numero_ragazzi > 0 %>, Ragazzi:<%= numero_ragazzi %><% end %>
+    Importo: <%= importo_totale %>
     Pagamento sul posto
 
     Visite guidate a cura di Lisa Rodi
@@ -122,11 +122,11 @@ cimitero = Event.find_or_create_by!(title: "Visita guidata al cimitero monumenta
   event.max_group_size = 25
   event.description = "Un percorso serale tra le sculture e le storie dei personaggi illustri sepolti nel cimitero monumentale."
   event.message_template = <<~MESSAGE
-    Salve <NOME_COMPLETO>,
-    Le confermo la prenotazione per <TITOLO_EVENTO> per
-    <DATA_ORA_GRUPPO> (appuntamento 15 min prima davanti al cimitero)
-    Numero Adulti:<NUMERO_ADULTI><% if numero_ragazzi > 0 %>, Ragazzi:<NUMERO_RAGAZZI><% end %>
-    Importo: <IMPORTO_TOTALE>
+    Salve <%= nome_completo %>,
+    Le confermo la prenotazione per <%= titolo_evento %> per
+    <%= data_ora_gruppo %> (appuntamento 15 min prima davanti al cimitero)
+    Numero Adulti:<%= numero_adulti %><% if numero_ragazzi > 0 %>, Ragazzi:<%= numero_ragazzi %><% end %>
+    Importo: <%= importo_totale %>
     Pagamento sul posto
 
     Visite guidate a cura di Lisa Rodi

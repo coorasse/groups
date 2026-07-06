@@ -4,6 +4,9 @@ class EventsController < ApplicationController
   def index
     @events = Event.order(created_at: :desc)
     @requested_counts = Reservation.requested.joins(:group).group("groups.event_id").count
+    @requested_reservations = Reservation.requested.includes(group: :event)
+                                          .references(:group)
+                                          .order(Arel.sql("groups.date, groups.time"))
   end
 
   def show

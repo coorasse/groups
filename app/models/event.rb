@@ -2,14 +2,14 @@ class Event < ApplicationRecord
   ALLOWED_IMAGE_TYPES = %w[image/png image/jpeg image/webp image/gif].freeze
   MAX_IMAGE_SIZE = 5.megabytes
 
-  MESSAGE_TOKENS = {
-    "<NOME_COMPLETO>" => "nome_completo",
-    "<TITOLO_EVENTO>" => "titolo_evento",
-    "<DATA_ORA_GRUPPO>" => "data_ora_gruppo",
-    "<NUMERO_ADULTI>" => "numero_adulti",
-    "<NUMERO_RAGAZZI>" => "numero_ragazzi",
-    "<IMPORTO_TOTALE>" => "importo_totale"
-  }.freeze
+  MESSAGE_VARIABLES = %w[
+    nome_completo
+    titolo_evento
+    data_ora_gruppo
+    numero_adulti
+    numero_ragazzi
+    importo_totale
+  ].freeze
 
   has_many :groups, dependent: :destroy
   has_many :reservations, through: :groups
@@ -17,18 +17,15 @@ class Event < ApplicationRecord
     attachable.variant :header, resize_to_fill: [ 1200, 500 ]
   end
 
-  # Renders the event message template for a reservation. Supports the <TOKEN>
-  # placeholders above and ERB control flow (e.g. `<% if numero_ragazzi > 0 %>`),
-  # with the tokens also available as local variables.
+  # Renders the event message template for a reservation. The template is plain
+  # ERB: use `<%= nome_completo %>` to interpolate a variable and `<% if ... %>`
+  # for control flow. The MESSAGE_VARIABLES are available as local variables.
   def message_for(**vars)
     return "" if message_template.blank?
 
-    source = MESSAGE_TOKENS.reduce(message_template.dup) do |text, (token, var)|
-      text.gsub(token, "<%= #{var} %>")
-    end
-    ERB.new(source, trim_mode: "-").result_with_hash(vars)
+    ERB.new(message_template, trim_mode: "-").result_with_hash(vars)
   rescue StandardError
-    MESSAGE_TOKENS.reduce(message_template.dup) { |text, (token, var)| text.gsub(token, vars[var.to_sym].to_s) }
+    message_template
   end
 
   validates :title, presence: true

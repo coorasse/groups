@@ -58,7 +58,7 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries = true
 
   # Host used by links generated in mailer templates. Override with APP_HOST on the server.
-  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "guidaturisticaromagna.it"), protocol: "https" }
+  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "app.guidaturisticaromagna.it"), protocol: "https" }
 
   # Outgoing SMTP server (Aruba). Credentials live in config/credentials.yml.enc under `smtp`.
   config.action_mailer.delivery_method = :smtp
