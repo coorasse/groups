@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+Dir.chdir(File.expand_path("..", __dir__))
+
+system("bin/rubocop") || exit($?.exitstatus)

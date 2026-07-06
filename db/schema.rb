@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_02_213234) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_03_153531) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -67,6 +67,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_02_213234) do
     t.index ["event_id"], name: "index_groups_on_event_id"
   end
 
+  create_table "letter_thief_email_messages", force: :cascade do |t|
+    t.text "bcc"
+    t.text "body_html"
+    t.text "body_text"
+    t.text "cc"
+    t.string "content_type"
+    t.datetime "created_at", null: false
+    t.text "from"
+    t.text "headers"
+    t.datetime "intercepted_at"
+    t.text "sender"
+    t.string "subject"
+    t.text "to"
+    t.datetime "updated_at", null: false
+    t.index ["intercepted_at"], name: "index_letter_thief_email_messages_on_intercepted_at"
+  end
+
   create_table "reservations", force: :cascade do |t|
     t.integer "adults_count", default: 0, null: false
     t.datetime "created_at", null: false
@@ -77,7 +94,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_02_213234) do
     t.integer "kids_count", default: 0, null: false
     t.text "notes"
     t.integer "owned_adult_tickets", default: 0, null: false
-    t.boolean "paid", default: false, null: false
     t.string "phone"
     t.decimal "price_to_pay", precision: 8, scale: 2, null: false
     t.integer "status", default: 2, null: false

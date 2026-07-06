@@ -1,15 +1,17 @@
 class Reservation < ApplicationRecord
   belongs_to :group
 
-  enum :status, { requested: 0, approved: 1, confirmed: 2, cancelled: 3 }, default: :confirmed
+  enum :status, { requested: 0, approved: 1, confirmed: 2, paid: 4, cancelled: 3 }, default: :confirmed
 
   scope :active, -> { where.not(status: :cancelled) }
 
-  before_validation :set_default_price
+  before_validation :set_price_to_pay
 
   validates :full_name, presence: true
   validates :adults_count, :kids_count, :owned_adult_tickets,
             numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :adults_count, numericality: { greater_than_or_equal_to: 1, less_than_or_equal_to: 100 }, on: :public_booking
+  validates :kids_count, numericality: { less_than_or_equal_to: 100 }, on: :public_booking
   validates :price_to_pay, numericality: { greater_than_or_equal_to: 0 }
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
   validates :tax_code, format: { with: /\A[A-Za-z0-9]{16}\z/ }, allow_blank: true
@@ -45,8 +47,13 @@ class Reservation < ApplicationRecord
 
   private
 
-  def set_default_price
-    self.price_to_pay = computed_price if price_to_pay.blank?
+  # The price is computed automatically when it is blank, and it is always
+  # recomputed (overwriting any manual value) when the adults or kids count of an
+  # existing reservation changes — e.g. when edited inline from the table.
+  def set_price_to_pay
+    return unless price_to_pay.blank? || (persisted? && (adults_count_changed? || kids_count_changed?))
+
+    self.price_to_pay = computed_price
   end
 
   def must_have_people

@@ -1,4 +1,7 @@
 <% content_for :title, @event.title %>
+<% content_for :head do %>
+  <meta name="turbo-cache-control" content="no-cache">
+<% end %>
 
 <% requested_count = @event.reservations.requested.count %>
 
@@ -21,7 +24,7 @@
 <% end %>
 
 <% if @event.image.attached? || @event.description.present? %>
-  <div class="box">
+  <%= card(title: t(".presentation")) do %>
     <% if @event.image.attached? %>
       <figure class="image mb-3">
         <%= image_tag @event.image.variant(resize_to_limit: [1200, 400]), class: "event-image" %>
@@ -30,13 +33,13 @@
     <% if @event.description.present? %>
       <div class="content"><%= simple_format @event.description %></div>
     <% end %>
-  </div>
+  <% end %>
 <% end %>
 
 <div class="columns">
   <div class="column is-two-thirds">
-    <div class="box">
-      <table class="table is-fullwidth">
+    <%= card(title: t(".prices")) do %>
+      <table class="table is-fullwidth mb-0">
         <thead>
           <tr>
             <th></th>
@@ -62,21 +65,17 @@
           </tr>
         </tbody>
       </table>
-    </div>
+    <% end %>
   </div>
-  <div class="column">
-    <div class="box has-text-centered">
-      <p class="heading"><%= Event.human_attribute_name(:max_group_size) %></p>
-      <p class="title is-4"><%= @event.max_group_size %></p>
-    </div>
-  </div>
+  <%= stat_card(Event.human_attribute_name(:max_group_size), column_class: "") do %>
+    <%= @event.max_group_size %>
+  <% end %>
 </div>
 
 <% if @event.notes.present? %>
-  <div class="box">
-    <p class="heading"><%= Event.human_attribute_name(:notes) %></p>
-    <p><%= simple_format @event.notes %></p>
-  </div>
+  <%= card(title: Event.human_attribute_name(:notes)) do %>
+    <%= simple_format @event.notes %>
+  <% end %>
 <% end %>
 
 <div class="level">

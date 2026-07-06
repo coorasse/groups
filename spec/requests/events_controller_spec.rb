@@ -12,6 +12,12 @@ RSpec.describe EventsController, type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(event.title)
     end
+
+    it "opts out of the Turbo cache so the to-process counts stay fresh" do
+      get events_path
+
+      expect(response.body).to include('name="turbo-cache-control" content="no-cache"')
+    end
   end
 
   describe "#show" do
@@ -33,6 +39,12 @@ RSpec.describe EventsController, type: :request do
 
       expect(response.body).to include("da elaborare")
     end
+
+    it "opts out of the Turbo cache so the to-process banner stays fresh" do
+      get event_path(create(:event))
+
+      expect(response.body).to include('name="turbo-cache-control" content="no-cache"')
+    end
   end
 
   describe "#index" do
@@ -43,6 +55,14 @@ RSpec.describe EventsController, type: :request do
       get events_path
 
       expect(response.body).to include("da elaborare")
+    end
+  end
+
+  describe "#new" do
+    it "renders the form" do
+      get new_event_path
+
+      expect(response).to have_http_status(:ok)
     end
   end
 
@@ -84,6 +104,15 @@ RSpec.describe EventsController, type: :request do
 
       expect(response).to redirect_to(event)
       expect(event.reload.title).to eq("Aggiornato")
+    end
+
+    it "re-renders the form with invalid attributes" do
+      event = create(:event)
+
+      patch event_path(event), params: { event: { title: "" } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(event.reload.title).not_to eq("")
     end
   end
 

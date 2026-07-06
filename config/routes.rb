@@ -27,5 +27,7 @@ Rails.application.routes.draw do
     end
   end
 
+  mount LetterThief::Engine => "/letter_thief" if Rails.env.development?
+
   root "events#index"
 end

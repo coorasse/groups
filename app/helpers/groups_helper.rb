@@ -31,9 +31,14 @@ module GroupsHelper
     ].compact.join(" ")
   end
 
-  def group_full_datetime(group)
+  def group_full_datetime(group, titleize: false)
     return "" if group.date.blank? || group.time.blank?
 
-    "#{l(group.date, format: :full)} ore #{l(group.time, format: :hour_minute)}"
+    weekday = l(group.date, format: "%A")
+    month = l(group.date, format: "%B")
+    weekday = weekday.capitalize if titleize
+    month = month.capitalize if titleize
+
+    "#{weekday} #{l(group.date, format: '%d')} #{month} ore #{l(group.time, format: :hour_minute)}"
   end
 end

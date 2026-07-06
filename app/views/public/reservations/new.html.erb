@@ -3,21 +3,19 @@
 <div class="box mb-5">
   <% if @event.image.attached? %>
     <figure class="image mb-4">
-      <%= image_tag @event.image.variant(resize_to_limit: [1200, 500]), class: "event-image" %>
+      <%= image_tag @event.image.variant(:header), class: "event-image" %>
     </figure>
   <% end %>
-  <p class="heading mb-1"><%= Event.model_name.human %></p>
-  <p class="is-size-3 has-text-weight-bold"><%= @event.title %></p>
+  <h2 class="title is-3 mb-2"><%= @event.title %></h2>
   <% if @event.description.present? %>
     <div class="content mt-2"><%= simple_format @event.description %></div>
   <% end %>
-  <p class="is-size-5 mt-2">
-    <span class="tag is-light mr-2"><%= Group.model_name.human %></span>
-    <%= group_label(@group) %>
+  <p class="is-size-5 has-text-weight-semibold mt-2">
+    <%= group_full_datetime(@group, titleize: true) %>
   </p>
 </div>
 
-<h1 class="title"><%= t("public.reservations.new.title") %></h1>
+<h1 class="title is-5 has-text-grey"><%= t("public.reservations.new.title") %></h1>
 
 <%= form_with model: @reservation, url: public_group_reservation_path(@group), class: "box",
       data: {
@@ -35,12 +33,13 @@
     </div>
   </div>
 
-  <div class="columns">
+  <div class="columns is-mobile">
     <div class="column">
       <div class="field">
         <%= f.label :adults_count, Reservation.human_attribute_name(:adults_count), class: "label" %>
         <div class="control">
-          <%= f.number_field :adults_count, min: 0, class: "input",
+          <%= f.number_field :adults_count, min: 1, max: 100, required: true, inputmode: "numeric",
+                pattern: "[0-9]*", class: "input",
                 data: { reservation_price_target: "adultsCount", action: "input->reservation-price#recalculate" } %>
         </div>
       </div>
@@ -49,7 +48,8 @@
       <div class="field">
         <%= f.label :kids_count, Reservation.human_attribute_name(:kids_count), class: "label" %>
         <div class="control">
-          <%= f.number_field :kids_count, min: 0, class: "input",
+          <%= f.number_field :kids_count, min: 0, max: 100, inputmode: "numeric", pattern: "[0-9]*",
+                class: "input",
                 data: { reservation_price_target: "kidsCount", action: "input->reservation-price#recalculate" } %>
         </div>
       </div>
@@ -57,7 +57,7 @@
   </div>
 
   <div class="notification is-light py-3">
-    <p>
+    <p class="is-size-7">
       <%= t("public.reservations.new.total_price") %>
       <strong data-reservation-price-target="suggestedPrice">—</strong>
     </p>
@@ -98,12 +98,15 @@
     </div>
   </div>
 
-  <div class="field is-grouped">
+  <div class="field">
     <div class="control">
-      <%= f.submit t("public.reservations.new.submit"), class: "button is-primary" %>
+      <%= f.submit t("public.reservations.new.submit"), class: "button is-primary is-medium is-fullwidth" %>
     </div>
+  </div>
+  <div class="field mt-4">
     <div class="control">
-      <%= link_to t("actions.cancel"), public_root_path, class: "button is-light" %>
+      <%= link_to t("actions.cancel"), public_root_path, class: "button is-light is-fullwidth",
+            data: { turbo_confirm: t("public.reservations.new.cancel_confirm") } %>
     </div>
   </div>
 <% end %>

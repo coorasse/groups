@@ -25,6 +25,34 @@ RSpec.describe Reservation do
     it "does not require consent in the default context" do
       expect(build(:reservation, data_processing_authorized: false)).to be_valid
     end
+
+    it "requires at least one adult" do
+      reservation = build(:reservation, adults_count: 0, kids_count: 1, phone: "123", data_processing_authorized: true)
+
+      expect(reservation.valid?(:public_booking)).to be(false)
+    end
+
+    it "does not require an adult in the default context" do
+      expect(build(:reservation, adults_count: 0, kids_count: 1)).to be_valid
+    end
+
+    it "rejects more than 100 adults" do
+      reservation = build(:reservation, adults_count: 101, phone: "123", data_processing_authorized: true)
+
+      expect(reservation.valid?(:public_booking)).to be(false)
+    end
+
+    it "rejects more than 100 kids" do
+      reservation = build(:reservation, kids_count: 101, phone: "123", data_processing_authorized: true)
+
+      expect(reservation.valid?(:public_booking)).to be(false)
+    end
+
+    it "allows up to 100 adults and kids" do
+      reservation = build(:reservation, adults_count: 100, kids_count: 100, phone: "123", data_processing_authorized: true)
+
+      expect(reservation.valid?(:public_booking)).to be(true)
+    end
   end
 
   it "requires a full name" do
@@ -96,6 +124,31 @@ RSpec.describe Reservation do
 
     it "keeps a manually provided price" do
       reservation = create(:reservation, group: group, adults_count: 2, owned_adult_tickets: 0, kids_count: 0, price_to_pay: 10)
+
+      expect(reservation.price_to_pay).to eq(10)
+    end
+
+    it "is recomputed (overwritten) when the adults count changes" do
+      reservation = create(:reservation, group: group, adults_count: 2, owned_adult_tickets: 0, kids_count: 0, price_to_pay: 10)
+
+      reservation.update!(adults_count: 3)
+
+      # 3 adults * 25 = 75, overwriting the manual 10
+      expect(reservation.price_to_pay).to eq(75)
+    end
+
+    it "is recomputed when the kids count changes" do
+      reservation = create(:reservation, group: group, adults_count: 0, owned_adult_tickets: 0, kids_count: 1, price_to_pay: 10)
+
+      reservation.update!(kids_count: 2)
+
+      expect(reservation.price_to_pay).to eq(24) # 2 kids * 12
+    end
+
+    it "keeps a manual price when the counts do not change" do
+      reservation = create(:reservation, group: group, adults_count: 2, owned_adult_tickets: 0, kids_count: 0, price_to_pay: 10)
+
+      reservation.update!(notes: "aggiornata")
 
       expect(reservation.price_to_pay).to eq(10)
     end

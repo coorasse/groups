@@ -17,6 +17,14 @@ RSpec.describe ReservationsController, type: :request do
     end
   end
 
+  describe "#new" do
+    it "renders the form" do
+      get new_event_group_reservation_path(event, group)
+
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
   describe "#create" do
     it "creates a reservation with valid attributes" do
       attributes = { full_name: "Mario Rossi", adults_count: 2, kids_count: 1, owned_adult_tickets: 0 }
@@ -53,13 +61,22 @@ RSpec.describe ReservationsController, type: :request do
 
       expect(response).to redirect_to(event_group_path(event, group))
     end
+
+    it "re-renders the form with invalid attributes" do
+      attributes = { full_name: "", adults_count: 1, kids_count: 0 }
+
+      expect { post event_group_reservations_path(event, group), params: { reservation: attributes } }
+        .not_to change(Reservation, :count)
+
+      expect(response).to have_http_status(:unprocessable_content)
+    end
   end
 
   describe "#update" do
     it "updates the reservation" do
       reservation = create(:reservation, group: group)
 
-      patch event_group_reservation_path(event, group, reservation), params: { reservation: { paid: true } }
+      patch event_group_reservation_path(event, group, reservation), params: { reservation: { status: "paid" } }
 
       expect(response).to redirect_to(event_group_path(event, group))
       expect(reservation.reload).to be_paid
@@ -71,6 +88,35 @@ RSpec.describe ReservationsController, type: :request do
       patch event_group_reservation_path(event, group, reservation), params: { reservation: { status: "approved" } }
 
       expect(reservation.reload).to be_approved
+    end
+
+    it "updates a numeric field inline and redirects so Turbo can morph" do
+      reservation = create(:reservation, group: group, adults_count: 2)
+
+      patch event_group_reservation_path(event, group, reservation), params: { inline: "1", reservation: { adults_count: 4 } }
+
+      expect(response).to redirect_to(event_group_path(event, group))
+      expect(reservation.reload.adults_count).to eq(4)
+    end
+
+    it "re-renders the form when a regular edit is invalid" do
+      reservation = create(:reservation, group: group)
+
+      patch event_group_reservation_path(event, group, reservation), params: { reservation: { full_name: "" } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(reservation.reload.full_name).to be_present
+    end
+
+    it "reverts and redirects with an alert when an inline edit is invalid" do
+      reservation = create(:reservation, group: group, adults_count: 2, owned_adult_tickets: 2)
+
+      patch event_group_reservation_path(event, group, reservation),
+        params: { inline: "1", reservation: { adults_count: 1 } }
+
+      expect(response).to redirect_to(event_group_path(event, group))
+      expect(flash[:alert]).to be_present
+      expect(reservation.reload.adults_count).to eq(2)
     end
   end
 

@@ -39,6 +39,9 @@ it:
       header:
         one: "Non è stato possibile salvare questo %{model}: 1 errore"
         other: "Non è stato possibile salvare questo %{model}: %{count} errori"
+    messages:
+      greater_than_or_equal_to: "deve essere maggiore o uguale a %{count}"
+      less_than_or_equal_to: "deve essere minore o uguale a %{count}"
 
   activerecord:
     models:
@@ -88,7 +91,6 @@ it:
         kids_count: "Numero ragazzi"
         owned_adult_tickets: "Biglietti adulti già in possesso"
         price_to_pay: "Prezzo da pagare"
-        paid: "Pagato"
         phone: "Telefono"
         email: "Email"
         tax_code: "Codice fiscale"
@@ -128,7 +130,6 @@ it:
       adults: "Adulti"
       kids: "Ragazzi"
       ticket: "biglietto"
-      to_process: "Da elaborare"
       to_process_banner:
         one: "Hai 1 prenotazione in richiesta da elaborare."
         other: "Hai %{count} prenotazioni in richiesta da elaborare."
@@ -152,6 +153,8 @@ it:
       public_price: "Prezzo al pubblico"
       ticket_price: "Prezzo biglietto"
       guided_tour_price: "Prezzo visita guidata"
+      prices: "Prezzi"
+      presentation: "Presentazione pubblica"
       to_process_banner:
         one: "1 prenotazione in richiesta da elaborare."
         other: "%{count} prenotazioni in richiesta da elaborare."
@@ -180,6 +183,9 @@ it:
       no_reservations: "Nessuna prenotazione per questo gruppo."
       group_schedule: "Data e ora"
       tickets_to_buy: "Biglietti da acquistare"
+      prices: "Prezzi"
+      adults_short: "# Adulti"
+      kids_short: "# Ragazzi"
       reserved_people:
         one: "1 persona prenotata"
         other: "%{count} persone prenotate"
@@ -206,10 +212,8 @@ it:
       requested: "Richiesta"
       approved: "Approvata"
       confirmed: "Confermata"
+      paid: "Pagata"
       cancelled: "Annullata"
-    paid:
-      "true": "Pagato"
-      "false": "Da pagare"
     new:
       title: "Nuova prenotazione"
     edit:
@@ -265,7 +269,7 @@ it:
       mismatch: "Le password non coincidono."
 
   public:
-    title: "Prenotazioni gruppi"
+    title: "Lisa Rodi - Guida Turistica Romagna"
     subtitle: "Prenota la tua visita"
     reservations:
       unavailable: "Il gruppo selezionato non è più disponibile."
@@ -284,7 +288,8 @@ it:
         total_price: "Totale indicativo da pagare:"
         consent: "Autorizzo il trattamento dei dati personali."
         submit: "Invia prenotazione"
+        cancel_confirm: "Sei sicuro di voler annullare? I dati inseriti andranno persi."
       confirmation:
         title: "Prenotazione ricevuta!"
-        body: "Grazie, abbiamo registrato la tua prenotazione. Ti contatteremo per confermarla."
+        body: "Grazie per la tua richiesta. Nelle prossime ore riceverai un messaggio con la conferma della disponibilità."
         back: "Torna agli eventi"

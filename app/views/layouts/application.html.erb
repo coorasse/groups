@@ -29,6 +29,24 @@
         <div class="navbar-brand">
           <%= link_to t("app.name"), root_path, class: "navbar-item is-size-4 has-text-weight-bold" %>
           <% if authenticated? %>
+            <div class="navbar-item search-container is-flex-grow-1" data-controller="search"
+                 data-action="click@window->search#hide">
+              <%= form_with url: search_reservations_path, method: :get,
+                    data: { turbo_frame: "search_results", search_target: "form" },
+                    class: "is-flex-grow-1" do %>
+                <input type="search" name="q" value="<%= params[:q] %>" autocomplete="off"
+                       class="input" placeholder="<%= t('searches.placeholder') %>"
+                       data-action="focus->search#open input->search#submit">
+                <div class="search-dropdown" data-search-target="dropdown">
+                  <label class="checkbox search-option">
+                    <input type="checkbox" name="include_past" value="1"
+                           data-action="change->search#submit">
+                    <%= t("searches.include_past") %>
+                  </label>
+                  <%= turbo_frame_tag "search_results" %>
+                </div>
+              <% end %>
+            </div>
             <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
                data-navbar-target="burger" data-action="navbar#toggle">
               <span aria-hidden="true"></span>
@@ -46,25 +64,12 @@
           </div>
           <div class="navbar-end">
             <% if authenticated? %>
-              <div class="navbar-item search-container" data-controller="search"
-                   data-action="click@window->search#hide">
-                <%= form_with url: search_reservations_path, method: :get,
-                      data: { turbo_frame: "search_results", search_target: "form" } do %>
-                  <div class="is-flex is-align-items-center">
-                    <input type="search" name="q" value="<%= params[:q] %>" autocomplete="off"
-                           class="input is-small mr-2" placeholder="<%= t('searches.placeholder') %>"
-                           data-action="input->search#submit focus->search#submit">
-                    <label class="checkbox is-size-7 has-text-white is-flex-shrink-0">
-                      <input type="checkbox" name="include_past" value="1"
-                             data-action="change->search#submit">
-                      <%= t("searches.include_past") %>
-                    </label>
-                  </div>
-                <% end %>
-                <%= turbo_frame_tag "search_results" %>
-              </div>
               <div class="navbar-item">
-                <span class="mr-3"><%= current_sys_manager.email_address %></span>
+                <figure class="image is-32x32 mr-3">
+                  <%= image_tag gravatar_url(current_sys_manager.email_address),
+                        class: "is-rounded", alt: current_sys_manager.email_address,
+                        title: current_sys_manager.email_address %>
+                </figure>
                 <%= button_to t("sessions.logout"), session_path, method: :delete, class: "button is-small is-light" %>
               </div>
             <% end %>

@@ -74,25 +74,11 @@
     </p>
   </div>
 
-  <div class="columns">
-    <div class="column is-one-third">
-      <div class="field">
-        <%= f.label :status, class: "label" %>
-        <div class="control">
-          <div class="select is-fullwidth">
-            <%= f.select :status, reservation_status_options %>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="column is-flex is-align-items-center">
-      <div class="field">
-        <div class="control">
-          <label class="checkbox">
-            <%= f.check_box :paid %>
-            <%= Reservation.human_attribute_name(:paid) %>
-          </label>
-        </div>
+  <div class="field">
+    <%= f.label :status, class: "label" %>
+    <div class="control">
+      <div class="select is-fullwidth">
+        <%= f.select :status, reservation_status_options %>
       </div>
     </div>
   </div>

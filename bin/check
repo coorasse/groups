@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+Dir.chdir(File.expand_path("..", __dir__))
+
+[
+  %w[bin/fastcheck],
+  %w[bundle exec rspec]
+].each do |command|
+  system(*command) || exit($?.exitstatus)
+end

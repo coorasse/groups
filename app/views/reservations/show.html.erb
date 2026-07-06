@@ -6,9 +6,6 @@
   <div class="level-left">
     <h1 class="title level-item"><%= @reservation.full_name %></h1>
     <span class="level-item"><%= reservation_status_tag(@reservation) %></span>
-    <span class="level-item">
-      <%= tag.span(t("reservations.paid.#{@reservation.paid?}"), class: "tag #{@reservation.paid? ? 'is-success' : 'is-warning'}") %>
-    </span>
   </div>
   <div class="level-right">
     <%= link_to t("actions.edit"), edit_event_group_reservation_path(@event, @group, @reservation), class: "button level-item" %>

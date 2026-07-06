@@ -13,7 +13,9 @@ class Event < ApplicationRecord
 
   has_many :groups, dependent: :destroy
   has_many :reservations, through: :groups
-  has_one_attached :image
+  has_one_attached :image do |attachable|
+    attachable.variant :header, resize_to_fill: [ 1200, 500 ]
+  end
 
   # Renders the event message template for a reservation. Supports the <TOKEN>
   # placeholders above and ERB control flow (e.g. `<% if numero_ragazzi > 0 %>`),

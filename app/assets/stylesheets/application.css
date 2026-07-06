@@ -24,30 +24,122 @@
   border-radius: 6px;
 }
 
-.event-thumb {
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
-  border-radius: 4px;
-  flex-shrink: 0;
+.event-card {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.15s ease;
+
+  &:hover {
+    box-shadow: 0 8px 16px rgba(10, 10, 10, 0.15);
+  }
+
+  .card-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* The whole card is clickable: the title link stretches over the card. */
+  .event-card-link {
+    color: inherit;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+    }
+  }
+
+  /* Actions sit above the stretched link so they stay clickable. */
+  .event-card-actions {
+    position: relative;
+    z-index: 1;
+    margin-top: auto;
+    padding-top: 1rem;
+  }
+}
+
+.confirmation-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  margin-bottom: 1rem;
+  border-radius: 50%;
+  background-color: var(--bulma-success-light, #eafff3);
+  color: var(--bulma-success, #48c78e);
+}
+
+.table-input {
+  width: 6rem;
+}
+
+.table-input-narrow {
+  width: 4rem;
+}
+
+.navbar {
+  position: relative;
+}
+
+@media screen and (min-width: 769px) {
+  .search-container {
+    min-width: 26rem;
+  }
+}
+
+/* On mobile the results overlay spans the full navbar width (edge to edge). */
+@media screen and (max-width: 768px) {
+  .navbar .search-container {
+    position: static;
+  }
+
+  .navbar .search-container .search-dropdown {
+    margin-top: 0;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+  }
 }
 
 .search-container {
   position: relative;
+  max-width: 34rem;
 
-  .search-panel {
+  .search-dropdown {
+    display: none;
     position: absolute;
     top: 100%;
+    left: 0;
     right: 0;
     z-index: 30;
     margin-top: 0.25rem;
-    min-width: 24rem;
-    max-height: 24rem;
-    overflow-y: auto;
     background-color: var(--bulma-scheme-main, #fff);
     border: 1px solid var(--bulma-border, #dbdbdb);
     border-radius: 6px;
     box-shadow: 0 8px 16px rgba(10, 10, 10, 0.1);
+    overflow: hidden;
+
+    &.is-active {
+      display: block;
+    }
+  }
+
+  .search-option {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--bulma-border-weak, #ededed);
+    color: var(--bulma-text, #363636);
+    font-size: 0.85rem;
+  }
+
+  #search_results {
+    display: block;
+    max-height: 20rem;
+    overflow-y: auto;
   }
 
   .search-result {
@@ -62,5 +154,16 @@
     & + .search-result {
       border-top: 1px solid var(--bulma-border-weak, #ededed);
     }
+  }
+}
+
+.reservation-slot-card {
+  display: block;
+  color: inherit;
+  transition: box-shadow 0.15s ease;
+
+  &:hover {
+    color: inherit;
+    box-shadow: 0 8px 16px rgba(10, 10, 10, 0.15);
   }
 }

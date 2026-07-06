@@ -2,6 +2,31 @@
 # development, test). The code here should be idempotent so that it can be executed at any point in every environment.
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
 #
+require "vips"
+
+# Generates a solid-color placeholder so events have something to show in the booking pages,
+# without depending on external image files or network access.
+def attach_placeholder_image(event, color:)
+  return if event.image.attached?
+
+  image = Vips::Image.black(1200, 675, bands: 3).linear([ 0, 0, 0 ], color)
+  event.image.attach(
+    io: StringIO.new(image.write_to_buffer(".png")),
+    filename: "#{event.title.parameterize}.png",
+    content_type: "image/png"
+  )
+end
+
+def attach_image(event, path)
+  return if event.image.attached?
+
+  event.image.attach(
+    io: File.open(path),
+    filename: File.basename(path),
+    content_type: "image/png"
+  )
+end
+
 [
   { email_address: "admin@example.com", password: "password" },
   { email_address: "manager@example.com", password: "password" }
@@ -36,6 +61,8 @@ museo = Event.find_or_create_by!(title: "Gita al museo") do |event|
   MESSAGE
 end
 
+attach_image(museo, Rails.root.join("app/assets/images/museo.png"))
+
 museo_group = museo.groups.first_or_create!(date: Date.current + 7, time: "10:30") do |group|
   group.status = :open
   group.notes = "Un bambino con intolleranza alimentare."
@@ -45,7 +72,6 @@ museo_group.reservations.find_or_create_by!(full_name: "Mario Rossi") do |reserv
   reservation.adults_count = 2
   reservation.kids_count = 3
   reservation.owned_adult_tickets = 1
-  reservation.paid = false
   reservation.status = :confirmed
   reservation.price_to_pay = nil
   reservation.phone = "+39 333 1234567"
@@ -57,8 +83,7 @@ museo_group.reservations.find_or_create_by!(full_name: "Anna Bianchi") do |reser
   reservation.adults_count = 1
   reservation.kids_count = 0
   reservation.owned_adult_tickets = 0
-  reservation.paid = true
-  reservation.status = :approved
+  reservation.status = :paid
   reservation.price_to_pay = 20
   reservation.phone = "+39 340 7654321"
   reservation.email = "anna.bianchi@example.com"
@@ -75,7 +100,7 @@ museo_group.reservations.find_or_create_by!(full_name: "Giulia Verdi") do |reser
   reservation.email = "giulia.verdi@example.com"
 end
 
-Event.find_or_create_by!(title: "Laboratorio di ceramica") do |event|
+ceramica = Event.find_or_create_by!(title: "Laboratorio di ceramica") do |event|
   event.adult_price = 40
   event.kid_price = 20
   event.adult_ticket_price = 24
@@ -85,6 +110,7 @@ Event.find_or_create_by!(title: "Laboratorio di ceramica") do |event|
   event.max_group_size = 6
   event.description = "Un laboratorio pratico di modellazione dell'argilla con un maestro ceramista. Materiali inclusi."
 end
+attach_placeholder_image(ceramica, color: [ 196, 106, 92 ])
 
 cimitero = Event.find_or_create_by!(title: "Visita guidata al cimitero monumentale") do |event|
   event.adult_price = 15
@@ -109,6 +135,8 @@ cimitero = Event.find_or_create_by!(title: "Visita guidata al cimitero monumenta
     E' attesa una conferma di lettura
   MESSAGE
 end
+
+attach_image(cimitero, Rails.root.join("app/assets/images/cimitero.png"))
 
 cimitero_group = cimitero.groups.first_or_create!(date: Date.current + 3, time: "20:30") do |group|
   group.status = :open

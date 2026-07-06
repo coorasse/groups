@@ -23,7 +23,12 @@ class ReservationsController < ApplicationController
   end
 
   def update
-    if @reservation.update(reservation_params)
+    saved = @reservation.update(reservation_params)
+
+    if inline_request?
+      flash[:alert] = @reservation.errors.full_messages.to_sentence unless saved
+      redirect_to event_group_path(@event, @group)
+    elsif saved
       redirect_to event_group_path(@event, @group), notice: t(".success")
     else
       render :edit, status: :unprocessable_entity
@@ -47,7 +52,7 @@ class ReservationsController < ApplicationController
   end
 
   def reservation_params
-    params.require(:reservation).permit(:full_name, :adults_count, :kids_count, :paid, :status,
+    params.require(:reservation).permit(:full_name, :adults_count, :kids_count, :status,
       :owned_adult_tickets, :price_to_pay, :phone, :email, :tax_code, :notes)
   end
 end

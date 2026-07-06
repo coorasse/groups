@@ -14,6 +14,24 @@ RSpec.describe GroupsController, type: :request do
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(event.title)
     end
+
+    it "renders the copy-message button when the event has a message template" do
+      event = create(:event, message_template: "Ciao <NOME_COMPLETO>")
+      group = create(:group, event: event)
+      reservation = create(:reservation, group: group)
+
+      get event_group_path(event, group)
+
+      expect(response.body).to include("Ciao #{reservation.full_name}")
+    end
+  end
+
+  describe "#new" do
+    it "renders the form" do
+      get new_event_group_path(event)
+
+      expect(response).to have_http_status(:ok)
+    end
   end
 
   describe "#create" do
@@ -46,12 +64,32 @@ RSpec.describe GroupsController, type: :request do
       expect(group.reload).to be_closed
     end
 
-    it "sets the net price inline" do
+    it "sets the net price inline and redirects so Turbo can morph" do
       group = create(:group, event: event)
 
-      patch event_group_path(event, group), params: { group: { net_price: "42.50" } }
+      patch event_group_path(event, group), params: { inline: "1", group: { net_price: "42.50" } }
 
+      expect(response).to redirect_to(event_group_path(event, group))
       expect(group.reload.net_price).to eq(42.50)
+    end
+
+    it "reverts and redirects with an alert when an inline edit is invalid" do
+      group = create(:group, event: event, net_price: 10)
+
+      patch event_group_path(event, group), params: { inline: "1", group: { net_price: "-5" } }
+
+      expect(response).to redirect_to(event_group_path(event, group))
+      expect(flash[:alert]).to be_present
+      expect(group.reload.net_price).to eq(10)
+    end
+
+    it "re-renders the form with invalid attributes" do
+      group = create(:group, event: event)
+
+      patch event_group_path(event, group), params: { group: { date: "" } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(group.reload.date).to be_present
     end
   end
 

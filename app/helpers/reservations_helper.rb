@@ -3,6 +3,7 @@ module ReservationsHelper
     "requested" => "is-warning",
     "approved" => "is-info",
     "confirmed" => "is-success",
+    "paid" => "is-primary",
     "cancelled" => "is-danger is-light"
   }.freeze
 
@@ -20,8 +21,6 @@ module ReservationsHelper
   end
 
   def to_process_tag(count)
-    return tag.span("—", class: "has-text-grey") if count.zero?
-
     tag.span(t("reservations.to_process", count: count), class: "tag is-warning")
   end
 

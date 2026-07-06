@@ -5,7 +5,6 @@ FactoryBot.define do
     adults_count { 2 }
     kids_count { 1 }
     owned_adult_tickets { 0 }
-    paid { false }
     price_to_pay { nil }
     phone { "+39 333 1234567" }
     email { "prenotante@example.com" }

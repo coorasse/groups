@@ -1,4 +1,8 @@
 <% content_for :title, "#{@event.title} — #{group_label(@group)}" %>
+<% content_for :head do %>
+  <meta name="turbo-refresh-method" content="morph">
+  <meta name="turbo-refresh-scroll" content="preserve">
+<% end %>
 
 <p class="is-size-7 has-text-grey">
   <%= link_to t("events.index.title"), events_path %> ›
@@ -8,7 +12,6 @@
 <div class="level">
   <div class="level-left">
     <h1 class="title level-item"><%= @event.title %> — <%= group_label(@group) %></h1>
-    <span class="level-item"><%= group_status_tag(@group) %></span>
   </div>
   <div class="level-right">
     <%= link_to t("actions.edit"), edit_event_group_path(@event, @group), class: "button level-item" %>
@@ -33,34 +36,44 @@
     <p class="is-size-7 has-text-grey has-text-weight-normal"><%= t(".max_indicative", count: @event.max_group_size) %></p>
   <% end %>
 
-  <%= stat_card(t(".computed_price")) { number_to_currency(@group.computed_price) } %>
-
-  <%= stat_card(t(".total_price")) { number_to_currency(@group.total_price) } %>
-
-  <div class="column is-one-quarter">
-    <%= turbo_frame_tag "group_net_price_frame" do %>
-      <div class="box has-text-centered">
-        <p class="heading"><%= Group.human_attribute_name(:net_price) %></p>
-        <p class="is-size-5 has-text-weight-bold mb-2">
-          <%= @group.net_price.present? ? number_to_currency(@group.net_price) : "—" %>
-        </p>
-        <%= form_with model: [@event, @group], class: "field has-addons has-addons-centered mb-0" do |f| %>
-          <div class="control">
-            <%= f.number_field :net_price, step: :any, min: 0, class: "input is-small", placeholder: number_to_currency(0) %>
-          </div>
-          <div class="control">
-            <%= f.submit t(".save_net_price"), class: "button is-small is-primary" %>
-          </div>
-        <% end %>
-      </div>
+  <div class="column is-half">
+    <%= card(title: t(".prices")) do %>
+      <table class="table is-fullwidth mb-0">
+        <tbody>
+          <tr>
+            <th><%= t(".computed_price") %></th>
+            <td class="has-text-right"><%= number_to_currency(@group.computed_price) %></td>
+          </tr>
+          <tr>
+            <th><%= t(".total_price") %></th>
+            <td class="has-text-right"><%= number_to_currency(@group.total_price) %></td>
+          </tr>
+          <tr>
+            <th><%= t(".price_difference") %></th>
+            <td class="has-text-right"><%= price_difference_tag(@group.price_difference) %></td>
+          </tr>
+          <tr>
+            <th><%= Group.human_attribute_name(:net_price) %></th>
+            <td>
+              <%= form_with model: [@event, @group], class: "field has-addons is-justify-content-flex-end mb-0" do |f| %>
+                <%= hidden_field_tag :inline, "1" %>
+                <div class="control">
+                  <%= f.number_field :net_price, step: :any, min: 0, class: "input is-small has-text-right table-input", placeholder: number_to_currency(0) %>
+                </div>
+                <div class="control">
+                  <%= f.submit t(".save_net_price"), class: "button is-small is-primary" %>
+                </div>
+              <% end %>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     <% end %>
   </div>
 
-  <%= stat_card(t(".price_difference")) { price_difference_tag(@group.price_difference) } %>
-
   <%= stat_card(t(".reservations"), column_class: "is-half") do %>
     <div class="tags is-justify-content-center mb-0">
-      <% %w[confirmed approved requested].each do |status| %>
+      <% %w[requested approved confirmed paid].each do |status| %>
         <%= reservation_status_count_tag(status, @group.people_count_for(status)) %>
       <% end %>
     </div>
@@ -68,91 +81,86 @@
 
   <% if @group.notes.present? %>
     <div class="column is-full">
-      <div class="box">
-        <p class="heading"><%= Group.human_attribute_name(:notes) %></p>
+      <%= card(title: Group.human_attribute_name(:notes)) do %>
         <%= simple_format @group.notes %>
-      </div>
+      <% end %>
     </div>
   <% end %>
 </div>
 
-<%= turbo_frame_tag "group_reservations" do %>
-  <div class="level">
-    <div class="level-left">
-      <h2 class="subtitle level-item mb-0"><%= t(".reservations") %></h2>
-    </div>
-    <div class="level-right">
-      <%= link_to t(".new_reservation"), new_event_group_reservation_path(@event, @group),
-            class: "button is-primary level-item", data: { turbo_frame: "_top" } %>
-    </div>
+<div class="level">
+  <div class="level-left">
+    <h2 class="subtitle level-item mb-0"><%= t(".reservations") %></h2>
   </div>
+  <div class="level-right">
+    <%= link_to t(".new_reservation"), new_event_group_reservation_path(@event, @group),
+          class: "button is-primary level-item" %>
+  </div>
+</div>
 
-  <% if @reservations.any? %>
-    <div class="table-container">
-      <table class="table is-fullwidth is-hoverable">
-        <thead>
-          <tr>
-            <th><%= Reservation.human_attribute_name(:full_name) %></th>
-            <th><%= Reservation.human_attribute_name(:status) %></th>
-            <th><%= Reservation.human_attribute_name(:adults_count) %></th>
-            <th><%= Reservation.human_attribute_name(:kids_count) %></th>
-            <th><%= t(".tickets_to_buy") %></th>
-            <th><%= Reservation.human_attribute_name(:price_to_pay) %></th>
-            <th><%= t(".price_difference") %></th>
-            <th><%= Reservation.human_attribute_name(:paid) %></th>
-            <th></th>
+<% if @reservations.any? %>
+  <div class="table-container">
+    <table class="table is-fullwidth is-hoverable">
+      <thead>
+        <tr>
+          <th><%= Reservation.human_attribute_name(:full_name) %></th>
+          <th><%= Reservation.human_attribute_name(:status) %></th>
+          <th><%= t(".adults_short") %></th>
+          <th><%= t(".kids_short") %></th>
+          <th><%= t(".tickets_to_buy") %></th>
+          <th><%= Reservation.human_attribute_name(:price_to_pay) %></th>
+          <th><%= t(".price_difference") %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @reservations.each do |reservation| %>
+          <tr id="<%= dom_id(reservation) %>" class="<%= "has-text-grey" if reservation.cancelled? %>">
+            <td><%= link_to reservation.full_name, event_group_reservation_path(@event, @group, reservation) %></td>
+            <td>
+              <%= form_with model: [@event, @group, reservation], data: { controller: "autosubmit" } do |f| %>
+                <%= hidden_field_tag :inline, "1" %>
+                <div class="select is-small">
+                  <%= f.select :status, reservation_status_options, {}, data: { action: "change->autosubmit#submit" } %>
+                </div>
+              <% end %>
+            </td>
+            <td><%= render "reservations/inline_number", event: @event, group: @group, reservation: reservation, field: :adults_count, narrow: true %></td>
+            <td><%= render "reservations/inline_number", event: @event, group: @group, reservation: reservation, field: :kids_count, narrow: true %></td>
+            <td><%= reservation.adult_tickets_to_buy %></td>
+            <td><%= render "reservations/inline_number", event: @event, group: @group, reservation: reservation, field: :price_to_pay, step: "any" %></td>
+            <td><%= price_difference_tag(reservation.price_difference) %></td>
+            <td class="has-text-right">
+              <% if @event.message_template.present? %>
+                <button type="button" class="button is-small mb-1"
+                        data-controller="clipboard"
+                        data-clipboard-text-value="<%= reservation_message(reservation) %>"
+                        data-clipboard-copied-label-value="<%= t(".message_copied") %>"
+                        data-action="clipboard#copy">
+                  <%= t(".copy_message") %>
+                </button>
+              <% end %>
+              <%= link_to t("actions.edit"), edit_event_group_reservation_path(@event, @group, reservation), class: "button is-small" %>
+              <%= button_to t("actions.destroy"), event_group_reservation_path(@event, @group, reservation), method: :delete,
+                    class: "button is-small is-danger is-light",
+                    form: { data: { turbo_confirm: t("actions.confirm") } } %>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          <% @reservations.each do |reservation| %>
+          <% if reservation.notes.present? %>
             <tr class="<%= "has-text-grey" if reservation.cancelled? %>">
-              <td><%= link_to reservation.full_name, event_group_reservation_path(@event, @group, reservation), data: { turbo_frame: "_top" } %></td>
-              <td>
-                <%= form_with model: [@event, @group, reservation], data: { controller: "autosubmit" } do |f| %>
-                  <div class="select is-small">
-                    <%= f.select :status, reservation_status_options, {}, data: { action: "change->autosubmit#submit" } %>
-                  </div>
-                <% end %>
-              </td>
-              <td><%= reservation.adults_count %></td>
-              <td><%= reservation.kids_count %></td>
-              <td><%= reservation.adult_tickets_to_buy %></td>
-              <td><%= number_to_currency(reservation.price_to_pay) %></td>
-              <td><%= price_difference_tag(reservation.price_difference) %></td>
-              <td><%= tag.span(t("reservations.paid.#{reservation.paid?}"), class: "tag #{reservation.paid? ? 'is-success' : 'is-warning'}") %></td>
-              <td class="has-text-right">
-                <% if @event.message_template.present? %>
-                  <button type="button" class="button is-small mb-1"
-                          data-controller="clipboard"
-                          data-clipboard-text-value="<%= reservation_message(reservation) %>"
-                          data-clipboard-copied-label-value="<%= t(".message_copied") %>"
-                          data-action="clipboard#copy">
-                    <%= t(".copy_message") %>
-                  </button>
-                <% end %>
-                <%= link_to t("actions.edit"), edit_event_group_reservation_path(@event, @group, reservation),
-                      class: "button is-small", data: { turbo_frame: "_top" } %>
-                <%= button_to t("actions.destroy"), event_group_reservation_path(@event, @group, reservation), method: :delete,
-                      class: "button is-small is-danger is-light",
-                      form: { data: { turbo_confirm: t("actions.confirm") } } %>
+              <td></td>
+              <td colspan="7" class="pt-0">
+                <span class="has-text-grey is-size-7"><%= Reservation.human_attribute_name(:notes) %>:</span>
+                <span class="is-size-7"><%= reservation.notes %></span>
               </td>
             </tr>
-            <% if reservation.notes.present? %>
-              <tr class="<%= "has-text-grey" if reservation.cancelled? %>">
-                <td></td>
-                <td colspan="8" class="pt-0">
-                  <span class="has-text-grey is-size-7"><%= Reservation.human_attribute_name(:notes) %>:</span>
-                  <span class="is-size-7"><%= reservation.notes %></span>
-                </td>
-              </tr>
-            <% end %>
           <% end %>
-        </tbody>
-      </table>
-    </div>
-  <% else %>
-    <div class="notification is-light">
-      <%= t(".no_reservations") %>
-    </div>
-  <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="notification is-light">
+    <%= t(".no_reservations") %>
+  </div>
 <% end %>

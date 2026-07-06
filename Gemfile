@@ -58,4 +58,13 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+
+  # Capture emails in the database instead of sending them (viewable at /letter_thief)
+  gem "letter_thief"
+  # Required by letter_thief to open captured emails in the browser
+  gem "launchy"
+end
+
+group :test do
+  gem "simplecov", require: false
 end

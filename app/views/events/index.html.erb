@@ -1,4 +1,7 @@
 <% content_for :title, t(".title") %>
+<% content_for :head do %>
+  <meta name="turbo-cache-control" content="no-cache">
+<% end %>
 
 <div class="level">
   <div class="level-left">
@@ -17,53 +20,55 @@
 <% end %>
 
 <% if @events.any? %>
-  <div class="table-container">
-    <table class="table is-fullwidth is-hoverable">
-      <thead>
-        <tr>
-          <th><%= Event.human_attribute_name(:title) %></th>
-          <th><%= t(".adults") %></th>
-          <th><%= t(".kids") %></th>
-          <th><%= Event.human_attribute_name(:max_group_size) %></th>
-          <th><%= t(".groups_count") %></th>
-          <th><%= t(".to_process") %></th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @events.each do |event| %>
-          <tr>
-            <td>
-              <div class="is-flex is-align-items-center">
-                <% if event.image.attached? %>
-                  <%= image_tag event.image.variant(resize_to_fill: [40, 40]), class: "event-thumb mr-2" %>
-                <% end %>
-                <%= link_to event.title, event %>
-              </div>
-            </td>
-            <td>
-              <%= number_to_currency(event.adult_price) %>
-              <br>
-              <small class="has-text-grey"><%= t(".ticket") %> <%= number_to_currency(event.adult_ticket_price) %></small>
-            </td>
-            <td>
-              <%= number_to_currency(event.kid_price) %>
-              <br>
-              <small class="has-text-grey"><%= t(".ticket") %> <%= number_to_currency(event.kid_ticket_price) %></small>
-            </td>
-            <td><%= event.max_group_size %></td>
-            <td><%= event.groups.count %></td>
-            <td><%= to_process_tag(@requested_counts.fetch(event.id, 0)) %></td>
-            <td class="has-text-right">
+  <div class="columns is-multiline">
+    <% @events.each do |event| %>
+      <% requested_count = @requested_counts.fetch(event.id, 0) %>
+      <div class="column is-half-tablet is-one-third-desktop">
+        <div class="card event-card">
+          <% if event.image.attached? %>
+            <div class="card-image">
+              <figure class="image is-16by9">
+                <%= image_tag event.image.variant(resize_to_fill: [640, 360]), class: "has-ratio" %>
+              </figure>
+            </div>
+          <% end %>
+          <div class="card-content">
+            <div class="is-flex is-justify-content-space-between is-align-items-flex-start mb-3">
+              <h2 class="title is-5 mb-0">
+                <%= link_to event.title, event, class: "event-card-link" %>
+              </h2>
+              <%= to_process_tag(requested_count) if requested_count.positive? %>
+            </div>
+            <div class="content is-small mb-0">
+              <p class="mb-1">
+                <strong><%= t(".adults") %>:</strong>
+                <%= number_to_currency(event.adult_price) %>
+                <span class="has-text-grey">· <%= t(".ticket") %> <%= number_to_currency(event.adult_ticket_price) %></span>
+              </p>
+              <p class="mb-1">
+                <strong><%= t(".kids") %>:</strong>
+                <%= number_to_currency(event.kid_price) %>
+                <span class="has-text-grey">· <%= t(".ticket") %> <%= number_to_currency(event.kid_ticket_price) %></span>
+              </p>
+              <p class="mb-1">
+                <strong><%= Event.human_attribute_name(:max_group_size) %>:</strong>
+                <%= event.max_group_size %>
+              </p>
+              <p class="mb-1">
+                <strong><%= t(".groups_count") %>:</strong>
+                <%= event.groups.count %>
+              </p>
+            </div>
+            <div class="buttons event-card-actions mb-0">
               <%= link_to t("actions.edit"), edit_event_path(event), class: "button is-small" %>
               <%= button_to t("actions.destroy"), event, method: :delete,
                     class: "button is-small is-danger is-light",
                     form: { data: { turbo_confirm: t("actions.confirm") } } %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
   </div>
 <% else %>
   <div class="notification is-light">

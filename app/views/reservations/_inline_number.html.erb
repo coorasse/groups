@@ -1,0 +1,8 @@
+<% step = local_assigns.fetch(:step, 1) %>
+<% width_class = local_assigns[:narrow] ? "table-input-narrow" : "table-input" %>
+<%= form_with model: [event, group, reservation], data: { controller: "autosubmit" } do |f| %>
+  <%= hidden_field_tag :inline, "1" %>
+  <%= f.number_field field, min: 0, step: step, class: "input is-small #{width_class}",
+        id: "#{dom_id(reservation)}_#{field}",
+        data: { action: "change->autosubmit#submit" } %>
+<% end %>

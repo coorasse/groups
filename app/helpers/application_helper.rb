@@ -8,15 +8,24 @@ module ApplicationHelper
     FLASH_CSS_CLASSES.fetch(type.to_s, "is-info")
   end
 
-  def stat_card(label, column_class: "is-one-quarter", &block)
-    tag.div(class: "column #{column_class}") do
-      tag.div(class: "box has-text-centered") do
-        safe_join([
-          tag.p(label, class: "heading"),
-          tag.div(capture(&block), class: "is-size-5 has-text-weight-bold")
-        ])
-      end
+  # Unified card used across the site. Renders a Bulma box with an optional
+  # label (heading). Pass the content as a block or via `body:`.
+  def card(title: nil, centered: false, body: nil, &block)
+    content = body || capture(&block)
+    tag.div(class: class_names("box", "has-text-centered" => centered)) do
+      safe_join([ (tag.p(title, class: "heading") if title), content ].compact)
     end
+  end
+
+  # A card showing a single value under its label, wrapped in a Bulma column.
+  def stat_card(label, column_class: "is-one-quarter", &block)
+    value = tag.div(capture(&block), class: "is-size-5 has-text-weight-bold")
+    tag.div(class: "column #{column_class}") { card(title: label, centered: true, body: value) }
+  end
+
+  def gravatar_url(email_address, size: 64)
+    digest = Digest::MD5.hexdigest(email_address.strip.downcase)
+    "https://www.gravatar.com/avatar/#{digest}?s=#{size}&d=robohash"
   end
 
   def price_difference_tag(difference)

@@ -24,7 +24,12 @@ class GroupsController < ApplicationController
   end
 
   def update
-    if @group.update(group_params)
+    saved = @group.update(group_params)
+
+    if inline_request?
+      flash[:alert] = @group.errors.full_messages.to_sentence unless saved
+      redirect_to event_group_path(@event, @group)
+    elsif saved
       redirect_to event_group_path(@event, @group), notice: t(".success")
     else
       render :edit, status: :unprocessable_entity

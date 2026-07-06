@@ -1,19 +1,17 @@
 <%= turbo_frame_tag "search_results" do %>
   <% if @query.present? %>
-    <div class="search-panel">
-      <% if @reservations.any? %>
-        <% @reservations.each do |reservation| %>
-          <%= link_to event_group_reservation_path(reservation.group.event, reservation.group, reservation),
-                class: "search-result", data: { turbo_frame: "_top" } do %>
-            <p class="has-text-weight-semibold"><%= reservation.full_name %></p>
-            <p class="is-size-7 has-text-grey">
-              <%= reservation.group.event.title %> · <%= group_label(reservation.group) %>
-            </p>
-          <% end %>
+    <% if @reservations.any? %>
+      <% @reservations.each do |reservation| %>
+        <%= link_to event_group_reservation_path(reservation.group.event, reservation.group, reservation),
+              class: "search-result", data: { turbo_frame: "_top" } do %>
+          <p class="has-text-weight-semibold"><%= reservation.full_name %></p>
+          <p class="is-size-7 has-text-grey">
+            <%= reservation.group.event.title %> · <%= group_label(reservation.group) %>
+          </p>
         <% end %>
-      <% else %>
-        <p class="p-3 has-text-grey"><%= t("searches.no_results") %></p>
       <% end %>
-    </div>
+    <% else %>
+      <p class="p-3 has-text-grey"><%= t("searches.no_results") %></p>
+    <% end %>
   <% end %>
 <% end %>

@@ -81,6 +81,12 @@ RSpec.describe Event do
     it "returns an empty string when no template is set" do
       expect(build(:event, message_template: nil).message_for(**vars)).to eq("")
     end
+
+    it "falls back to plain token replacement when the ERB is broken" do
+      event = build(:event, message_template: "Ciao <NOME_COMPLETO><% if variabile_inesistente %>!<% end %>")
+
+      expect(event.message_for(**vars)).to include("Ciao Mario")
+    end
   end
 
   it "counts requested reservations across its groups" do

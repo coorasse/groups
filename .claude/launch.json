@@ -4,8 +4,9 @@
     {
       "name": "rails",
       "runtimeExecutable": "bin/rails",
-      "runtimeArgs": ["server", "-p", "3002"],
-      "port": 3002
+      "runtimeArgs": ["server", "-P", "tmp/pids/preview-server.pid"],
+      "port": 3002,
+      "autoPort": true
     }
   ]
 }
