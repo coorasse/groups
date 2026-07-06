@@ -16,7 +16,7 @@ RSpec.describe GroupsController, type: :request do
     end
 
     it "renders the copy-message button when the event has a message template" do
-      event = create(:event, message_template: "Ciao <NOME_COMPLETO>")
+      event = create(:event, message_template: "Ciao <%= nome_completo %>")
       group = create(:group, event: event)
       reservation = create(:reservation, group: group)
 

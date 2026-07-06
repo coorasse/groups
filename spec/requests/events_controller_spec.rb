@@ -105,12 +105,12 @@ RSpec.describe EventsController, type: :request do
     it "attaches an image and stores the description and message template" do
       image = Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/event.png"), "image/png")
       attributes = attributes_for(:event).merge(description: "Una gita fantastica",
-        message_template: "Salve <NOME_COMPLETO>", image: image)
+        message_template: "Salve <%= nome_completo %>", image: image)
 
       post events_path, params: { event: attributes }
 
       expect(Event.last.description).to eq("Una gita fantastica")
-      expect(Event.last.message_template).to eq("Salve <NOME_COMPLETO>")
+      expect(Event.last.message_template).to eq("Salve <%= nome_completo %>")
       expect(Event.last.image).to be_attached
     end
   end

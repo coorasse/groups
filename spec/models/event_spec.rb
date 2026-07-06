@@ -55,7 +55,7 @@ RSpec.describe Event do
 
   describe "#message_for" do
     let(:event) do
-      build(:event, message_template: "Ciao <NOME_COMPLETO> per <TITOLO_EVENTO><% if numero_ragazzi > 0 %> con <NUMERO_RAGAZZI> ragazzi<% end %>. Importo <IMPORTO_TOTALE>")
+      build(:event, message_template: "Ciao <%= nome_completo %> per <%= titolo_evento %><% if numero_ragazzi > 0 %> con <%= numero_ragazzi %> ragazzi<% end %>. Importo <%= importo_totale %>")
     end
 
     let(:vars) do
@@ -63,7 +63,7 @@ RSpec.describe Event do
         numero_adulti: 2, numero_ragazzi: 1, importo_totale: "45,00 €" }
     end
 
-    it "replaces the tokens with the provided values" do
+    it "interpolates the variables with the provided values" do
       result = event.message_for(**vars)
 
       expect(result).to include("Ciao Mario per Gita")
@@ -82,10 +82,10 @@ RSpec.describe Event do
       expect(build(:event, message_template: nil).message_for(**vars)).to eq("")
     end
 
-    it "falls back to plain token replacement when the ERB is broken" do
-      event = build(:event, message_template: "Ciao <NOME_COMPLETO><% if variabile_inesistente %>!<% end %>")
+    it "falls back to the raw template when the ERB is broken" do
+      event = build(:event, message_template: "Ciao <%= nome_completo %><% if %>")
 
-      expect(event.message_for(**vars)).to include("Ciao Mario")
+      expect(event.message_for(**vars)).to eq("Ciao <%= nome_completo %><% if %>")
     end
   end
 

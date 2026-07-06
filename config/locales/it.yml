@@ -146,7 +146,22 @@ it:
       adults: "Adulti"
       kids: "Ragazzi"
       public_hint: "Utilizzata per abbellire la pagina pubblica di prenotazione."
-      message_hint: "Token disponibili: <NOME_COMPLETO>, <TITOLO_EVENTO>, <DATA_ORA_GRUPPO>, <NUMERO_ADULTI>, <NUMERO_RAGAZZI>, <IMPORTO_TOTALE>. Puoi usare ERB per le parti condizionali, es. <% if numero_ragazzi > 0 %> … <% end %>."
+      message_intro_html: "Il messaggio è un template <strong>ERB</strong>: usa <code>&lt;%= variabile %&gt;</code> per inserire un valore e <code>&lt;% ... %&gt;</code> per la logica condizionale."
+      message_variables_title: "Variabili disponibili"
+      message_variables:
+        nome_completo: "Nome e cognome di chi prenota"
+        titolo_evento: "Titolo dell'evento"
+        data_ora_gruppo: "Data e ora del gruppo prenotato"
+        numero_adulti: "Numero di adulti"
+        numero_ragazzi: "Numero di ragazzi"
+        importo_totale: "Importo totale da pagare"
+      message_example_title: "Esempio"
+      message_example: |-
+        Salve <%= nome_completo %>,
+        Le confermo la prenotazione per <%= titolo_evento %> per
+        <%= data_ora_gruppo %>.
+        Numero Adulti: <%= numero_adulti %><% if numero_ragazzi > 0 %>, Ragazzi: <%= numero_ragazzi %><% end %>
+        Importo: <%= importo_totale %>
     show:
       groups: "Gruppi"
       new_group: "Nuovo gruppo"

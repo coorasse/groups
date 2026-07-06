@@ -80,7 +80,22 @@
     <div class="control">
       <%= f.text_area :message_template, rows: 12, class: "textarea is-family-monospace" %>
     </div>
-    <p class="help"><%= t(".message_hint") %></p>
+    <div class="message-template-help">
+      <p class="help"><%= t(".message_intro_html") %></p>
+
+      <p class="help has-text-weight-semibold mt-3"><%= t(".message_variables_title") %></p>
+      <ul class="message-variables">
+        <% Event::MESSAGE_VARIABLES.each do |variable| %>
+          <li>
+            <code class="erb-output">&lt;%= <%= variable %> %&gt;</code>
+            <span><%= t(variable, scope: "events.form.message_variables") %></span>
+          </li>
+        <% end %>
+      </ul>
+
+      <p class="help has-text-weight-semibold mt-3"><%= t(".message_example_title") %></p>
+      <pre class="erb-code"><%= highlight_erb(t(".message_example")) %></pre>
+    </div>
   </div>
 
   <div class="field">
