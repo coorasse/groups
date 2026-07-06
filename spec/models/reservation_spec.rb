@@ -53,6 +53,13 @@ RSpec.describe Reservation do
 
       expect(reservation.valid?(:public_booking)).to be(true)
     end
+
+    it "treats a blank kids count as zero" do
+      reservation = build(:reservation, adults_count: 2, kids_count: "", phone: "123", data_processing_authorized: true)
+
+      expect(reservation.valid?(:public_booking)).to be(true)
+      expect(reservation.kids_count).to eq(0)
+    end
   end
 
   it "requires a full name" do

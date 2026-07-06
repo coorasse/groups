@@ -11,7 +11,9 @@
       </section>
       <footer class="modal-card-foot buttons">
         <% if @reservation_to_confirm.email.present? %>
-          <%= link_to t("reservations.confirmation_modal.send_email"), reservation_confirmation_mailto(@reservation_to_confirm),
+          <% event = @reservation_to_confirm.group.event %>
+          <%= button_to t("reservations.confirmation_modal.send_email"),
+                event_group_reservation_confirmation_email_path(event, @reservation_to_confirm.group, @reservation_to_confirm),
                 class: "button is-primary" %>
         <% else %>
           <span class="button is-primary" disabled><%= t("reservations.confirmation_modal.send_email") %></span>

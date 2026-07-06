@@ -13,7 +13,9 @@ Rails.application.routes.draw do
 
   resources :events do
     resources :groups, except: :index do
-      resources :reservations, except: :index
+      resources :reservations, except: :index do
+        resource :confirmation_email, only: :create, controller: "reservations/confirmation_emails"
+      end
     end
   end
 

@@ -238,11 +238,14 @@ it:
     confirmation_modal:
       title: "Prenotazione approvata"
       body: "Ricordati di inviare il messaggio di conferma a %{name}."
-      email_subject: "Conferma prenotazione — %{event}"
       send_email: "Invia Email"
       copy: "Copia negli appunti"
       copied: "Copiato!"
       ok: "OK"
+    confirmation_emails:
+      create:
+        success: "Email di conferma inviata."
+        no_email: "Questa prenotazione non ha un indirizzo email."
     new:
       title: "Nuova prenotazione"
     edit:
@@ -277,6 +280,8 @@ it:
         total: "Totale indicativo"
       outro: "Nelle prossime ore ti contatteremo per confermare la disponibilità. Se qualche dato non è corretto, puoi rispondere direttamente a questa email."
       signature: "A presto, Lisa Rodi – Guida Turistica Romagna"
+    approval_confirmation:
+      subject: "Conferma prenotazione – %{event}"
 
   searches:
     placeholder: "Cerca prenotazione…"

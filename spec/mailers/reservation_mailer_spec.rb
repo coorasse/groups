@@ -17,4 +17,18 @@ RSpec.describe ReservationMailer do
       expect(mail.body.encoded).to include("10:30")
     end
   end
+
+  describe "#approval_confirmation" do
+    it "sends the event's message template to the person who booked" do
+      event = create(:event, title: "Tour del centro storico", message_template: "Ciao <%= nome_completo %>!")
+      group = create(:group, event: event)
+      reservation = create(:reservation, group: group, full_name: "Mario Rossi", email: "mario@example.com")
+
+      mail = described_class.approval_confirmation(reservation)
+
+      expect(mail.to).to eq([ "mario@example.com" ])
+      expect(mail.subject).to include("Tour del centro storico")
+      expect(mail.body.encoded).to include("Ciao Mario Rossi!")
+    end
+  end
 end

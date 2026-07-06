@@ -36,11 +36,6 @@ module ReservationsHelper
     )
   end
 
-  def reservation_confirmation_mailto(reservation)
-    subject = t("reservations.confirmation_modal.email_subject", event: reservation.group.event.title)
-    "mailto:#{reservation.email}?subject=#{ERB::Util.url_encode(subject)}&body=#{ERB::Util.url_encode(reservation_message(reservation))}"
-  end
-
   def reservation_status_count_tag(status, count)
     tag.span(class: "tag #{STATUS_TAG_CLASSES.fetch(status)}") do
       safe_join([ reservation_status_label(status), tag.strong(count) ], ": ")

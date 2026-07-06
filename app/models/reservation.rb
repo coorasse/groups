@@ -5,11 +5,10 @@ class Reservation < ApplicationRecord
 
   scope :active, -> { where.not(status: :cancelled) }
 
+  before_validation :normalize_kids_count
   before_validation :set_price_to_pay
 
   validates :full_name, presence: true
-  normalizes :kids_count, with: ->(value) { value.presence || 0 }, apply_to_nil: true
-
   validates :adults_count, :kids_count, :owned_adult_tickets,
             numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :adults_count, numericality: { greater_than_or_equal_to: 1, less_than_or_equal_to: 100 }, on: :public_booking
@@ -48,6 +47,11 @@ class Reservation < ApplicationRecord
   end
 
   private
+
+  # Kids count is optional on the public form: a blank value means "no kids".
+  def normalize_kids_count
+    self.kids_count = 0 if kids_count_before_type_cast.blank?
+  end
 
   # The price is computed automatically when it is blank, and it is always
   # recomputed (overwriting any manual value) when the adults or kids count of an
