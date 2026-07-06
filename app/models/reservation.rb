@@ -49,7 +49,7 @@ class Reservation < ApplicationRecord
 
   # The price is computed automatically when it is blank, and it is always
   # recomputed (overwriting any manual value) when the adults or kids count of an
-  # existing reservation changes — e.g. when edited inline from the table.
+  # existing reservation changes - e.g. when edited inline from the table.
   def set_price_to_pay
     return unless price_to_pay.blank? || (persisted? && (adults_count_changed? || kids_count_changed?))
 

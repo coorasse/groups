@@ -233,6 +233,14 @@ it:
       confirmed: "Confermata"
       paid: "Pagata"
       cancelled: "Annullata"
+    confirmation_modal:
+      title: "Prenotazione approvata"
+      body: "Ricordati di inviare il messaggio di conferma a %{name}."
+      email_subject: "Conferma prenotazione — %{event}"
+      send_email: "Invia Email"
+      copy: "Copia negli appunti"
+      copied: "Copiato!"
+      ok: "OK"
     new:
       title: "Nuova prenotazione"
     edit:

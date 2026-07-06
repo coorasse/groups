@@ -24,7 +24,7 @@ class Event < ApplicationRecord
     return "" if message_template.blank?
 
     ERB.new(message_template, trim_mode: "-").result_with_hash(vars)
-  rescue StandardError
+  rescue StandardError, SyntaxError
     message_template
   end
 

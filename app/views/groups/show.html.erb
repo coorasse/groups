@@ -1,4 +1,4 @@
-<% content_for :title, "#{@event.title} — #{group_label(@group)}" %>
+<% content_for :title, "#{@event.title} - #{group_label(@group)}" %>
 <% content_for :head do %>
   <meta name="turbo-refresh-method" content="morph">
   <meta name="turbo-refresh-scroll" content="preserve">
@@ -11,7 +11,7 @@
 
 <div class="level">
   <div class="level-left">
-    <h1 class="title level-item"><%= @event.title %> — <%= group_label(@group) %></h1>
+    <h1 class="title level-item"><%= @event.title %> - <%= group_label(@group) %></h1>
   </div>
   <div class="level-right">
     <%= link_to t("actions.edit"), edit_event_group_path(@event, @group), class: "button level-item" %>

@@ -1,0 +1,31 @@
+<% if @reservation_to_confirm %>
+  <div class="modal is-active" data-controller="modal">
+    <div class="modal-background" data-action="click->modal#close"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title"><%= t("reservations.confirmation_modal.title") %></p>
+        <button type="button" class="delete" aria-label="close" data-action="click->modal#close"></button>
+      </header>
+      <section class="modal-card-body">
+        <p><%= t("reservations.confirmation_modal.body", name: @reservation_to_confirm.full_name) %></p>
+      </section>
+      <footer class="modal-card-foot buttons">
+        <% if @reservation_to_confirm.email.present? %>
+          <%= link_to t("reservations.confirmation_modal.send_email"), reservation_confirmation_mailto(@reservation_to_confirm),
+                class: "button is-primary" %>
+        <% else %>
+          <span class="button is-primary" disabled><%= t("reservations.confirmation_modal.send_email") %></span>
+        <% end %>
+        <button type="button" class="button" data-controller="clipboard"
+                data-clipboard-text-value="<%= reservation_message(@reservation_to_confirm) %>"
+                data-clipboard-copied-label-value="<%= t("reservations.confirmation_modal.copied") %>"
+                data-action="clipboard#copy">
+          <%= t("reservations.confirmation_modal.copy") %>
+        </button>
+        <button type="button" class="button" data-action="click->modal#close">
+          <%= t("reservations.confirmation_modal.ok") %>
+        </button>
+      </footer>
+    </div>
+  </div>
+<% end %>

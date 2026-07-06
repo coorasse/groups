@@ -118,6 +118,35 @@ RSpec.describe ReservationsController, type: :request do
       expect(flash[:alert]).to be_present
       expect(reservation.reload.adults_count).to eq(2)
     end
+
+    it "shows the confirmation reminder modal after approving a request" do
+      reservation = create(:reservation, group: group, status: :requested)
+
+      patch event_group_reservation_path(event, group, reservation), params: { reservation: { status: "approved" } }
+      follow_redirect!
+
+      expect(response.body).to include(I18n.t("reservations.confirmation_modal.title"))
+      expect(response.body).to include(reservation.full_name)
+    end
+
+    it "shows the confirmation reminder modal after approving a request inline" do
+      reservation = create(:reservation, group: group, status: :requested)
+
+      patch event_group_reservation_path(event, group, reservation),
+        params: { inline: "1", reservation: { status: "approved" } }
+      follow_redirect!
+
+      expect(response.body).to include(I18n.t("reservations.confirmation_modal.title"))
+    end
+
+    it "does not show the confirmation reminder modal for other status changes" do
+      reservation = create(:reservation, group: group, status: :approved)
+
+      patch event_group_reservation_path(event, group, reservation), params: { reservation: { status: "paid" } }
+      follow_redirect!
+
+      expect(response.body).not_to include(I18n.t("reservations.confirmation_modal.title"))
+    end
   end
 
   describe "#destroy" do

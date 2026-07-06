@@ -29,7 +29,7 @@ module ApplicationHelper
   end
 
   def price_difference_tag(difference)
-    return tag.span("—", class: "has-text-grey") if difference.zero?
+    return tag.span("-", class: "has-text-grey") if difference.zero?
 
     css_class = difference.positive? ? "has-text-danger" : "has-text-success"
     sign = difference.positive? ? "+" : "−"
