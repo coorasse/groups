@@ -8,6 +8,8 @@ class Reservation < ApplicationRecord
   before_validation :set_price_to_pay
 
   validates :full_name, presence: true
+  normalizes :kids_count, with: ->(value) { value.presence || 0 }, apply_to_nil: true
+
   validates :adults_count, :kids_count, :owned_adult_tickets,
             numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :adults_count, numericality: { greater_than_or_equal_to: 1, less_than_or_equal_to: 100 }, on: :public_booking
