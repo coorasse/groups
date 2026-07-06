@@ -5,6 +5,15 @@ RSpec.describe Reservation do
     expect(build(:reservation)).to be_valid
   end
 
+  it "broadcasts a Turbo refresh to its own stream when it is updated" do
+    reservation = create(:reservation, status: :requested)
+
+    expect(Turbo::StreamsChannel).to receive(:broadcast_refresh_later_to)
+      .with(reservation, hash_including(:request_id))
+
+    reservation.update!(status: :approved)
+  end
+
   it "defaults to the confirmed status" do
     expect(Reservation.new.status).to eq("confirmed")
   end

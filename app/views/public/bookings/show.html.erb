@@ -1,11 +1,23 @@
 <% content_for :title, t("title", scope: "bookings.show") %>
 
+<%= turbo_stream_from @reservation %>
+
 <div class="box booking">
+  <% if @event.image.attached? %>
+    <figure class="image booking-image mb-4">
+      <%= image_tag @event.image.variant(:header), alt: @event.title %>
+    </figure>
+  <% end %>
+
   <div class="booking-header">
     <h1 class="title is-3 mb-1"><%= @event.title %></h1>
     <p class="subtitle is-5 has-text-grey"><%= group_full_datetime(@group, titleize: true) %></p>
     <%= reservation_status_tag(@reservation) %>
   </div>
+
+  <% if @event.description.present? %>
+    <div class="content booking-description"><%= simple_format @event.description %></div>
+  <% end %>
 
   <table class="table is-fullwidth booking-details">
     <tbody>
@@ -47,6 +59,19 @@
           booking_confirmation_path(@reservation.token),
           method: :patch, class: "button is-primary is-fullwidth is-medium mt-4" %>
   <% end %>
+
+  <% if @reservation.confirmed? && @event.notes.present? %>
+    <div class="notification is-info is-light booking-instructions mt-4">
+      <p class="has-text-weight-semibold mb-2"><%= t("instructions_title", scope: "bookings.show") %></p>
+      <div class="content"><%= simple_format @event.notes %></div>
+    </div>
+  <% end %>
+
+  <p class="booking-contact has-text-grey is-size-7 mt-4">
+    <%= t("contact_note_html", scope: "bookings.show",
+          phone: link_to("335 750 1026", "tel:+393357501026"),
+          email: mail_to("prenota@guidaturisticaromagna.it")) %>
+  </p>
 
   <%= link_to t("back", scope: "bookings.show"), public_root_path, class: "button is-text mt-3" %>
 </div>

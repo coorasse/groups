@@ -12,4 +12,9 @@
 
 <p><%= t("outro", scope: "reservation_mailer.confirmation") %></p>
 
+<p>
+  <%= t("status_intro", scope: "reservation_mailer.confirmation") %><br>
+  <%= link_to t("status_link", scope: "reservation_mailer.confirmation"), booking_url(@reservation.token) %>
+</p>
+
 <%= simple_format(t("signature", scope: "reservation_mailer.confirmation")) %>

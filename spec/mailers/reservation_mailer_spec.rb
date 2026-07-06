@@ -16,6 +16,14 @@ RSpec.describe ReservationMailer do
       expect(mail.body.encoded).to include("Tour del centro storico")
       expect(mail.body.encoded).to include("10:30")
     end
+
+    it "includes a link to the booking status page" do
+      reservation = create(:reservation, email: "mario@example.com")
+
+      mail = described_class.confirmation(reservation)
+
+      expect(mail.body.encoded).to include("http://example.com/prenotazione/#{reservation.token}")
+    end
   end
 
   describe "#approval_confirmation" do

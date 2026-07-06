@@ -3,6 +3,8 @@ class Reservation < ApplicationRecord
 
   has_secure_token
 
+  broadcasts_refreshes
+
   enum :status, { requested: 0, approved: 1, confirmed: 2, paid: 4, cancelled: 3 }, default: :confirmed
 
   scope :active, -> { where.not(status: :cancelled) }

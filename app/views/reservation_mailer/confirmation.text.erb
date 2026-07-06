@@ -10,4 +10,7 @@
 
 <%= t("outro", scope: "reservation_mailer.confirmation") %>
 
+<%= t("status_intro", scope: "reservation_mailer.confirmation") %>
+<%= booking_url(@reservation.token) %>
+
 <%= t("signature", scope: "reservation_mailer.confirmation") %>

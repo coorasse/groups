@@ -280,6 +280,8 @@ it:
         kids: "Ragazzi"
         total: "Totale indicativo"
       outro: "Nelle prossime ore ti contatteremo per confermare la disponibilità. Se qualche dato non è corretto, puoi rispondere direttamente a questa email."
+      status_intro: "Puoi seguire lo stato della tua prenotazione da questa pagina:"
+      status_link: "Visualizza lo stato della prenotazione"
       signature: "A presto,\nLisa Rodi\nGuida Turistica Romagna"
     approval_confirmation:
       subject: "Conferma prenotazione – %{event}"
@@ -343,6 +345,8 @@ it:
     show:
       title: "La tua prenotazione"
       confirm: "Conferma la prenotazione"
+      instructions_title: "Istruzioni utili"
+      contact_note_html: "Per correzioni o segnalazioni di errori puoi contattarci al %{phone} o scrivere a %{email}."
       back: "Torna agli eventi"
       messages:
         requested: "Abbiamo ricevuto la tua richiesta. Nelle prossime ore riceverai un messaggio con la conferma della disponibilità."
