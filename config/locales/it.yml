@@ -40,6 +40,8 @@ it:
         one: "Non è stato possibile salvare questo %{model}: 1 errore"
         other: "Non è stato possibile salvare questo %{model}: %{count} errori"
     messages:
+      not_a_number: "non è un numero"
+      not_an_integer: "deve essere un numero intero"
       greater_than_or_equal_to: "deve essere maggiore o uguale a %{count}"
       less_than_or_equal_to: "deve essere minore o uguale a %{count}"
 
