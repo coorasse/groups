@@ -24,6 +24,10 @@ module ReservationsHelper
     tag.span(t("reservations.to_process", count: count), class: "tag is-warning")
   end
 
+  def to_notify_tag(count)
+    tag.span(t("reservations.to_notify", count: count), class: "tag is-link")
+  end
+
   def reservation_message(reservation)
     event = reservation.group.event
     event.message_for(

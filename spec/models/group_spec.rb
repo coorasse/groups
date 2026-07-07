@@ -95,6 +95,65 @@ RSpec.describe Group do
     end
   end
 
+  describe "notification window" do
+    let(:event) { create(:event, notify_days_before: 3) }
+
+    it "inherits the days of advance notice from the event" do
+      expect(create(:group, event: event).effective_notify_days_before).to eq(3)
+    end
+
+    it "prefers the group override when set" do
+      expect(create(:group, event: event, notify_days_before: 1).effective_notify_days_before).to eq(1)
+    end
+
+    it "is within the window from the notice day up to the group date" do
+      group = build(:group, event: event, date: Date.current + 3)
+
+      expect(group).to be_within_notify_window
+    end
+
+    it "is not within the window before the notice day" do
+      group = build(:group, event: event, date: Date.current + 4)
+
+      expect(group).not_to be_within_notify_window
+    end
+
+    it "is not within the window when the date is blank" do
+      expect(build(:group, event: event, date: nil)).not_to be_within_notify_window
+    end
+
+    describe "#needs_notification?" do
+      it "is true while there are active reservations still to notify in the window" do
+        group = create(:group, event: event, date: Date.current + 3)
+        reservation = create(:reservation, group: group)
+        reservation.update!(notified: false)
+
+        expect(group).to be_needs_notification
+      end
+
+      it "is false once every active reservation has been notified" do
+        group = create(:group, event: event, date: Date.current + 3)
+        create(:reservation, group: group, notified: true)
+
+        expect(group).not_to be_needs_notification
+      end
+
+      it "ignores cancelled reservations" do
+        group = create(:group, event: event, date: Date.current + 3)
+        create(:reservation, group: group, status: :cancelled, notified: false)
+
+        expect(group).not_to be_needs_notification
+      end
+
+      it "is false outside the notification window" do
+        group = create(:group, event: event, date: Date.current + 10)
+        create(:reservation, group: group, notified: false)
+
+        expect(group).not_to be_needs_notification
+      end
+    end
+  end
+
   describe "#fits_available_seats?" do
     let(:group) { create(:group, event: create(:event, max_group_size: 5, max_overbooking: 3)) }
 
@@ -149,8 +208,8 @@ RSpec.describe Group do
   describe "pricing" do
     it "sums the computed and effective prices and exposes their difference" do
       group = create(:group)
-      create(:reservation, group: group, adults_count: 1, kids_count: 0, owned_adult_tickets: 0, price_to_pay: 100)
-      create(:reservation, group: group, adults_count: 1, kids_count: 0, owned_adult_tickets: 0, price_to_pay: nil)
+      create(:reservation, group: group, adults_count: 1, kids_count: 0, guided_tour_only_adults: 0, price_to_pay: 100)
+      create(:reservation, group: group, adults_count: 1, kids_count: 0, guided_tour_only_adults: 0, price_to_pay: nil)
 
       # each computed = 1 adult ticket to buy * adult_price (20) = 20 -> total computed 40
       expect(group.computed_price).to eq(40)

@@ -48,6 +48,43 @@ RSpec.describe GroupsController, type: :request do
 
       expect(response.body).to include(I18n.t("groups.index.empty"))
     end
+
+    it "lists reservations to approve from all events in a single table" do
+      reservation = create(:reservation, group: create(:group, event: event), status: :requested)
+      create(:reservation, group: create(:group, event: create(:event)), status: :confirmed)
+
+      get root_path
+
+      expect(response.body).to include("Prenotazioni da approvare")
+      expect(response.body).to include(reservation.full_name)
+    end
+
+    it "does not show the pending reservations table when there is nothing to approve" do
+      create(:reservation, group: create(:group, event: event), status: :confirmed)
+
+      get root_path
+
+      expect(response.body).not_to include("Prenotazioni da approvare")
+    end
+
+    it "flags open groups that still have reservations to notify" do
+      group = create(:group, event: event, status: :open, date: Date.current + 30)
+      create(:reservation, group: group)
+      group.update!(date: Date.current + 1)
+
+      get root_path
+
+      expect(response.body).to include("da avvisare")
+    end
+
+    it "does not flag groups whose reservations have all been notified" do
+      group = create(:group, event: event, status: :open, date: Date.current + 1)
+      create(:reservation, group: group)
+
+      get root_path
+
+      expect(response.body).not_to include("da avvisare")
+    end
   end
 
   describe "#show" do
@@ -68,6 +105,25 @@ RSpec.describe GroupsController, type: :request do
       get event_group_path(event, group)
 
       expect(response.body.index(older.full_name)).to be < response.body.index(newer.full_name)
+    end
+
+    it "shows the notified column with a checkbox once inside the notification window" do
+      group = create(:group, event: event, date: Date.current + 1)
+      create(:reservation, group: group)
+
+      get event_group_path(event, group)
+
+      expect(response.body).to include(I18n.t("groups.show.notified"))
+      expect(response.body).to include("reservation[notified]")
+    end
+
+    it "hides the to-notify column before the notification window opens" do
+      group = create(:group, event: event, date: Date.current + 30)
+      create(:reservation, group: group)
+
+      get event_group_path(event, group)
+
+      expect(response.body).not_to include("reservation[notified]")
     end
 
     it "renders the copy-message icon button when the event has a message template" do
@@ -138,6 +194,14 @@ RSpec.describe GroupsController, type: :request do
 
       expect(response).to redirect_to(event_group_path(event, group))
       expect(group.reload.net_price).to eq(42.50)
+    end
+
+    it "stores the per-group notify_days_before override" do
+      group = create(:group, event: event)
+
+      patch event_group_path(event, group), params: { group: { notify_days_before: 7 } }
+
+      expect(group.reload.notify_days_before).to eq(7)
     end
 
     it "reverts and redirects with an alert when an inline edit is invalid" do

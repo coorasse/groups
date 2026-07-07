@@ -1,0 +1,26 @@
+<%= turbo_frame_tag "modal" do %>
+  <div class="modal is-active" data-controller="modal">
+    <div class="modal-background" data-action="click->modal#close"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title"><%= t("reservations.notes.edit.title", name: @reservation.full_name) %></p>
+        <button type="button" class="delete" aria-label="close" data-action="click->modal#close"></button>
+      </header>
+      <%= form_with model: @reservation,
+            url: event_group_reservation_notes_path(@event, @group, @reservation),
+            method: :patch do |f| %>
+        <section class="modal-card-body">
+          <div class="field">
+            <div class="control">
+              <%= f.text_area :notes, rows: 4, class: "textarea", autofocus: true %>
+            </div>
+          </div>
+        </section>
+        <footer class="modal-card-foot buttons">
+          <%= f.submit t("actions.save"), class: "button is-primary" %>
+          <button type="button" class="button" data-action="click->modal#close"><%= t("actions.cancel") %></button>
+        </footer>
+      <% end %>
+    </div>
+  </div>
+<% end %>

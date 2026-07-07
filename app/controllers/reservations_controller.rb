@@ -55,6 +55,6 @@ class ReservationsController < ApplicationController
 
   def reservation_params
     params.require(:reservation).permit(:full_name, :adults_count, :kids_count, :status,
-      :owned_adult_tickets, :price_to_pay, :phone, :email, :tax_code, :notes)
+      :guided_tour_only_adults, :price_to_pay, :phone, :email, :tax_code, :notes, :notified)
   end
 end

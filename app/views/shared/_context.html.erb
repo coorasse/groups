@@ -10,5 +10,28 @@
       <span class="tag is-light mr-2"><%= Group.model_name.human %></span>
       <%= link_to group_label(group), event_group_path(event, group) %>
     </p>
+    <div class="level is-mobile mt-3 group-context-stats">
+      <div class="level-item has-text-centered">
+        <div>
+          <p class="heading"><%= Group.human_attribute_name(:status) %></p>
+          <p><%= group_status_tag(group) %></p>
+        </div>
+      </div>
+      <div class="level-item has-text-centered">
+        <div>
+          <p class="heading"><%= Group.human_attribute_name(:people_count) %></p>
+          <p class="is-size-5 has-text-weight-semibold"><%= group.people_count %></p>
+        </div>
+      </div>
+      <div class="level-item has-text-centered">
+        <div>
+          <p class="heading"><%= t("available_seats", scope: "groups.show") %></p>
+          <p class="is-size-5">
+            <%= seats_left_tag(group) %>
+            <span class="is-size-7 has-text-grey">/ <%= group.effective_max_group_size %></span>
+          </p>
+        </div>
+      </div>
+    </div>
   <% end %>
 </div>

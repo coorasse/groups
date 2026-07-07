@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_06_200000) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_07_130100) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -52,6 +52,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_06_200000) do
     t.integer "max_overbooking", default: 0, null: false
     t.text "message_template"
     t.text "notes"
+    t.integer "notify_days_before", default: 2, null: false
     t.string "short_name"
     t.string "title", null: false
     t.datetime "updated_at", null: false
@@ -65,6 +66,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_06_200000) do
     t.integer "max_overbooking"
     t.decimal "net_price", precision: 8, scale: 2
     t.text "notes"
+    t.integer "notify_days_before"
     t.integer "status", default: 0, null: false
     t.time "time"
     t.datetime "updated_at", null: false
@@ -95,9 +97,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_06_200000) do
     t.string "email"
     t.string "full_name", null: false
     t.integer "group_id", null: false
+    t.integer "guided_tour_only_adults", default: 0, null: false
     t.integer "kids_count", default: 0, null: false
     t.text "notes"
-    t.integer "owned_adult_tickets", default: 0, null: false
+    t.boolean "notified", default: false, null: false
     t.string "phone"
     t.decimal "price_to_pay", precision: 8, scale: 2, null: false
     t.integer "status", default: 2, null: false

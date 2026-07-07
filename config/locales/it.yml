@@ -80,7 +80,7 @@ it:
         notes: "Note"
         description: "Descrizione"
         image: "Immagine"
-        message_template: "Modello messaggio di conferma"
+        message_template: "Messaggio di accettazione (overbooking)"
       group:
         adults_count: "Adulti"
         kids_count: "Ragazzi"
@@ -97,13 +97,14 @@ it:
         full_name: "Nome Cognome"
         adults_count: "Numero adulti"
         kids_count: "Numero ragazzi"
-        owned_adult_tickets: "Biglietti adulti già in possesso"
-        price_to_pay: "Prezzo da pagare"
+        guided_tour_only_adults: "Solo visita"
+        price_to_pay: "Importo"
         phone: "Telefono"
         email: "Email"
         tax_code: "Codice fiscale"
         notes: "Note"
         status: "Stato"
+        notified: "Avvisata"
         data_processing_authorized: "Autorizzazione al trattamento dei dati personali"
     errors:
       models:
@@ -127,7 +128,7 @@ it:
               empty_reservation: "La prenotazione deve contenere almeno una persona"
               over_group_capacity: "Supera i posti disponibili nel gruppo (rimasti: %{count})"
               consent_required: "Devi autorizzare il trattamento dei dati personali per procedere"
-            owned_adult_tickets:
+            guided_tour_only_adults:
               more_than_adults: "non può superare il numero di adulti della prenotazione"
 
   events:
@@ -144,8 +145,8 @@ it:
       empty: "Nessun evento presente. Creane uno per iniziare."
       pending_reservations: "Prenotazioni da approvare"
       group_schedule: "Data e ora"
-      adults_short: "# Adulti"
-      kids_short: "# Ragazzi"
+      adults_short: "Adulti"
+      kids_short: "Ragazzi"
     new:
       title: "Nuovo evento"
     edit:
@@ -155,6 +156,7 @@ it:
       kids: "Ragazzi"
       short_name_hint: "Nome abbreviato usato nella lista dei gruppi in homepage. Se vuoto, viene usato il titolo."
       overbooking_hint: "Persone accettabili oltre la capienza massima prima che il gruppo non sia più prenotabile dal pubblico. Ridefinibile per singolo gruppo."
+      notify_days_before_hint: "Giorni prima del gruppo in cui parte la fase di invio delle conferme. Ridefinibile per singolo gruppo."
       public_hint: "Utilizzata per abbellire la pagina pubblica di prenotazione."
       message_intro_html: "Il messaggio è un template <strong>ERB</strong>: usa <code>&lt;%= variabile %&gt;</code> per inserire un valore e <code>&lt;% ... %&gt;</code> per la logica condizionale."
       message_variables_title: "Variabili disponibili"
@@ -166,13 +168,6 @@ it:
         numero_ragazzi: "Numero di ragazzi"
         importo_totale: "Importo totale da pagare"
         confirmation_link: "Link alla pagina di prenotazione per confermare"
-      message_example_title: "Esempio"
-      message_example: |-
-        Salve <%= nome_completo %>,
-        Le confermo la prenotazione per <%= titolo_evento %> per
-        <%= data_ora_gruppo %>.
-        Numero Adulti: <%= numero_adulti %><% if numero_ragazzi > 0 %>, Ragazzi: <%= numero_ragazzi %><% end %>
-        Importo: <%= importo_totale %>
     show:
       groups: "Gruppi"
       new_group: "Nuovo gruppo"
@@ -200,7 +195,12 @@ it:
       title: "Gruppi aperti"
       group_schedule: "Data e ora"
       available_seats: "Posti disponibili"
+      available_seats_short: "Disp"
+      people_count_short: "Np"
       empty: "Nessun gruppo aperto al momento."
+      pending_reservations: "Prenotazioni da approvare"
+      adults_short: "Adulti"
+      kids_short: "Ragazzi"
     statuses:
       open: "Aperto"
       closed: "Chiuso"
@@ -218,11 +218,13 @@ it:
       details: "Dettagli"
       new_reservation: "Nuova prenotazione"
       no_reservations: "Nessuna prenotazione per questo gruppo."
+      notified: "Avvisato"
+      guided_tour_only: "Solo visita"
       group_schedule: "Data e ora"
       tickets_to_buy: "Biglietti da acquistare"
       prices: "Prezzi"
-      adults_short: "# Adulti"
-      kids_short: "# Ragazzi"
+      adults_short: "Adulti"
+      kids_short: "Ragazzi"
       reserved_people:
         one: "1 persona prenotata"
         other: "%{count} persone prenotate"
@@ -246,6 +248,9 @@ it:
     to_process:
       one: "1 da elaborare"
       other: "%{count} da elaborare"
+    to_notify:
+      one: "1 da avvisare"
+      other: "%{count} da avvisare"
     statuses:
       requested: "Richiesta"
       approved: "Approvata"
@@ -263,6 +268,11 @@ it:
       create:
         success: "Email di conferma inviata."
         no_email: "Questa prenotazione non ha un indirizzo email."
+    notes:
+      edit:
+        title: "Note di %{name}"
+        link: "Modifica note"
+        add: "Aggiungi note"
     new:
       title: "Nuova prenotazione"
     edit:
@@ -270,7 +280,11 @@ it:
     form:
       availability_hint: "Posti ancora disponibili nel gruppo: %{seats}."
       tickets_to_buy: "Biglietti adulti da acquistare:"
+      guided_tour_only_hint: "Adulti che partecipano solo alla visita guidata."
       suggested_price: "Prezzo suggerito:"
+      breakdown_adults: "adulti"
+      breakdown_guided_tour: "solo visita guidata"
+      breakdown_kids: "bambini"
       use_computed: "Usa prezzo calcolato"
     show:
       tickets_to_buy: "Biglietti da acquistare"

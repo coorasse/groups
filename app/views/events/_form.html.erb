@@ -79,6 +79,15 @@
         <p class="help"><%= t("events.form.overbooking_hint") %></p>
       </div>
     </div>
+    <div class="column">
+      <div class="field">
+        <%= f.label :notify_days_before, class: "label" %>
+        <div class="control">
+          <%= f.number_field :notify_days_before, min: 0, class: "input" %>
+        </div>
+        <p class="help"><%= t(".notify_days_before_hint") %></p>
+      </div>
+    </div>
   </div>
 
   <div class="field">
@@ -99,7 +108,14 @@
   <div class="field">
     <%= f.label :message_template, class: "label" %>
     <div class="control">
-      <%= f.text_area :message_template, rows: 12, class: "textarea is-family-monospace" %>
+      <div class="erb-editor" data-controller="erb-highlight">
+        <pre class="erb-editor__highlight" data-erb-highlight-target="output" aria-hidden="true"></pre>
+        <%= f.text_area :message_template, rows: 12,
+              class: "textarea is-family-monospace erb-editor__input",
+              spellcheck: false,
+              data: { erb_highlight_target: "input",
+                      action: "input->erb-highlight#render scroll->erb-highlight#sync" } %>
+      </div>
     </div>
     <div class="message-template-help">
       <p class="help"><%= t(".message_intro_html") %></p>
@@ -113,9 +129,6 @@
           </li>
         <% end %>
       </ul>
-
-      <p class="help has-text-weight-semibold mt-3"><%= t(".message_example_title") %></p>
-      <pre class="erb-code"><%= highlight_erb(t(".message_example")) %></pre>
     </div>
   </div>
 

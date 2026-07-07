@@ -11,7 +11,11 @@
 
 <div class="level">
   <div class="level-left">
-    <h1 class="title level-item"><%= @event.title %> - <%= group_label(@group) %></h1>
+    <h1 class="title level-item mb-0"><%= @event.title %> - <%= group_label(@group) %></h1>
+    <div class="level-item"><%= group_status_tag(@group) %></div>
+    <% if @group.needs_notification? %>
+      <div class="level-item"><%= to_notify_tag(@group.reservations_to_notify.count) %></div>
+    <% end %>
   </div>
   <div class="level-right">
     <%= link_to action_icon(:edit), edit_event_group_path(@event, @group), class: "button level-item",
@@ -30,15 +34,19 @@
 </div>
 
 <% if @reservations.any? %>
+  <% notify_window = @group.within_notify_window? %>
   <div class="table-container" data-controller="highlight-row">
     <table class="table is-fullwidth is-hoverable">
       <thead>
         <tr>
+          <% if notify_window %>
+            <th class="has-text-centered"><%= t(".notified") %></th>
+          <% end %>
           <th><%= Reservation.human_attribute_name(:full_name) %></th>
           <th><%= Reservation.human_attribute_name(:phone) %></th>
           <th><%= t(".adults_short") %></th>
           <th><%= t(".kids_short") %></th>
-          <th><%= t(".tickets_to_buy") %></th>
+          <th><%= t(".guided_tour_only") %></th>
           <th><%= Reservation.human_attribute_name(:price_to_pay) %></th>
           <th><%= t(".price_difference") %></th>
           <th><%= Reservation.human_attribute_name(:status) %></th>
@@ -48,15 +56,26 @@
       <tbody>
         <% @reservations.each do |reservation| %>
           <tr id="<%= dom_id(reservation) %>" class="<%= "has-text-grey" if reservation.cancelled? %>">
-            <td>
+            <% if notify_window %>
+              <td class="has-text-centered">
+                <% if reservation.cancelled? %>
+                  —
+                <% else %>
+                  <%= form_with model: [@event, @group, reservation], data: { controller: "autosubmit" },
+                        class: "reservation-notified" do |f| %>
+                    <%= hidden_field_tag :inline, "1" %>
+                    <label class="checkbox" title="<%= t(".notified") %>">
+                      <%= f.check_box :notified, data: { action: "change->autosubmit#submit" } %>
+                    </label>
+                  <% end %>
+                <% end %>
+              </td>
+            <% end %>
+            <td class="reservation-name">
               <%= link_to reservation.full_name, event_group_reservation_path(@event, @group, reservation) %>
-              <% if reservation.notes.present? %>
-                <br>
-                <span class="has-text-grey is-size-7"><%= Reservation.human_attribute_name(:notes) %>:</span>
-                <span class="is-size-7"><%= reservation.notes %></span>
-              <% end %>
+              <%= render "reservations/notes", event: @event, group: @group, reservation: reservation %>
             </td>
-            <td>
+            <td class="reservation-phone">
               <% if reservation.phone.present? %>
                 <%= link_to reservation.phone, "tel:#{reservation.phone}" %>
               <% else %>
@@ -65,7 +84,7 @@
             </td>
             <td><%= render "reservations/inline_number", event: @event, group: @group, reservation: reservation, field: :adults_count, narrow: true %></td>
             <td><%= render "reservations/inline_number", event: @event, group: @group, reservation: reservation, field: :kids_count, narrow: true %></td>
-            <td><%= reservation.adult_tickets_to_buy %></td>
+            <td><%= reservation.guided_tour_only_adults %></td>
             <td><%= render "reservations/inline_number", event: @event, group: @group, reservation: reservation, field: :price_to_pay, step: "any" %></td>
             <td><%= price_difference_tag(reservation.price_difference) %></td>
             <td>
@@ -108,10 +127,6 @@
 <h2 class="subtitle mt-6"><%= t(".details") %></h2>
 
 <div class="columns is-multiline">
-  <%= stat_card(t(".group_schedule")) { group_label(@group) } %>
-
-  <%= stat_card(Group.human_attribute_name(:status)) { group_status_tag(@group) } %>
-
   <%= stat_card(Group.human_attribute_name(:people_count)) do %>
     <%= @group.people_count %>
     <p class="is-size-7 has-text-grey has-text-weight-normal">
@@ -145,13 +160,13 @@
           <tr>
             <th><%= Group.human_attribute_name(:net_price) %></th>
             <td>
-              <%= form_with model: [@event, @group], class: "field has-addons is-justify-content-flex-end mb-0" do |f| %>
+              <%= form_with model: [@event, @group], data: { controller: "autosubmit" },
+                    class: "field is-flex is-justify-content-flex-end mb-0" do |f| %>
                 <%= hidden_field_tag :inline, "1" %>
                 <div class="control">
-                  <%= f.number_field :net_price, step: :any, min: 0, class: "input is-small has-text-right table-input", placeholder: number_to_currency(0) %>
-                </div>
-                <div class="control">
-                  <%= f.submit t(".save_net_price"), class: "button is-small is-primary" %>
+                  <%= f.number_field :net_price, step: :any, min: 0,
+                        class: "input is-small has-text-right table-input", placeholder: number_to_currency(0),
+                        data: { action: "change->autosubmit#submit" } %>
                 </div>
               <% end %>
             </td>

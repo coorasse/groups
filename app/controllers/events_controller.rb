@@ -4,9 +4,6 @@ class EventsController < ApplicationController
   def index
     @events = Event.order(created_at: :desc)
     @requested_counts = Reservation.requested.joins(:group).group("groups.event_id").count
-    @requested_reservations = Reservation.requested.includes(group: :event)
-                                          .references(:group)
-                                          .order(Arel.sql("groups.date, groups.time"))
   end
 
   def show
@@ -53,6 +50,6 @@ class EventsController < ApplicationController
     params.require(:event).permit(:title, :short_name, :adult_price, :kid_price,
       :adult_ticket_price, :kid_ticket_price,
       :adult_guided_tour_price, :kid_guided_tour_price,
-      :max_group_size, :notes, :description, :image, :message_template)
+      :max_group_size, :notify_days_before, :notes, :description, :image, :message_template)
   end
 end

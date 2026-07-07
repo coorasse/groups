@@ -30,6 +30,29 @@ class Group < ApplicationRecord
     max_overbooking || event.max_overbooking
   end
 
+  # How many days before the group the confirmations must be sent out. Inherited
+  # from the event but can be overridden per group.
+  def effective_notify_days_before
+    notify_days_before || event.notify_days_before
+  end
+
+  # The confirmation phase opens `effective_notify_days_before` days before the
+  # group takes place: from that day on the operator is expected to notify the
+  # reservations.
+  def within_notify_window?
+    date.present? && Date.current >= date - effective_notify_days_before
+  end
+
+  def reservations_to_notify
+    reservations.active.where(notified: false)
+  end
+
+  # A group needs attention while it is in the confirmation phase and still has
+  # active reservations that have not been notified yet.
+  def needs_notification?
+    within_notify_window? && reservations_to_notify.exists?
+  end
+
   # Total number of people the group can hold, overbooking included. Once this
   # ceiling is reached the group is no longer offered on the public form.
   def total_capacity

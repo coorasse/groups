@@ -9,6 +9,18 @@
  * Consider organizing styles into separate files for maintainability.
  */
 
+:root {
+  --table-font-size: 0.8rem;
+}
+
+/* Shrink table text on mobile to fit more columns without horizontal scroll.
+   Controlled by the global --table-font-size variable. */
+@media screen and (max-width: 768px) {
+  .table {
+    font-size: var(--table-font-size);
+  }
+}
+
 .event-image {
   display: block;
   width: 100%;
@@ -140,20 +152,20 @@
   }
 }
 
-/* Date + time cell: fixed-width day abbreviation and tabular figures keep the
-   date and time parts aligned in a column across every row. */
+/* Date + time cell: a monospace font keeps the day/date/time parts aligned in a
+   column across every row while packing them into less horizontal space. */
 .group-datetime {
   white-space: nowrap;
-  font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace;
 
   .group-datetime-day {
     display: inline-block;
-    width: 2.5rem;
+    width: 2rem;
     color: var(--bulma-grey, #7a7a7a);
   }
 
   .group-datetime-time {
-    margin-left: 0.75rem;
+    margin-left: 0.35rem;
   }
 }
 
@@ -182,6 +194,34 @@ td form.button_to {
   white-space: nowrap;
 }
 
+/* The name and phone always stay on a single line (the notes below the name
+   are free to wrap). */
+.reservation-name > a {
+  white-space: nowrap;
+}
+
+.reservation-phone {
+  white-space: nowrap;
+}
+
+/* Reservation notes shown under the name: the whole note is a single clickable
+   link (icon + "Note:" + text) that opens the edit modal, kept on one compact
+   block to save vertical space. */
+.reservation-notes-edit {
+  display: inline;
+  color: var(--bulma-text-weak, #7a7a7a);
+  text-decoration: none;
+
+  &:hover .has-text-dark {
+    text-decoration: underline;
+  }
+
+  & .icon {
+    vertical-align: text-bottom;
+    margin-right: 0.1rem;
+  }
+}
+
 /* Confirmation modal (Turbo confirm override): compact card, headerless. */
 .confirm-modal-card {
   max-width: 26rem;
@@ -189,6 +229,18 @@ td form.button_to {
 
   & .modal-card-body {
     border-radius: var(--bulma-radius-large, 0.75rem) var(--bulma-radius-large, 0.75rem) 0 0;
+  }
+}
+
+/* "Avvisato" checkbox column: keep the toggle centered and enlarge the hit
+   area so it stays comfortable to tap on mobile. */
+.reservation-notified {
+  display: flex;
+  justify-content: center;
+
+  & input {
+    width: 1.25rem;
+    height: 1.25rem;
   }
 }
 
@@ -307,18 +359,51 @@ td form.button_to {
   }
 }
 
-/* Lightweight ERB syntax highlighting for the template reference. */
-.erb-code {
-  margin-top: 0.5rem;
-  padding: 1rem;
-  border-radius: 6px;
-  background-color: var(--bulma-scheme-main-bis, #f5f5f5);
-  color: var(--bulma-text, #363636);
+/* Live ERB highlighting: a highlighted <pre> sits behind a transparent textarea.
+   Both layers must share identical box metrics so the text lines up exactly. */
+.erb-editor {
+  position: relative;
+}
+
+.erb-editor__input,
+.erb-editor__highlight {
+  margin: 0;
+  padding: 0.625em 0.75em;
+  border: 1px solid transparent;
+  border-radius: 4px;
   font-family: var(--bulma-family-code, monospace);
   font-size: 0.85rem;
   line-height: 1.5;
+  tab-size: 2;
   white-space: pre-wrap;
-  overflow-x: auto;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.erb-editor__highlight {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+  pointer-events: none;
+  background-color: var(--bulma-scheme-main, #fff);
+  color: var(--bulma-text, #363636);
+}
+
+.erb-editor__input {
+  position: relative;
+  display: block;
+  width: 100%;
+  min-height: unset;
+  border-color: var(--bulma-border, #dbdbdb);
+  background-color: transparent;
+  color: transparent;
+  caret-color: var(--bulma-text, #363636);
+  resize: vertical;
+
+  &:focus {
+    border-color: var(--bulma-link, #485fc7);
+    box-shadow: 0 0 0 0.125em color-mix(in srgb, var(--bulma-link, #485fc7) 25%, transparent);
+  }
 }
 
 .erb-output {

@@ -1,11 +1,14 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class ReservationPriceController extends Controller {
-  static targets = ["adultsCount", "kidsCount", "ownedAdultTickets", "priceToPay", "ticketsToBuy", "suggestedPrice"]
+  static targets = ["adultsCount", "kidsCount", "guidedTourOnlyAdults", "priceToPay", "suggestedPrice", "priceBreakdown"]
   static values = {
     adultPrice: Number,
     kidPrice: Number,
     adultGuidedTourPrice: Number,
+    adultLabel: { type: String, default: "adults" },
+    guidedTourLabel: { type: String, default: "guided tour only" },
+    kidLabel: { type: String, default: "kids" },
     currency: { type: String, default: "€" },
     persisted: Boolean
   }
@@ -27,21 +30,36 @@ export default class ReservationPriceController extends Controller {
   recalculate() {
     const adults = this.intValue(this.adultsCountTarget)
     const kids = this.intValue(this.kidsCountTarget)
-    const owned = this.hasOwnedAdultTicketsTarget ? this.intValue(this.ownedAdultTicketsTarget) : 0
+    const guidedTourOnly = this.hasGuidedTourOnlyAdultsTarget ? this.intValue(this.guidedTourOnlyAdultsTarget) : 0
 
-    const ticketsToBuy = Math.max(adults - owned, 0)
-    const adultsWithTicket = adults - ticketsToBuy
+    const guidedTourAdults = Math.min(guidedTourOnly, adults)
+    const fullPriceAdults = adults - guidedTourAdults
 
-    const price = ticketsToBuy * this.adultPriceValue +
-      adultsWithTicket * this.adultGuidedTourPriceValue +
+    const price = fullPriceAdults * this.adultPriceValue +
+      guidedTourAdults * this.adultGuidedTourPriceValue +
       kids * this.kidPriceValue
 
-    if (this.hasTicketsToBuyTarget) this.ticketsToBuyTarget.textContent = ticketsToBuy
     if (this.hasSuggestedPriceTarget) this.suggestedPriceTarget.textContent = this.format(price)
+    if (this.hasPriceBreakdownTarget) {
+      this.priceBreakdownTarget.textContent = this.breakdown(fullPriceAdults, guidedTourAdults, kids)
+    }
 
     if (!this.overridden && this.hasPriceToPayTarget) {
       this.priceToPayTarget.value = price.toFixed(2)
     }
+  }
+
+  breakdown(fullPriceAdults, guidedTourAdults, kids) {
+    const parts = [
+      [fullPriceAdults, this.adultPriceValue, this.adultLabelValue],
+      [guidedTourAdults, this.adultGuidedTourPriceValue, this.guidedTourLabelValue],
+      [kids, this.kidPriceValue, this.kidLabelValue]
+    ]
+
+    return parts
+      .filter(([count]) => count > 0)
+      .map(([count, unitPrice, label]) => `${count} ${label} × ${this.format(unitPrice)}`)
+      .join(" + ")
   }
 
   intValue(element) {

@@ -6,6 +6,9 @@
         reservation_price_adult_price_value: event.adult_price,
         reservation_price_kid_price_value: event.kid_price,
         reservation_price_adult_guided_tour_price_value: event.adult_guided_tour_price,
+        reservation_price_adult_label_value: t(".breakdown_adults"),
+        reservation_price_guided_tour_label_value: t(".breakdown_guided_tour"),
+        reservation_price_kid_label_value: t(".breakdown_kids"),
         reservation_price_persisted_value: reservation.persisted?
       } do |f| %>
   <%= render "shared/errors", record: reservation %>
@@ -42,15 +45,12 @@
     </div>
     <div class="column">
       <div class="field">
-        <%= f.label :owned_adult_tickets, class: "label" %>
+        <%= f.label :guided_tour_only_adults, class: "label" %>
         <div class="control">
-          <%= f.number_field :owned_adult_tickets, min: 0, class: "input",
-                data: { reservation_price_target: "ownedAdultTickets", action: "input->reservation-price#recalculate" } %>
+          <%= f.number_field :guided_tour_only_adults, min: 0, class: "input",
+                data: { reservation_price_target: "guidedTourOnlyAdults", action: "input->reservation-price#recalculate" } %>
         </div>
-        <p class="help">
-          <%= t(".tickets_to_buy") %>
-          <strong data-reservation-price-target="ticketsToBuy">0</strong>
-        </p>
+        <p class="help"><%= t(".guided_tour_only_hint") %></p>
       </div>
     </div>
   </div>
@@ -72,6 +72,7 @@
       <%= t(".suggested_price") %>
       <strong data-reservation-price-target="suggestedPrice">—</strong>
     </p>
+    <p class="help has-text-grey" data-reservation-price-target="priceBreakdown"></p>
   </div>
 
   <div class="field">

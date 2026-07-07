@@ -27,7 +27,7 @@ RSpec.describe ReservationsController, type: :request do
 
   describe "#create" do
     it "creates a reservation with valid attributes" do
-      attributes = { full_name: "Mario Rossi", adults_count: 2, kids_count: 1, owned_adult_tickets: 0 }
+      attributes = { full_name: "Mario Rossi", adults_count: 2, kids_count: 1, guided_tour_only_adults: 0 }
 
       expect { post event_group_reservations_path(event, group), params: { reservation: attributes } }
         .to change { group.reservations.count }.by(1)
@@ -46,7 +46,7 @@ RSpec.describe ReservationsController, type: :request do
     it "computes the price when left blank" do
       event = create(:event, adult_price: 25, kid_price: 12, adult_guided_tour_price: 5)
       group = create(:group, event: event)
-      attributes = { full_name: "Mario Rossi", adults_count: 2, kids_count: 0, owned_adult_tickets: 0, price_to_pay: "" }
+      attributes = { full_name: "Mario Rossi", adults_count: 2, kids_count: 0, guided_tour_only_adults: 0, price_to_pay: "" }
 
       post event_group_reservations_path(event, group), params: { reservation: attributes }
 
@@ -99,6 +99,16 @@ RSpec.describe ReservationsController, type: :request do
       expect(reservation.reload.adults_count).to eq(4)
     end
 
+    it "toggles the notified flag inline from the to-notify column" do
+      distant_group = create(:group, event: event, date: Date.current + 30)
+      reservation = create(:reservation, group: distant_group)
+
+      patch event_group_reservation_path(event, distant_group, reservation),
+        params: { inline: "1", reservation: { notified: "1" } }
+
+      expect(reservation.reload).to be_notified
+    end
+
     it "redirects back to the referring page for an inline update, e.g. the events index" do
       reservation = create(:reservation, group: group, status: :requested)
 
@@ -119,7 +129,7 @@ RSpec.describe ReservationsController, type: :request do
     end
 
     it "reverts and redirects with an alert when an inline edit is invalid" do
-      reservation = create(:reservation, group: group, adults_count: 2, owned_adult_tickets: 2)
+      reservation = create(:reservation, group: group, adults_count: 2, guided_tour_only_adults: 2)
 
       patch event_group_reservation_path(event, group, reservation),
         params: { inline: "1", reservation: { adults_count: 1 } }

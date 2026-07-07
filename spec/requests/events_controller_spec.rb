@@ -66,23 +66,14 @@ RSpec.describe EventsController, type: :request do
       expect(response.body).to include("da elaborare")
     end
 
-    it "lists reservations to approve from all events in a single table" do
+    it "does not list the reservations to approve" do
       event = create(:event)
       reservation = create(:reservation, group: create(:group, event: event), status: :requested)
-      create(:reservation, group: create(:group, event: create(:event)), status: :confirmed)
-
-      get events_path
-
-      expect(response.body).to include("Prenotazioni da approvare")
-      expect(response.body).to include(reservation.full_name)
-    end
-
-    it "does not show the pending reservations table when there is nothing to approve" do
-      create(:reservation, group: create(:group, event: create(:event)), status: :confirmed)
 
       get events_path
 
       expect(response.body).not_to include("Prenotazioni da approvare")
+      expect(response.body).not_to include(reservation.full_name)
     end
   end
 
@@ -142,6 +133,14 @@ RSpec.describe EventsController, type: :request do
 
       expect(response).to have_http_status(:unprocessable_content)
       expect(event.reload.title).not_to eq("")
+    end
+
+    it "updates the days of advance notice" do
+      event = create(:event, notify_days_before: 2)
+
+      patch event_path(event), params: { event: { notify_days_before: 5 } }
+
+      expect(event.reload.notify_days_before).to eq(5)
     end
   end
 

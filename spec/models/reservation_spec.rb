@@ -92,8 +92,8 @@ RSpec.describe Reservation do
     expect(build(:reservation, adults_count: 0, kids_count: 0)).not_to be_valid
   end
 
-  it "rejects more owned tickets than adults" do
-    expect(build(:reservation, adults_count: 2, owned_adult_tickets: 3)).not_to be_valid
+  it "rejects more guided-tour-only adults than adults" do
+    expect(build(:reservation, adults_count: 2, guided_tour_only_adults: 3)).not_to be_valid
   end
 
   it "rejects a malformed email" do
@@ -123,20 +123,20 @@ RSpec.describe Reservation do
     end
   end
 
-  describe "#adult_tickets_to_buy" do
-    it "is the adults without a ticket, never negative" do
-      expect(build(:reservation, adults_count: 3, owned_adult_tickets: 1).adult_tickets_to_buy).to eq(2)
-      expect(build(:reservation, adults_count: 2, owned_adult_tickets: 2).adult_tickets_to_buy).to eq(0)
+  describe "#full_price_adults" do
+    it "is the adults not doing the guided tour only, never negative" do
+      expect(build(:reservation, adults_count: 3, guided_tour_only_adults: 1).full_price_adults).to eq(2)
+      expect(build(:reservation, adults_count: 2, guided_tour_only_adults: 3).full_price_adults).to eq(0)
     end
   end
 
   describe "#computed_price" do
-    it "charges full price for tickets to buy, guided tour for owned tickets, full price for kids" do
+    it "charges full price for regular adults, guided tour price for guided-tour-only adults, full price for kids" do
       event = create(:event, adult_price: 25, kid_price: 12, adult_guided_tour_price: 5)
       group = create(:group, event: event)
-      reservation = build(:reservation, group: group, adults_count: 3, owned_adult_tickets: 1, kids_count: 2)
+      reservation = build(:reservation, group: group, adults_count: 3, guided_tour_only_adults: 1, kids_count: 2)
 
-      # 2 tickets to buy * 25 + 1 owned * 5 + 2 kids * 12 = 50 + 5 + 24
+      # 2 full-price adults * 25 + 1 guided-tour-only * 5 + 2 kids * 12 = 50 + 5 + 24
       expect(reservation.computed_price).to eq(79)
     end
   end
@@ -146,19 +146,19 @@ RSpec.describe Reservation do
     let(:group) { create(:group, event: event) }
 
     it "is filled with the computed price when left blank" do
-      reservation = create(:reservation, group: group, adults_count: 2, owned_adult_tickets: 0, kids_count: 0, price_to_pay: nil)
+      reservation = create(:reservation, group: group, adults_count: 2, guided_tour_only_adults: 0, kids_count: 0, price_to_pay: nil)
 
       expect(reservation.price_to_pay).to eq(50)
     end
 
     it "keeps a manually provided price" do
-      reservation = create(:reservation, group: group, adults_count: 2, owned_adult_tickets: 0, kids_count: 0, price_to_pay: 10)
+      reservation = create(:reservation, group: group, adults_count: 2, guided_tour_only_adults: 0, kids_count: 0, price_to_pay: 10)
 
       expect(reservation.price_to_pay).to eq(10)
     end
 
     it "is recomputed (overwritten) when the adults count changes" do
-      reservation = create(:reservation, group: group, adults_count: 2, owned_adult_tickets: 0, kids_count: 0, price_to_pay: 10)
+      reservation = create(:reservation, group: group, adults_count: 2, guided_tour_only_adults: 0, kids_count: 0, price_to_pay: 10)
 
       reservation.update!(adults_count: 3)
 
@@ -167,7 +167,7 @@ RSpec.describe Reservation do
     end
 
     it "is recomputed when the kids count changes" do
-      reservation = create(:reservation, group: group, adults_count: 0, owned_adult_tickets: 0, kids_count: 1, price_to_pay: 10)
+      reservation = create(:reservation, group: group, adults_count: 0, guided_tour_only_adults: 0, kids_count: 1, price_to_pay: 10)
 
       reservation.update!(kids_count: 2)
 
@@ -175,11 +175,27 @@ RSpec.describe Reservation do
     end
 
     it "keeps a manual price when the counts do not change" do
-      reservation = create(:reservation, group: group, adults_count: 2, owned_adult_tickets: 0, kids_count: 0, price_to_pay: 10)
+      reservation = create(:reservation, group: group, adults_count: 2, guided_tour_only_adults: 0, kids_count: 0, price_to_pay: 10)
 
       reservation.update!(notes: "aggiornata")
 
       expect(reservation.price_to_pay).to eq(10)
+    end
+  end
+
+  describe "automatic notification" do
+    let(:event) { create(:event, notify_days_before: 3) }
+
+    it "marks a reservation as already notified when it comes in within the window" do
+      group = create(:group, event: event, date: Date.current + 2)
+
+      expect(create(:reservation, group: group)).to be_notified
+    end
+
+    it "leaves a reservation to be notified when it comes in before the window" do
+      group = create(:group, event: event, date: Date.current + 10)
+
+      expect(create(:reservation, group: group)).not_to be_notified
     end
   end
 end

@@ -7,6 +7,11 @@ class GroupsController < ApplicationController
     @requested_counts = Reservation.requested.joins(:group)
                                    .where(groups: { status: Group.statuses[:open] })
                                    .group("groups.id").count
+    @requested_reservations = Reservation.requested.includes(group: :event)
+                                          .references(:group)
+                                          .order(Arel.sql("groups.date, groups.time"))
+    @to_notify_counts = Reservation.active.where(notified: false, group: @groups)
+                                   .group(:group_id).count
   end
 
   def show
@@ -59,6 +64,7 @@ class GroupsController < ApplicationController
   end
 
   def group_params
-    params.require(:group).permit(:date, :time, :status, :notes, :net_price, :max_group_size, :max_overbooking)
+    params.require(:group).permit(:date, :time, :status, :notes, :net_price,
+      :max_group_size, :max_overbooking, :notify_days_before)
   end
 end

@@ -83,6 +83,7 @@
       <div class="container">
         <%= render "shared/flash" %>
         <%= render "reservations/confirmation_modal" %>
+        <%= turbo_frame_tag "modal" %>
         <%= yield %>
       </div>
     </main>

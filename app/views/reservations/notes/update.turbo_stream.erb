@@ -1,0 +1,4 @@
+<%= turbo_stream.replace dom_id(@reservation, :notes) do %>
+  <%= render "reservations/notes", event: @event, group: @group, reservation: @reservation %>
+<% end %>
+<%= turbo_stream.update "modal", "" %>

@@ -203,10 +203,10 @@ RSpec.describe Public::ReservationsController, type: :request do
       expect(group.reservations.last.price_to_pay).to eq(62)
     end
 
-    it "ignores owned adult tickets sent by the public form" do
-      book(valid_params.merge(owned_adult_tickets: 5))
+    it "ignores guided tour only adults sent by the public form" do
+      book(valid_params.merge(guided_tour_only_adults: 5))
 
-      expect(group.reservations.last.owned_adult_tickets).to eq(0)
+      expect(group.reservations.last.guided_tour_only_adults).to eq(0)
     end
 
     it "requires the data processing consent" do

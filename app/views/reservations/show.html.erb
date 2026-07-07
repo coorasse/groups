@@ -25,12 +25,8 @@
         <td><%= @reservation.kids_count %></td>
       </tr>
       <tr>
-        <th><%= Reservation.human_attribute_name(:owned_adult_tickets) %></th>
-        <td><%= @reservation.owned_adult_tickets %></td>
-      </tr>
-      <tr>
-        <th><%= t("reservations.show.tickets_to_buy") %></th>
-        <td><strong><%= @reservation.adult_tickets_to_buy %></strong></td>
+        <th><%= Reservation.human_attribute_name(:guided_tour_only_adults) %></th>
+        <td><%= @reservation.guided_tour_only_adults %></td>
       </tr>
       <tr>
         <th><%= t("reservations.show.computed_price") %></th>

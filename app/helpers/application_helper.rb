@@ -12,7 +12,8 @@ module ApplicationHelper
   ICON_PATHS = {
     edit: "M12 20h9 M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z",
     destroy: "M3 6h18 M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2 M10 11v6 M14 11v6",
-    copy: "M9 9h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V11a2 2 0 0 1 2-2z M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+    copy: "M9 9h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V11a2 2 0 0 1 2-2z M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1",
+    notes: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
   }.freeze
 
   def action_icon(name)
@@ -37,6 +38,15 @@ module ApplicationHelper
   def stat_card(label, column_class: "is-one-quarter", &block)
     value = tag.div(capture(&block), class: "is-size-5 has-text-weight-bold")
     tag.div(class: "column #{column_class}") { card(title: label, centered: true, body: value) }
+  end
+
+  # Column header that shrinks on mobile: shows the full label on tablet and up,
+  # and a shorter one on mobile to keep table columns narrow.
+  def responsive_label(full, short)
+    safe_join([
+      tag.span(full, class: "is-hidden-mobile"),
+      tag.span(short, class: "is-hidden-tablet")
+    ])
   end
 
   def gravatar_url(email_address, size: 64)

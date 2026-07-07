@@ -53,6 +53,15 @@
         </div>
       </div>
     </div>
+    <div class="column">
+      <div class="field">
+        <%= f.label :notify_days_before, class: "label" %>
+        <div class="control">
+          <%= f.number_field :notify_days_before, min: 0, class: "input",
+                placeholder: t("groups.form.inherited", value: event.notify_days_before) %>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="field">

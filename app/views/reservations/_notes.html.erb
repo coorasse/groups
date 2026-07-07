@@ -1,0 +1,12 @@
+<div id="<%= dom_id(reservation, :notes) %>" class="reservation-notes">
+  <%= link_to edit_event_group_reservation_notes_path(event, group, reservation),
+        class: "reservation-notes-edit is-size-7", data: { turbo_frame: "modal" } do %>
+    <%= action_icon(:notes) %>
+    <% if reservation.notes.present? %>
+      <span class="has-text-grey"><%= Reservation.human_attribute_name(:notes) %>:</span>
+      <span class="has-text-dark"><%= reservation.notes %></span>
+    <% else %>
+      <span><%= t("reservations.notes.edit.add") %></span>
+    <% end %>
+  <% end %>
+</div>
