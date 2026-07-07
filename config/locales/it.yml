@@ -283,8 +283,8 @@ it:
       guided_tour_only_hint: "Adulti che partecipano solo alla visita guidata."
       suggested_price: "Prezzo suggerito:"
       breakdown_adults: "adulti"
-      breakdown_guided_tour: "solo visita guidata"
-      breakdown_kids: "bambini"
+      breakdown_kids: "ragazzi"
+      breakdown_guided_tour: "solo visita"
       use_computed: "Usa prezzo calcolato"
     show:
       tickets_to_buy: "Biglietti da acquistare"

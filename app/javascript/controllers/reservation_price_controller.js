@@ -52,8 +52,8 @@ export default class ReservationPriceController extends Controller {
   breakdown(fullPriceAdults, guidedTourAdults, kids) {
     const parts = [
       [fullPriceAdults, this.adultPriceValue, this.adultLabelValue],
-      [guidedTourAdults, this.adultGuidedTourPriceValue, this.guidedTourLabelValue],
-      [kids, this.kidPriceValue, this.kidLabelValue]
+      [kids, this.kidPriceValue, this.kidLabelValue],
+      [guidedTourAdults, this.adultGuidedTourPriceValue, this.guidedTourLabelValue]
     ]
 
     return parts
