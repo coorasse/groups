@@ -15,20 +15,12 @@ RSpec.describe Public::BookingsController, type: :request do
       expect(response.body).to include("Tour del centro storico")
     end
 
-    it "shows the confirm button only when the reservation is approved" do
-      reservation = create(:reservation, group: group, status: :approved)
-
-      get booking_path(reservation.token)
-
-      expect(response.body).to include("Conferma la prenotazione")
-    end
-
-    it "does not show the confirm button when the reservation is only requested" do
+    it "shows the pending message when the reservation is only requested" do
       reservation = create(:reservation, group: group, status: :requested)
 
       get booking_path(reservation.token)
 
-      expect(response.body).not_to include("Conferma la prenotazione")
+      expect(response.body).to include("La tua richiesta è stata inviata")
     end
 
     it "shows the success message once confirmed" do
@@ -37,7 +29,6 @@ RSpec.describe Public::BookingsController, type: :request do
       get booking_path(reservation.token)
 
       expect(response.body).to include("prenotazione è confermata")
-      expect(response.body).not_to include("Conferma la prenotazione")
     end
 
     it "shows the event image and description" do
@@ -55,7 +46,7 @@ RSpec.describe Public::BookingsController, type: :request do
 
     it "reveals the event instructions only once the reservation is confirmed" do
       event.update!(notes: "Ritrovo davanti alla fontana 15 minuti prima.")
-      reservation = create(:reservation, group: group, status: :approved)
+      reservation = create(:reservation, group: group, status: :requested)
 
       get booking_path(reservation.token)
       expect(response.body).not_to include("Ritrovo davanti alla fontana")

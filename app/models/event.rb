@@ -38,7 +38,7 @@ class Event < ApplicationRecord
             :adult_guided_tour_price, :kid_guided_tour_price,
             presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :max_group_size, presence: true, numericality: { only_integer: true, greater_than: 0 }
-  validates :max_overbooking, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :max_overbooking, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
   validate :ticket_prices_within_public_prices
   validate :acceptable_image
 

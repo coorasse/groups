@@ -31,10 +31,10 @@ module GroupsHelper
     ].compact.join(" ")
   end
 
-  # Unique per-slot name that lets the shared event image morph between the
+  # Unique per-event name that lets the shared event image morph between the
   # public reservation list and the reservation form via CSS view transitions.
-  def reservation_image_transition_name(group)
-    "reservation-image-#{group.id}"
+  def reservation_image_transition_name(event)
+    "reservation-image-#{event.id}"
   end
 
   def group_full_datetime(group, titleize: false)

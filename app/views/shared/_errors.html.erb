@@ -3,10 +3,13 @@
     <p class="has-text-weight-semibold">
       <%= t("errors.template.header", count: record.errors.count, model: record.class.model_name.human.downcase) %>
     </p>
-    <ul>
-      <% record.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-    </ul>
+    <% base_messages = record.errors.full_messages_for(:base) %>
+    <% if base_messages.any? %>
+      <ul>
+        <% base_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    <% end %>
   </div>
 <% end %>

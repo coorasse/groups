@@ -178,7 +178,7 @@
 
   <%= stat_card(t(".reservations"), column_class: "is-half") do %>
     <div class="tags is-justify-content-center mb-0">
-      <% %w[requested approved confirmed paid].each do |status| %>
+      <% %w[requested confirmed paid].each do |status| %>
         <%= reservation_status_count_tag(status, @group.people_count_for(status)) %>
       <% end %>
     </div>

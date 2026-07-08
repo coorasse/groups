@@ -2,10 +2,10 @@ require "rails_helper"
 
 RSpec.describe GroupsHelper, type: :helper do
   describe "#reservation_image_transition_name" do
-    it "builds a unique name from the group id" do
-      group = build_stubbed(:group)
+    it "builds a unique name from the event id" do
+      event = build_stubbed(:event)
 
-      expect(helper.reservation_image_transition_name(group)).to eq("reservation-image-#{group.id}")
+      expect(helper.reservation_image_transition_name(event)).to eq("reservation-image-#{event.id}")
     end
   end
 

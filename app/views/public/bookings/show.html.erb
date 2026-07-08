@@ -54,13 +54,6 @@
     <p class="booking-message has-text-grey"><%= t(@reservation.status, scope: "bookings.show.messages") %></p>
   <% end %>
 
-  <% if @reservation.approved? %>
-    <%= button_to t("confirm", scope: "bookings.show"),
-          booking_confirmation_path(@reservation.token),
-          method: :patch, class: "button is-primary is-fullwidth is-medium mt-4",
-          data: { turbo_submits_with: t("confirming", scope: "bookings.show") } %>
-  <% end %>
-
   <% if @reservation.confirmed? && @event.notes.present? %>
     <div class="notification is-info is-light booking-instructions mt-4">
       <p class="has-text-weight-semibold mb-2"><%= t("instructions_title", scope: "bookings.show") %></p>

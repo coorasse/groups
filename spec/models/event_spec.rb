@@ -13,10 +13,10 @@ RSpec.describe Event do
     expect(build(:event, max_group_size: 0)).not_to be_valid
   end
 
-  it "requires a non-negative max_overbooking" do
-    expect(build(:event, max_overbooking: -1)).not_to be_valid
+  it "requires a max_overbooking of at least 1" do
+    expect(build(:event, max_overbooking: 0)).not_to be_valid
     expect(build(:event, max_overbooking: nil)).not_to be_valid
-    expect(build(:event, max_overbooking: 0)).to be_valid
+    expect(build(:event, max_overbooking: 1)).to be_valid
   end
 
   it "rejects negative prices" do

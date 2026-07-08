@@ -7,7 +7,7 @@ class Group < ApplicationRecord
   validates :date, :time, presence: true
   validates :net_price, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validates :max_group_size, numericality: { only_integer: true, greater_than: 0 }, allow_nil: true
-  validates :max_overbooking, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :max_overbooking, numericality: { only_integer: true, greater_than_or_equal_to: 1 }, allow_nil: true
 
   scope :upcoming_candidates, -> { where(date: Date.current..) }
 
@@ -53,20 +53,24 @@ class Group < ApplicationRecord
     within_notify_window? && reservations_to_notify.exists?
   end
 
-  # Total number of people the group can hold, overbooking included. Once this
-  # ceiling is reached the group is no longer offered on the public form.
+  # Total number of people the group can hold, overbooking included.
   def total_capacity
     effective_max_group_size + effective_max_overbooking
   end
 
+  # A group is offered on the public form only while it still has plain seats
+  # available: as soon as they run out it disappears from the bookable list,
+  # even though the overbooking allowance could still absorb a request handled
+  # by an operator.
   def bookable?
-    open? && upcoming? && people_count < total_capacity
+    open? && upcoming? && remaining_seats.positive?
   end
 
   # Whether a reservation of `count` people still fits within the plain seats
-  # (i.e. without spilling into the overbooking allowance).
-  def fits_available_seats?(count)
-    people_count + count <= effective_max_group_size
+  # plus the overbooking allowance. Requests within this ceiling are confirmed
+  # automatically; anything beyond it needs an operator's decision.
+  def fits_within_overbooking?(count)
+    people_count + count <= total_capacity
   end
 
   def adults_count

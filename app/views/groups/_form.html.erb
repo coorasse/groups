@@ -1,4 +1,4 @@
-<%= form_with model: [event, group], class: "box" do |f| %>
+<%= simple_form_for [event, group], html: { class: "box" } do |f| %>
   <%= render "shared/errors", record: group %>
 
   <p class="help mb-4">
@@ -12,6 +12,7 @@
         <div class="control">
           <%= f.date_field :date, class: "input" %>
         </div>
+        <%= f.error :date, wrap_with: { tag: "p", class: "help is-danger" } %>
       </div>
     </div>
     <div class="column">
@@ -20,56 +21,31 @@
         <div class="control">
           <%= f.time_field :time, class: "input" %>
         </div>
+        <%= f.error :time, wrap_with: { tag: "p", class: "help is-danger" } %>
       </div>
     </div>
     <div class="column">
-      <div class="field">
-        <%= f.label :status, class: "label" %>
-        <div class="control">
-          <div class="select is-fullwidth">
-            <%= f.select :status, group_status_options %>
-          </div>
-        </div>
-      </div>
+      <%= f.input :status, collection: group_status_options,
+            label_method: :first, value_method: :last, include_blank: false %>
     </div>
   </div>
 
   <div class="columns">
     <div class="column">
-      <div class="field">
-        <%= f.label :max_group_size, class: "label" %>
-        <div class="control">
-          <%= f.number_field :max_group_size, min: 1, class: "input",
-                placeholder: t("groups.form.inherited", value: event.max_group_size) %>
-        </div>
-      </div>
+      <%= f.input :max_group_size,
+            input_html: { min: 1, placeholder: t("groups.form.inherited", value: event.max_group_size) } %>
     </div>
     <div class="column">
-      <div class="field">
-        <%= f.label :max_overbooking, class: "label" %>
-        <div class="control">
-          <%= f.number_field :max_overbooking, min: 0, class: "input",
-                placeholder: t("groups.form.inherited", value: event.max_overbooking) %>
-        </div>
-      </div>
+      <%= f.input :max_overbooking,
+            input_html: { min: 0, placeholder: t("groups.form.inherited", value: event.max_overbooking) } %>
     </div>
     <div class="column">
-      <div class="field">
-        <%= f.label :notify_days_before, class: "label" %>
-        <div class="control">
-          <%= f.number_field :notify_days_before, min: 0, class: "input",
-                placeholder: t("groups.form.inherited", value: event.notify_days_before) %>
-        </div>
-      </div>
+      <%= f.input :notify_days_before,
+            input_html: { min: 0, placeholder: t("groups.form.inherited", value: event.notify_days_before) } %>
     </div>
   </div>
 
-  <div class="field">
-    <%= f.label :notes, class: "label" %>
-    <div class="control">
-      <%= f.text_area :notes, rows: 4, class: "textarea" %>
-    </div>
-  </div>
+  <%= f.input :notes, input_html: { rows: 4 } %>
 
   <div class="field is-grouped">
     <div class="control">

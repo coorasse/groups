@@ -55,7 +55,7 @@ RSpec.describe GroupsController, type: :request do
 
       get root_path
 
-      expect(response.body).to include("Prenotazioni da approvare")
+      expect(response.body).to include("Prenotazioni da confermare")
       expect(response.body).to include(reservation.full_name)
     end
 
@@ -64,7 +64,7 @@ RSpec.describe GroupsController, type: :request do
 
       get root_path
 
-      expect(response.body).not_to include("Prenotazioni da approvare")
+      expect(response.body).not_to include("Prenotazioni da confermare")
     end
 
     it "flags open groups that still have reservations to notify" do

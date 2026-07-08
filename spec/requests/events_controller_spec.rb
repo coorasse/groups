@@ -66,13 +66,13 @@ RSpec.describe EventsController, type: :request do
       expect(response.body).to include("da elaborare")
     end
 
-    it "does not list the reservations to approve" do
+    it "does not list the reservations to confirm" do
       event = create(:event)
       reservation = create(:reservation, group: create(:group, event: event), status: :requested)
 
       get events_path
 
-      expect(response.body).not_to include("Prenotazioni da approvare")
+      expect(response.body).not_to include("Prenotazioni da confermare")
       expect(response.body).not_to include(reservation.full_name)
     end
   end

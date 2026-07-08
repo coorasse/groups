@@ -42,20 +42,12 @@ RSpec.describe Group do
       expect(create(:group, date: Date.current - 1, time: "10:00", status: :open)).not_to be_bookable
     end
 
-    it "stays bookable while there is overbooking room left" do
+    it "is no longer bookable once the plain seats are taken, even with overbooking room left" do
       event = create(:event, max_group_size: 2, max_overbooking: 3)
       group = create(:group, event: event, date: Date.current + 1, time: "10:00", status: :open)
-      create(:reservation, group: group, adults_count: 3, kids_count: 0)
+      create(:reservation, group: group, adults_count: 2, kids_count: 0)
 
-      expect(group.remaining_seats).to be_negative
-      expect(group).to be_bookable
-    end
-
-    it "is no longer bookable once the overbooking ceiling is reached" do
-      event = create(:event, max_group_size: 2, max_overbooking: 1)
-      group = create(:group, event: event, date: Date.current + 1, time: "10:00", status: :open)
-      create(:reservation, group: group, adults_count: 3, kids_count: 0)
-
+      expect(group.remaining_seats).to eq(0)
       expect(group).not_to be_bookable
     end
   end
@@ -90,8 +82,12 @@ RSpec.describe Group do
       expect(build(:group, max_group_size: 0)).not_to be_valid
     end
 
-    it "rejects a negative max_overbooking override" do
-      expect(build(:group, max_overbooking: -1)).not_to be_valid
+    it "rejects a max_overbooking override below 1" do
+      expect(build(:group, max_overbooking: 0)).not_to be_valid
+    end
+
+    it "accepts a max_overbooking override of at least 1" do
+      expect(build(:group, max_overbooking: 1)).to be_valid
     end
   end
 
@@ -154,19 +150,19 @@ RSpec.describe Group do
     end
   end
 
-  describe "#fits_available_seats?" do
+  describe "#fits_within_overbooking?" do
     let(:group) { create(:group, event: create(:event, max_group_size: 5, max_overbooking: 3)) }
 
-    it "is true when the people still fit within the plain seats" do
-      create(:reservation, group: group, adults_count: 2, kids_count: 0)
-
-      expect(group.fits_available_seats?(3)).to be(true)
-    end
-
-    it "is false when the people would spill into the overbooking allowance" do
+    it "is true when the people fit within the seats plus the overbooking allowance" do
       create(:reservation, group: group, adults_count: 4, kids_count: 0)
 
-      expect(group.fits_available_seats?(2)).to be(false)
+      expect(group.fits_within_overbooking?(4)).to be(true)
+    end
+
+    it "is false when the people exceed the seats plus the overbooking allowance" do
+      create(:reservation, group: group, adults_count: 4, kids_count: 0)
+
+      expect(group.fits_within_overbooking?(5)).to be(false)
     end
   end
 
@@ -201,7 +197,7 @@ RSpec.describe Group do
 
       expect(group.people_count_for(:confirmed)).to eq(3)
       expect(group.people_count_for(:requested)).to eq(1)
-      expect(group.people_count_for(:approved)).to eq(0)
+      expect(group.people_count_for(:paid)).to eq(0)
     end
   end
 

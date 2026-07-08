@@ -1,7 +1,6 @@
 module ReservationsHelper
   STATUS_TAG_CLASSES = {
     "requested" => "is-warning",
-    "approved" => "is-info",
     "confirmed" => "is-success",
     "paid" => "is-primary",
     "cancelled" => "is-danger is-light"

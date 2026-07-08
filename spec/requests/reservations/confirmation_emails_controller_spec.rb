@@ -8,7 +8,7 @@ RSpec.describe Reservations::ConfirmationEmailsController, type: :request do
 
   describe "#create" do
     it "delivers the approval confirmation email" do
-      reservation = create(:reservation, group: group, email: "mario@example.com", status: :approved)
+      reservation = create(:reservation, group: group, email: "mario@example.com", status: :confirmed)
 
       expect { post event_group_reservation_confirmation_email_path(event, group, reservation) }
         .to have_enqueued_mail(ReservationMailer, :approval_confirmation).with(reservation)
@@ -19,7 +19,7 @@ RSpec.describe Reservations::ConfirmationEmailsController, type: :request do
     end
 
     it "does not send an email and shows an alert when the reservation has no email" do
-      reservation = create(:reservation, group: group, email: "", status: :approved)
+      reservation = create(:reservation, group: group, email: "", status: :confirmed)
 
       expect { post event_group_reservation_confirmation_email_path(event, group, reservation) }
         .not_to have_enqueued_mail(ReservationMailer, :approval_confirmation)

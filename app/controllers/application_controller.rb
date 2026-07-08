@@ -10,8 +10,8 @@ class ApplicationController < ActionController::Base
 
   private
 
-  # After a reservation is approved, ReservationsController#update stashes its id in the
-  # flash so the confirmation reminder modal can render on whichever page the redirect lands on.
+  # After an operator confirms a pending request, ReservationsController#update stashes its id
+  # in the flash so the confirmation reminder modal can render on whichever page the redirect lands on.
   def set_reservation_to_confirm
     return if flash[:reservation_to_confirm_id].blank?
 

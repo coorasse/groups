@@ -11,7 +11,7 @@ RSpec.describe Reservation do
     expect(Turbo::StreamsChannel).to receive(:broadcast_refresh_later_to)
       .with(reservation, hash_including(:request_id))
 
-    reservation.update!(status: :approved)
+    reservation.update!(status: :confirmed)
   end
 
   it "defaults to the confirmed status" do

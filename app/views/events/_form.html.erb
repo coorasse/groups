@@ -1,109 +1,38 @@
-<%= form_with model: event, class: "box" do |f| %>
+<%= simple_form_for event, html: { class: "box" } do |f| %>
   <%= render "shared/errors", record: event %>
 
-  <div class="field">
-    <%= f.label :title, class: "label" %>
-    <div class="control">
-      <%= f.text_field :title, class: "input" %>
-    </div>
-  </div>
-
-  <div class="field">
-    <%= f.label :short_name, class: "label" %>
-    <div class="control">
-      <%= f.text_field :short_name, class: "input" %>
-    </div>
-    <p class="help"><%= t(".short_name_hint") %></p>
-  </div>
+  <%= f.input :title %>
+  <%= f.input :short_name, hint: t(".short_name_hint") %>
 
   <div class="columns">
     <div class="column">
       <h2 class="label"><%= t(".adults") %></h2>
-      <div class="field">
-        <%= f.label :adult_price, class: "label is-small" %>
-        <div class="control">
-          <%= f.number_field :adult_price, step: :any, min: 0, class: "input" %>
-        </div>
-      </div>
-      <div class="field">
-        <%= f.label :adult_ticket_price, class: "label is-small" %>
-        <div class="control">
-          <%= f.number_field :adult_ticket_price, step: :any, min: 0, class: "input" %>
-        </div>
-      </div>
-      <div class="field">
-        <%= f.label :adult_guided_tour_price, class: "label is-small" %>
-        <div class="control">
-          <%= f.number_field :adult_guided_tour_price, step: :any, min: 0, class: "input" %>
-        </div>
-      </div>
+      <%= price_input f, :adult_price %>
+      <%= price_input f, :adult_ticket_price %>
+      <%= price_input f, :adult_guided_tour_price %>
     </div>
     <div class="column">
       <h2 class="label"><%= t(".kids") %></h2>
-      <div class="field">
-        <%= f.label :kid_price, class: "label is-small" %>
-        <div class="control">
-          <%= f.number_field :kid_price, step: :any, min: 0, class: "input" %>
-        </div>
-      </div>
-      <div class="field">
-        <%= f.label :kid_ticket_price, class: "label is-small" %>
-        <div class="control">
-          <%= f.number_field :kid_ticket_price, step: :any, min: 0, class: "input" %>
-        </div>
-      </div>
-      <div class="field">
-        <%= f.label :kid_guided_tour_price, class: "label is-small" %>
-        <div class="control">
-          <%= f.number_field :kid_guided_tour_price, step: :any, min: 0, class: "input" %>
-        </div>
-      </div>
+      <%= price_input f, :kid_price %>
+      <%= price_input f, :kid_ticket_price %>
+      <%= price_input f, :kid_guided_tour_price %>
     </div>
   </div>
 
   <div class="columns">
     <div class="column">
-      <div class="field">
-        <%= f.label :max_group_size, class: "label" %>
-        <div class="control">
-          <%= f.number_field :max_group_size, min: 1, class: "input" %>
-        </div>
-      </div>
+      <%= f.input :max_group_size, input_html: { min: 1 } %>
     </div>
     <div class="column">
-      <div class="field">
-        <%= f.label :max_overbooking, class: "label" %>
-        <div class="control">
-          <%= f.number_field :max_overbooking, min: 0, class: "input" %>
-        </div>
-        <p class="help"><%= t("events.form.overbooking_hint") %></p>
-      </div>
+      <%= f.input :max_overbooking, hint: t("events.form.overbooking_hint"), input_html: { min: 0 } %>
     </div>
     <div class="column">
-      <div class="field">
-        <%= f.label :notify_days_before, class: "label" %>
-        <div class="control">
-          <%= f.number_field :notify_days_before, min: 0, class: "input" %>
-        </div>
-        <p class="help"><%= t(".notify_days_before_hint") %></p>
-      </div>
+      <%= f.input :notify_days_before, hint: t(".notify_days_before_hint"), input_html: { min: 0 } %>
     </div>
   </div>
 
-  <div class="field">
-    <%= f.label :notes, class: "label" %>
-    <div class="control">
-      <%= f.text_area :notes, rows: 4, class: "textarea" %>
-    </div>
-  </div>
-
-  <div class="field">
-    <%= f.label :description, class: "label" %>
-    <div class="control">
-      <%= f.text_area :description, rows: 4, class: "textarea" %>
-    </div>
-    <p class="help"><%= t(".public_hint") %></p>
-  </div>
+  <%= f.input :notes, input_html: { rows: 4 } %>
+  <%= f.input :description, hint: t(".public_hint"), input_html: { rows: 4 } %>
 
   <div class="field">
     <%= f.label :message_template, class: "label" %>
@@ -117,6 +46,7 @@
                       action: "input->erb-highlight#render scroll->erb-highlight#sync" } %>
       </div>
     </div>
+    <%= f.error :message_template, wrap_with: { tag: "p", class: "help is-danger" } %>
     <div class="message-template-help">
       <p class="help"><%= t(".message_intro_html") %></p>
 
@@ -140,6 +70,7 @@
     <div class="control">
       <%= f.file_field :image, accept: "image/png,image/jpeg,image/webp,image/gif", class: "input" %>
     </div>
+    <%= f.error :image, wrap_with: { tag: "p", class: "help is-danger" } %>
     <p class="help"><%= t(".public_hint") %></p>
   </div>
 

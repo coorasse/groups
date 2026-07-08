@@ -1,6 +1,6 @@
 <% remaining_seats = group.remaining_seats + (reservation.persisted? ? reservation.people_count : 0) %>
 
-<%= form_with model: [event, group, reservation], class: "box",
+<%= simple_form_for [event, group, reservation], html: { class: "box",
       data: {
         controller: "reservation-price",
         reservation_price_adult_price_value: event.adult_price,
@@ -10,15 +10,10 @@
         reservation_price_guided_tour_label_value: t(".breakdown_guided_tour"),
         reservation_price_kid_label_value: t(".breakdown_kids"),
         reservation_price_persisted_value: reservation.persisted?
-      } do |f| %>
+      } } do |f| %>
   <%= render "shared/errors", record: reservation %>
 
-  <div class="field">
-    <%= f.label :full_name, class: "label" %>
-    <div class="control">
-      <%= f.text_field :full_name, class: "input" %>
-    </div>
-  </div>
+  <%= f.input :full_name %>
 
   <div class="notification is-light py-2 px-4">
     <%= t(".availability_hint", seats: remaining_seats) %>
@@ -26,32 +21,16 @@
 
   <div class="columns">
     <div class="column">
-      <div class="field">
-        <%= f.label :adults_count, class: "label" %>
-        <div class="control">
-          <%= f.number_field :adults_count, min: 0, class: "input",
-                data: { reservation_price_target: "adultsCount", action: "input->reservation-price#recalculate" } %>
-        </div>
-      </div>
+      <%= f.input :adults_count, input_html: { min: 0,
+            data: { reservation_price_target: "adultsCount", action: "input->reservation-price#recalculate" } } %>
     </div>
     <div class="column">
-      <div class="field">
-        <%= f.label :kids_count, class: "label" %>
-        <div class="control">
-          <%= f.number_field :kids_count, min: 0, class: "input",
-                data: { reservation_price_target: "kidsCount", action: "input->reservation-price#recalculate" } %>
-        </div>
-      </div>
+      <%= f.input :kids_count, input_html: { min: 0,
+            data: { reservation_price_target: "kidsCount", action: "input->reservation-price#recalculate" } } %>
     </div>
     <div class="column">
-      <div class="field">
-        <%= f.label :guided_tour_only_adults, class: "label" %>
-        <div class="control">
-          <%= f.number_field :guided_tour_only_adults, min: 0, class: "input",
-                data: { reservation_price_target: "guidedTourOnlyAdults", action: "input->reservation-price#recalculate" } %>
-        </div>
-        <p class="help"><%= t(".guided_tour_only_hint") %></p>
-      </div>
+      <%= f.input :guided_tour_only_adults, hint: t(".guided_tour_only_hint"), input_html: { min: 0,
+            data: { reservation_price_target: "guidedTourOnlyAdults", action: "input->reservation-price#recalculate" } } %>
     </div>
   </div>
 
@@ -59,7 +38,8 @@
     <%= f.label :price_to_pay, class: "label" %>
     <div class="field has-addons">
       <div class="control is-expanded">
-        <%= f.number_field :price_to_pay, step: :any, min: 0, class: "input",
+        <%= f.number_field :price_to_pay, step: 1, min: 0, class: "input",
+              value: (format("%.2f", reservation.price_to_pay) if reservation.price_to_pay),
               data: { reservation_price_target: "priceToPay", action: "input->reservation-price#markOverridden" } %>
       </div>
       <div class="control">
@@ -68,6 +48,7 @@
         </button>
       </div>
     </div>
+    <%= f.error :price_to_pay, wrap_with: { tag: "p", class: "help is-danger" } %>
     <p class="help">
       <%= t(".suggested_price") %>
       <strong data-reservation-price-target="suggestedPrice">—</strong>
@@ -75,48 +56,22 @@
     <p class="help has-text-grey" data-reservation-price-target="priceBreakdown"></p>
   </div>
 
-  <div class="field">
-    <%= f.label :status, class: "label" %>
-    <div class="control">
-      <div class="select is-fullwidth">
-        <%= f.select :status, reservation_status_options %>
-      </div>
-    </div>
-  </div>
+  <%= f.input :status, collection: reservation_status_options,
+        label_method: :first, value_method: :last, include_blank: false %>
 
   <div class="columns">
     <div class="column">
-      <div class="field">
-        <%= f.label :phone, class: "label" %>
-        <div class="control">
-          <%= f.telephone_field :phone, class: "input" %>
-        </div>
-      </div>
+      <%= f.input :phone, as: :tel %>
     </div>
     <div class="column">
-      <div class="field">
-        <%= f.label :email, class: "label" %>
-        <div class="control">
-          <%= f.email_field :email, class: "input" %>
-        </div>
-      </div>
+      <%= f.input :email %>
     </div>
     <div class="column">
-      <div class="field">
-        <%= f.label :tax_code, class: "label" %>
-        <div class="control">
-          <%= f.text_field :tax_code, class: "input" %>
-        </div>
-      </div>
+      <%= f.input :tax_code %>
     </div>
   </div>
 
-  <div class="field">
-    <%= f.label :notes, class: "label" %>
-    <div class="control">
-      <%= f.text_area :notes, rows: 3, class: "textarea" %>
-    </div>
-  </div>
+  <%= f.input :notes, input_html: { rows: 3 } %>
 
   <div class="field is-grouped">
     <div class="control">

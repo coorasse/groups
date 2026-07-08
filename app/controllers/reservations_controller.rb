@@ -25,7 +25,7 @@ class ReservationsController < ApplicationController
   def update
     was_requested = @reservation.requested?
     saved = @reservation.update(reservation_params)
-    flash[:reservation_to_confirm_id] = @reservation.id if saved && was_requested && @reservation.approved?
+    flash[:reservation_to_confirm_id] = @reservation.id if saved && was_requested && @reservation.confirmed?
 
     if inline_request?
       flash[:alert] = @reservation.errors.full_messages.to_sentence unless saved

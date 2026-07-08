@@ -4,56 +4,40 @@
   <% if @event.image.attached? %>
     <figure class="image mb-4">
       <%= image_tag @event.image.variant(:header), class: "event-image",
-            style: "view-transition-name: #{reservation_image_transition_name(@group)}" %>
+            style: "view-transition-name: #{reservation_image_transition_name(@event)}" %>
     </figure>
   <% end %>
   <h2 class="title is-3 mb-2"><%= @event.title %></h2>
   <% if @event.description.present? %>
     <div class="content mt-2"><%= simple_format @event.description %></div>
   <% end %>
-  <p class="is-size-5 has-text-weight-semibold mt-2">
-    <%= group_full_datetime(@group, titleize: true) %>
-  </p>
 </div>
 
 <h1 class="title is-5 has-text-grey"><%= t("public.reservations.new.title") %></h1>
 
-<%= form_with model: @reservation, url: public_group_reservation_path(@group), class: "box",
+<%= simple_form_for @reservation, url: public_event_reservation_path(@event), html: { class: "box",
       data: {
-        controller: "reservation-price",
+        controller: "reservation-price booking",
         reservation_price_adult_price_value: @event.adult_price,
         reservation_price_kid_price_value: @event.kid_price,
         reservation_price_adult_guided_tour_price_value: @event.adult_guided_tour_price
-      } do |f| %>
+      } } do |f| %>
   <%= render "shared/errors", record: @reservation %>
 
-  <div class="field">
-    <%= f.label :full_name, Reservation.human_attribute_name(:full_name), class: "label" %>
-    <div class="control">
-      <%= f.text_field :full_name, required: true, autofocus: true, class: "input" %>
-    </div>
-  </div>
+  <%= f.input :full_name, required: true, input_html: { autofocus: true } %>
 
   <div class="columns is-mobile">
     <div class="column">
-      <div class="field">
-        <%= f.label :adults_count, Reservation.human_attribute_name(:adults_count), class: "label" %>
-        <div class="control">
-          <%= f.number_field :adults_count, min: 1, max: 100, required: true, inputmode: "numeric",
-                pattern: "[0-9]*", class: "input",
-                data: { reservation_price_target: "adultsCount", action: "input->reservation-price#recalculate" } %>
-        </div>
-      </div>
+      <%= f.input :adults_count, required: true, input_html: { min: 1, max: 100,
+            inputmode: "numeric", pattern: "[0-9]*",
+            data: { reservation_price_target: "adultsCount", booking_target: "adultsCount",
+                    action: "input->reservation-price#recalculate input->booking#refresh" } } %>
     </div>
     <div class="column">
-      <div class="field">
-        <%= f.label :kids_count, Reservation.human_attribute_name(:kids_count), class: "label" %>
-        <div class="control">
-          <%= f.number_field :kids_count, min: 0, max: 100, inputmode: "numeric", pattern: "[0-9]*",
-                class: "input",
-                data: { reservation_price_target: "kidsCount", action: "input->reservation-price#recalculate" } %>
-        </div>
-      </div>
+      <%= f.input :kids_count, input_html: { min: 0, max: 100,
+            inputmode: "numeric", pattern: "[0-9]*",
+            data: { reservation_price_target: "kidsCount", booking_target: "kidsCount",
+                    action: "input->reservation-price#recalculate input->booking#refresh" } } %>
     </div>
   </div>
 
@@ -64,47 +48,63 @@
     </p>
   </div>
 
+  <div class="field">
+    <%= f.label :group_id, t("public.reservations.new.choose_date"), class: "label" %>
+    <%= f.hidden_field :group_id, data: { booking_target: "groupId" } %>
+    <div class="booking-slots">
+      <% @bookable_groups.each do |group| %>
+        <label class="booking-slot" data-booking-target="slot">
+          <%= radio_button_tag "booking_group", group.id, group == @reservation.group,
+                data: { booking_target: "group", remaining: group.total_capacity - group.people_count,
+                        action: "change->booking#selectGroup" } %>
+          <span class="booking-slot-body">
+            <span class="booking-slot-datetime"><%= group_full_datetime(group, titleize: true) %></span>
+            <span class="booking-slot-seats">
+              <%= t("public.reservations.index.seats_left", count: group.remaining_seats) %>
+            </span>
+          </span>
+          <span class="booking-slot-full-tag"><%= t("public.reservations.new.slot_full_tag") %></span>
+        </label>
+      <% end %>
+    </div>
+  </div>
+
   <div class="columns">
     <div class="column">
-      <div class="field">
-        <%= f.label :phone, Reservation.human_attribute_name(:phone), class: "label" %>
-        <div class="control">
-          <%= f.telephone_field :phone, required: true, class: "input" %>
-        </div>
-      </div>
+      <%= f.input :phone, as: :tel, required: true %>
     </div>
     <div class="column">
-      <div class="field">
-        <%= f.label :email, class: "label" %>
-        <div class="control">
-          <%= f.email_field :email, class: "input" %>
-        </div>
-      </div>
+      <%= f.input :email %>
     </div>
   </div>
 
-  <div class="field">
-    <%= f.label :notes, Reservation.human_attribute_name(:notes), class: "label" %>
-    <div class="control">
-      <%= f.text_area :notes, rows: 3, class: "textarea" %>
-    </div>
-  </div>
+  <%= f.input :notes, input_html: { rows: 3 } %>
 
-  <div class="field consent-field">
-    <div class="control">
-      <label class="checkbox">
-        <%= f.check_box :data_processing_authorized, required: true %>
-        <span><%= t("public.reservations.new.consent") %></span>
-      </label>
-    </div>
-  </div>
+  <%= f.input :data_processing_authorized, as: :boolean, required: true,
+        label: t("public.reservations.new.consent"), wrapper_html: { class: "consent-field" } %>
+
+  <p class="help is-danger booking-warning" data-booking-target="warning" hidden>
+    <%= t("public.reservations.new.slot_full") %>
+  </p>
 
   <div class="field">
     <div class="control">
       <%= f.submit t("public.reservations.new.submit"),
             class: "button is-primary is-medium is-fullwidth",
-            data: { turbo_submits_with: t("public.reservations.new.submitting") } %>
+            data: { booking_target: "submit",
+                    turbo_submits_with: t("public.reservations.new.submitting") } %>
     </div>
+  </div>
+
+  <div class="notification is-warning booking-request" data-booking-target="request" hidden>
+    <p class="mb-3">
+      <%= t("public.reservations.new.no_availability_html",
+            phone: link_to("+39 328 223 0472", "tel:+393282230472")) %>
+    </p>
+    <button type="submit" name="force_request" value="1" class="button is-fullwidth"
+            data-turbo-submits-with="<%= t("public.reservations.new.submitting") %>">
+      <%= t("public.reservations.new.send_request_anyway") %>
+    </button>
   </div>
 <% end %>
 

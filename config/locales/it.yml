@@ -42,10 +42,29 @@ it:
         one: "Non è stato possibile salvare questo %{model}: 1 errore"
         other: "Non è stato possibile salvare questo %{model}: %{count} errori"
     messages:
+      accepted: "deve essere accettato"
+      blank: "non può essere lasciato in bianco"
+      confirmation: "non coincide con %{attribute}"
+      empty: "non può essere vuoto"
+      equal_to: "deve essere uguale a %{count}"
+      even: "deve essere pari"
+      exclusion: "è riservato"
+      greater_than: "deve essere maggiore di %{count}"
+      greater_than_or_equal_to: "deve essere maggiore o uguale a %{count}"
+      inclusion: "non è incluso nella lista"
+      invalid: "non è valido"
+      less_than: "deve essere minore di %{count}"
+      less_than_or_equal_to: "deve essere minore o uguale a %{count}"
       not_a_number: "non è un numero"
       not_an_integer: "deve essere un numero intero"
-      greater_than_or_equal_to: "deve essere maggiore o uguale a %{count}"
-      less_than_or_equal_to: "deve essere minore o uguale a %{count}"
+      odd: "deve essere dispari"
+      other_than: "deve essere diverso da %{count}"
+      present: "deve essere lasciato in bianco"
+      required: "deve esistere"
+      taken: "è già stato utilizzato"
+      too_long: "è troppo lungo (il massimo è %{count} caratteri)"
+      too_short: "è troppo corto (il minimo è %{count} caratteri)"
+      wrong_length: "non ha la lunghezza corretta (deve essere di %{count} caratteri)"
 
   activerecord:
     models:
@@ -77,10 +96,11 @@ it:
         kid_guided_tour_price: "Prezzo visita guidata ragazzi"
         max_group_size: "Max persone per gruppo"
         max_overbooking: "Max persone in overbooking"
+        notify_days_before: "Giorni di preavviso"
         notes: "Note"
         description: "Descrizione"
         image: "Immagine"
-        message_template: "Messaggio di accettazione (overbooking)"
+        message_template: "Messaggio di conferma"
       group:
         adults_count: "Adulti"
         kids_count: "Ragazzi"
@@ -93,6 +113,7 @@ it:
         net_price: "Prezzo netto"
         max_group_size: "Max persone per gruppo"
         max_overbooking: "Max persone in overbooking"
+        notify_days_before: "Giorni di preavviso"
       reservation:
         full_name: "Nome Cognome"
         adults_count: "Numero adulti"
@@ -128,6 +149,8 @@ it:
               empty_reservation: "La prenotazione deve contenere almeno una persona"
               over_group_capacity: "Supera i posti disponibili nel gruppo (rimasti: %{count})"
               consent_required: "Devi autorizzare il trattamento dei dati personali per procedere"
+              group_required: "Seleziona una data disponibile"
+              not_enough_seats: "Non ci sono abbastanza posti disponibili nella data scelta"
             guided_tour_only_adults:
               more_than_adults: "non può superare il numero di adulti della prenotazione"
 
@@ -143,7 +166,7 @@ it:
         one: "Hai 1 prenotazione in richiesta da elaborare."
         other: "Hai %{count} prenotazioni in richiesta da elaborare."
       empty: "Nessun evento presente. Creane uno per iniziare."
-      pending_reservations: "Prenotazioni da approvare"
+      pending_reservations: "Prenotazioni da confermare"
       group_schedule: "Data e ora"
       adults_short: "Adulti"
       kids_short: "Ragazzi"
@@ -198,7 +221,7 @@ it:
       available_seats_short: "Disp"
       people_count_short: "Np"
       empty: "Nessun gruppo aperto al momento."
-      pending_reservations: "Prenotazioni da approvare"
+      pending_reservations: "Prenotazioni da confermare"
       adults_short: "Adulti"
       kids_short: "Ragazzi"
     statuses:
@@ -253,12 +276,11 @@ it:
       other: "%{count} da avvisare"
     statuses:
       requested: "Richiesta"
-      approved: "Approvata"
       confirmed: "Confermata"
       paid: "Pagata"
       cancelled: "Annullata"
     confirmation_modal:
-      title: "Prenotazione approvata"
+      title: "Prenotazione confermata"
       body: "Ricordati di inviare il messaggio di conferma a %{name}."
       send_email: "Invia Email"
       copy: "Copia negli appunti"
@@ -326,9 +348,9 @@ it:
       total: "Totale indicativo"
       notes: "Note"
     new_request_notification:
-      subject: "Nuova richiesta di prenotazione da approvare – %{event}"
+      subject: "Nuova richiesta di prenotazione da confermare – %{event}"
       intro: "È arrivata una nuova richiesta di prenotazione per «%{event}»:"
-      cta: "Apri il gruppo per approvarla"
+      cta: "Apri il gruppo per confermarla"
     new_booking_notification:
       subject: "Nuova prenotazione confermata – %{event}"
       intro: "È arrivata una nuova prenotazione per «%{event}», confermata automaticamente perché rientra nei posti disponibili:"
@@ -371,22 +393,27 @@ it:
     title: "Lisa Rodi - Guida Turistica Romagna"
     subtitle: "Prenota la tua visita"
     reservations:
-      unavailable: "Il gruppo selezionato non è più disponibile."
+      unavailable: "L'evento selezionato non ha più date disponibili."
       index:
         title: "Eventi disponibili"
         prices: "Adulti %{adult} · Ragazzi %{kid}"
         seats_left:
           one: "1 posto disponibile"
           other: "%{count} posti disponibili"
-        book: "Invia Richiesta"
+        book: "Prenota"
         empty: "Al momento non ci sono eventi disponibili per la prenotazione."
       new:
-        title: "Richiesta di prenotazione"
+        title: "Prenota la tua visita"
         optional: "facoltativa"
         tickets_to_buy: "Biglietti adulti da acquistare:"
         total_price: "Totale indicativo da pagare:"
+        choose_date: "Scegli la data e l'ora"
+        slot_full_tag: "Non disponibile per il numero di persone scelto"
+        slot_full: "In questa data non ci sono abbastanza posti per il numero di persone indicato: scegli un'altra data disponibile oppure invia comunque la richiesta."
+        no_availability_html: "Preferisci questa data anche se al completo? Puoi contattarci al %{phone} (Cristina) oppure inviare comunque la richiesta e vi contatteremo il prima possibile."
+        send_request_anyway: "Invia comunque la richiesta"
         consent: "Autorizzo il trattamento dei dati personali."
-        submit: "Invia Richiesta"
+        submit: "Prenota"
         submitting: "Invio in corso…"
         cancel_confirm: "Sei sicuro di voler annullare? I dati inseriti andranno persi."
         cancel_accept: "Sì, annulla"
@@ -395,14 +422,11 @@ it:
   bookings:
     show:
       title: "La tua prenotazione"
-      confirm: "Conferma la prenotazione"
-      confirming: "Conferma in corso…"
       instructions_title: "Istruzioni utili"
       contact_note_html: "Per correzioni o segnalazioni di errori puoi contattarci al %{phone} o scrivere a %{email}."
       back: "Torna agli eventi"
       messages:
-        requested: "La tua richiesta è stata inviata: non è ancora una prenotazione confermata. Nelle prossime ore riceverai un messaggio con la conferma della disponibilità."
-        approved: "La disponibilità è confermata! Clicca il pulsante qui sotto per confermare definitivamente la tua prenotazione."
+        requested: "La tua richiesta è stata inviata: non è ancora una prenotazione confermata. Nelle prossime ore vi contatteremo per confermare la disponibilità."
         confirmed: "La tua prenotazione è confermata. Ci vediamo all'evento!"
         paid: "La tua prenotazione è confermata e il pagamento è stato registrato. Grazie!"
         cancelled: "Questa prenotazione è stata annullata."

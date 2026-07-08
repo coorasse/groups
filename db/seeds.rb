@@ -98,10 +98,10 @@ RESERVATION_SHAPES = [
   { adults_count: 2, kids_count: 3, guided_tour_only_adults: 1, status: :confirmed, price_to_pay: nil },
   { adults_count: 1, kids_count: 0, guided_tour_only_adults: 0, status: :paid,      price_to_pay: 20 },
   { adults_count: 2, kids_count: 1, guided_tour_only_adults: 0, status: :requested, price_to_pay: nil },
-  { adults_count: 4, kids_count: 2, guided_tour_only_adults: 2, status: :approved,  price_to_pay: nil },
+  { adults_count: 4, kids_count: 2, guided_tour_only_adults: 2, status: :confirmed, price_to_pay: nil },
   { adults_count: 3, kids_count: 0, guided_tour_only_adults: 1, status: :confirmed, price_to_pay: nil },
   { adults_count: 2, kids_count: 2, guided_tour_only_adults: 0, status: :requested, price_to_pay: nil },
-  { adults_count: 1, kids_count: 1, guided_tour_only_adults: 0, status: :approved,  price_to_pay: nil },
+  { adults_count: 1, kids_count: 1, guided_tour_only_adults: 0, status: :confirmed, price_to_pay: nil },
   { adults_count: 5, kids_count: 3, guided_tour_only_adults: 3, status: :paid,      price_to_pay: nil }
 ].freeze
 
@@ -122,7 +122,7 @@ GROUP_SLOTS = [
   { offset:  12, status: :open,      notes: "Gruppo scolastico, richiesta fattura.",    net_price: nil, max_group_size: nil, max_overbooking: nil },
   { offset: -20, status: :completed, notes: nil,                                        net_price: 180, max_group_size: nil, max_overbooking: nil },
   { offset:  19, status: :open,      notes: "Un partecipante in sedia a rotelle.",      net_price: nil, max_group_size: nil, max_overbooking: nil },
-  { offset:  26, status: :closed,    notes: "Gruppo al completo.",                      net_price: nil, max_group_size: 6,   max_overbooking: 0 },
+  { offset:  26, status: :closed,    notes: "Gruppo al completo.",                      net_price: nil, max_group_size: nil, max_overbooking: nil },
   { offset:  -8, status: :completed, notes: nil,                                        net_price: 95,  max_group_size: nil, max_overbooking: nil },
   { offset:  33, status: :open,      notes: "Comitiva in visita dall'estero.",          net_price: nil, max_group_size: nil, max_overbooking: 4 },
   { offset:  40, status: :cancelled, notes: "Annullato per maltempo.",                  net_price: nil, max_group_size: nil, max_overbooking: nil },
@@ -180,13 +180,13 @@ EVENTS = [
   {
     title: "Gita al museo",
     image: "museo.png",
-    groups: 6,
+    groups: 5,
     attrs: {
       short_name: "Museo Civico",
       adult_price: 25, kid_price: 12,
       adult_ticket_price: 15, kid_ticket_price: 7,
       adult_guided_tour_price: 5, kid_guided_tour_price: 3,
-      max_group_size: 8, max_overbooking: 2, notify_days_before: 7,
+      max_group_size: 25, max_overbooking: 2, notify_days_before: 7,
       notes: "Ritrovo davanti all'ingresso principale 15 minuti prima.",
       description: "Una visita guidata alle collezioni permanenti del museo civico, adatta a famiglie e scolaresche. Durata circa 2 ore.",
       message_template: confirmation_template("all'ingresso principale")
@@ -200,7 +200,7 @@ EVENTS = [
       adult_price: 40, kid_price: 20,
       adult_ticket_price: 24, kid_ticket_price: 12,
       adult_guided_tour_price: 8, kid_guided_tour_price: 4,
-      max_group_size: 6, max_overbooking: 1,
+      max_group_size: 24, max_overbooking: 2,
       description: "Un laboratorio pratico di modellazione dell'argilla con un maestro ceramista. Materiali inclusi."
     }
   },
@@ -212,7 +212,7 @@ EVENTS = [
       adult_price: 15, kid_price: 8,
       adult_ticket_price: 10, kid_ticket_price: 5,
       adult_guided_tour_price: 5, kid_guided_tour_price: 3,
-      max_group_size: 25, max_overbooking: 5,
+      max_group_size: 26, max_overbooking: 3,
       description: "Un percorso serale tra le sculture e le storie dei personaggi illustri sepolti nel cimitero monumentale.",
       message_template: confirmation_template("davanti al cimitero")
     }
@@ -220,13 +220,13 @@ EVENTS = [
   {
     title: "Parco avventura sugli alberi",
     color: [ 76, 148, 84 ],
-    groups: 8,
+    groups: 5,
     attrs: {
       short_name: "Parco Avventura",
       adult_price: 30, kid_price: 18,
       adult_ticket_price: 18, kid_ticket_price: 10,
       adult_guided_tour_price: 6, kid_guided_tour_price: 4,
-      max_group_size: 12, max_overbooking: 3,
+      max_group_size: 25, max_overbooking: 2,
       notes: "Consigliato abbigliamento sportivo e scarpe chiuse.",
       description: "Percorsi acrobatici tra gli alberi con diversi livelli di difficoltà. Attrezzatura di sicurezza fornita sul posto.",
       message_template: confirmation_template("alla biglietteria del parco")
@@ -241,20 +241,20 @@ EVENTS = [
       adult_price: 45, kid_price: 15,
       adult_ticket_price: 28, kid_ticket_price: 8,
       adult_guided_tour_price: 10, kid_guided_tour_price: 5,
-      max_group_size: 15, max_overbooking: 2,
+      max_group_size: 24, max_overbooking: 2,
       description: "Visita alle cantine storiche con degustazione guidata di quattro etichette e prodotti tipici locali."
     }
   },
   {
     title: "Spettacolo teatrale serale",
     color: [ 60, 90, 150 ],
-    groups: 10,
+    groups: 5,
     attrs: {
       short_name: "Teatro",
       adult_price: 22, kid_price: 12,
       adult_ticket_price: 14, kid_ticket_price: 8,
       adult_guided_tour_price: 4, kid_guided_tour_price: 2,
-      max_group_size: 40, max_overbooking: 8,
+      max_group_size: 28, max_overbooking: 3,
       description: "Una serata a teatro con una rappresentazione della compagnia locale. Posti a sedere numerati.",
       message_template: confirmation_template("all'ingresso del teatro")
     }

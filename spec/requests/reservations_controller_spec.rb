@@ -82,12 +82,12 @@ RSpec.describe ReservationsController, type: :request do
       expect(reservation.reload).to be_paid
     end
 
-    it "can change the status (e.g. approve a request)" do
+    it "can change the status (e.g. confirm a request)" do
       reservation = create(:reservation, group: group, status: :requested)
 
-      patch event_group_reservation_path(event, group, reservation), params: { reservation: { status: "approved" } }
+      patch event_group_reservation_path(event, group, reservation), params: { reservation: { status: "confirmed" } }
 
-      expect(reservation.reload).to be_approved
+      expect(reservation.reload).to be_confirmed
     end
 
     it "updates a numeric field inline and redirects so Turbo can morph" do
@@ -113,7 +113,7 @@ RSpec.describe ReservationsController, type: :request do
       reservation = create(:reservation, group: group, status: :requested)
 
       patch event_group_reservation_path(event, group, reservation),
-        params: { inline: "1", reservation: { status: "approved" } },
+        params: { inline: "1", reservation: { status: "confirmed" } },
         headers: { "HTTP_REFERER" => events_path }
 
       expect(response).to redirect_to(events_path)
@@ -139,28 +139,28 @@ RSpec.describe ReservationsController, type: :request do
       expect(reservation.reload.adults_count).to eq(2)
     end
 
-    it "shows the confirmation reminder modal after approving a request" do
+    it "shows the confirmation reminder modal after confirming a request" do
       reservation = create(:reservation, group: group, status: :requested)
 
-      patch event_group_reservation_path(event, group, reservation), params: { reservation: { status: "approved" } }
+      patch event_group_reservation_path(event, group, reservation), params: { reservation: { status: "confirmed" } }
       follow_redirect!
 
       expect(response.body).to include(I18n.t("reservations.confirmation_modal.title"))
       expect(response.body).to include(reservation.full_name)
     end
 
-    it "shows the confirmation reminder modal after approving a request inline" do
+    it "shows the confirmation reminder modal after confirming a request inline" do
       reservation = create(:reservation, group: group, status: :requested)
 
       patch event_group_reservation_path(event, group, reservation),
-        params: { inline: "1", reservation: { status: "approved" } }
+        params: { inline: "1", reservation: { status: "confirmed" } }
       follow_redirect!
 
       expect(response.body).to include(I18n.t("reservations.confirmation_modal.title"))
     end
 
     it "does not show the confirmation reminder modal for other status changes" do
-      reservation = create(:reservation, group: group, status: :approved)
+      reservation = create(:reservation, group: group, status: :confirmed)
 
       patch event_group_reservation_path(event, group, reservation), params: { reservation: { status: "paid" } }
       follow_redirect!

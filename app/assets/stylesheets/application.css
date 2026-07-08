@@ -135,6 +135,12 @@
   accent-color: var(--bulma-primary, #00d1b2);
 }
 
+/* The checkbox is already required (browser + server side): hide the lone
+   "required" mark that would otherwise float between box and label. */
+.consent-field .checkbox abbr {
+  display: none;
+}
+
 /* Whole-row link: the first-cell link stretches over the entire row so a click
    anywhere on the row opens the group. */
 .clickable-row {
@@ -420,14 +426,97 @@ code.erb-output {
   background-color: color-mix(in srgb, var(--bulma-primary, #7048e8) 12%, transparent);
 }
 
-.reservation-slot-card {
-  display: block;
-  color: inherit;
+.reservation-event-card {
   transition: box-shadow 0.15s ease;
 
   &:hover {
-    color: inherit;
     box-shadow: 0 8px 16px rgba(10, 10, 10, 0.15);
+  }
+}
+
+.reservation-slots {
+  margin-top: 1.25rem;
+  border-top: 1px solid var(--bulma-border, #dbdbdb);
+}
+
+.reservation-slot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--bulma-border, #dbdbdb);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  .reservation-slot-info {
+    min-width: 0;
+  }
+
+  @media (max-width: 480px) {
+    .button {
+      width: 100%;
+    }
+  }
+}
+
+.booking-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.booking-slot {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--bulma-border, #dbdbdb);
+  border-radius: var(--bulma-radius, 6px);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+
+  &:has(input:checked) {
+    border-color: var(--bulma-primary, #00d1b2);
+    background-color: color-mix(in srgb, var(--bulma-primary, #00d1b2) 8%, transparent);
+  }
+
+  .booking-slot-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .booking-slot-datetime {
+    font-weight: 600;
+  }
+
+  .booking-slot-seats {
+    font-size: 0.75rem;
+    color: var(--bulma-grey, #7a7a7a);
+  }
+
+  .booking-slot-full-tag {
+    display: none;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--bulma-danger, #f14668);
+  }
+
+  &.is-full {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: color-mix(in srgb, var(--bulma-danger, #f14668) 6%, transparent);
+    border-color: var(--bulma-border, #dbdbdb);
+
+    .booking-slot-full-tag {
+      display: inline;
+    }
   }
 }
 

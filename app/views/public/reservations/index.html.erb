@@ -1,7 +1,5 @@
 <% content_for :title, t("public.reservations.index.title") %>
 
-<h1 class="title"><%= t("public.reservations.index.title") %></h1>
-
 <% if params[:unavailable].present? %>
   <div class="notification is-warning">
     <%= t("public.reservations.unavailable") %>
@@ -9,39 +7,27 @@
 <% end %>
 
 <% if @events_with_groups.any? %>
-  <% @events_with_groups.each do |event, groups| %>
-    <% groups.each do |group| %>
-      <%= link_to new_public_group_reservation_path(group), class: "box reservation-slot-card" do %>
-        <% if event.image.attached? %>
-          <figure class="image mb-4">
-            <%= image_tag event.image.variant(:header), class: "event-image",
-                  style: "view-transition-name: #{reservation_image_transition_name(group)}" %>
-          </figure>
-        <% end %>
-        <p class="title is-4"><%= group_full_datetime(group) %></p>
-        <p class="subtitle is-5 has-text-grey"><%= event.title %></p>
-        <p class="subtitle is-6 has-text-grey">
-          <%= t("public.reservations.index.prices",
-                adult: number_to_currency(event.adult_price), kid: number_to_currency(event.kid_price)) %>
-        </p>
-        <% if event.description.present? %>
-          <div class="content"><%= simple_format event.description %></div>
-        <% end %>
-
-        <div class="level is-mobile mt-4">
-          <div class="level-left">
-            <% if group.remaining_seats.positive? %>
-              <p class="is-size-7 has-text-grey">
-                <%= t("public.reservations.index.seats_left", count: group.remaining_seats) %>
-              </p>
-            <% end %>
-          </div>
-          <div class="level-right">
-            <span class="button is-primary"><%= t("public.reservations.index.book") %></span>
-          </div>
-        </div>
+  <% @events_with_groups.each_key do |event| %>
+    <div class="box reservation-event-card">
+      <% if event.image.attached? %>
+        <figure class="image mb-4">
+          <%= image_tag event.image.variant(:header), class: "event-image",
+                style: "view-transition-name: #{reservation_image_transition_name(event)}" %>
+        </figure>
       <% end %>
-    <% end %>
+      <p class="title is-4"><%= event.title %></p>
+      <p class="subtitle is-6 has-text-grey">
+        <%= t("public.reservations.index.prices",
+              adult: number_to_currency(event.adult_price), kid: number_to_currency(event.kid_price)) %>
+      </p>
+      <% if event.description.present? %>
+        <div class="content"><%= simple_format event.description %></div>
+      <% end %>
+
+      <%= link_to t("public.reservations.index.book"),
+            new_public_event_reservation_path(event),
+            class: "button is-primary is-medium is-fullwidth" %>
+    </div>
   <% end %>
 <% else %>
   <div class="notification is-light">

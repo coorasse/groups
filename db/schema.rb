@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_07_130100) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_08_120100) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -49,7 +49,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_07_130100) do
     t.decimal "kid_price", precision: 8, scale: 2, default: "0.0", null: false
     t.decimal "kid_ticket_price", precision: 8, scale: 2, default: "0.0", null: false
     t.integer "max_group_size", null: false
-    t.integer "max_overbooking", default: 0, null: false
+    t.integer "max_overbooking", default: 1, null: false
     t.text "message_template"
     t.text "notes"
     t.integer "notify_days_before", default: 2, null: false
